@@ -1,0 +1,1971 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>人生岔路口</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Press+Start+2P&display=swap">
+<style>
+/* Layout: one narrow RPG column — pixel scene, status HUD, dialogue box, choice buttons. Single deliberate dark CRT look. */
+:root{
+  --bg:#141322; --panel:#1f1d36; --panel2:#2b2950; --panel3:#3b3870;
+  --line:#e8e6f3; --fg:#f3f1fa; --mut:#a3a1c4;
+  --acc:#ffcd75; --hot:#ef7d57; --ok:#a7f070; --cool:#41a6f6; --bad:#f0607a;
+  --px:'Noto Sans TC','PingFang TC','Microsoft JhengHei',system-ui,sans-serif;
+  --num:'Press Start 2P','Noto Sans TC',ui-monospace,monospace;
+  color-scheme:dark;
+}
+html,body{background:var(--bg)}
+body{color:var(--fg);font-family:var(--px);font-size:15.5px;line-height:1.8;letter-spacing:.02em}
+*{box-sizing:border-box}
+.wrap{max-width:560px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 48px;display:flex;flex-direction:column;gap:14px}
+.pxb{background:var(--panel);margin:4px;box-shadow:0 -4px 0 0 var(--line),0 4px 0 0 var(--line),-4px 0 0 0 var(--line),4px 0 0 0 var(--line),inset 0 -4px 0 0 rgba(0,0,0,.35)}
+header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.logo{display:flex;flex-direction:column;line-height:1.2}
+.logo b{font-size:24px;font-weight:900;color:var(--acc);text-shadow:3px 3px 0 var(--hot);letter-spacing:.06em}
+.logo small{font-family:var(--num);font-size:8px;color:var(--mut);letter-spacing:.12em;margin-top:6px}
+.tb{display:flex;gap:8px}
+.mini{font:inherit;font-size:14px;color:var(--fg);background:var(--panel2);border:0;padding:4px 10px;cursor:pointer;margin:3px;box-shadow:0 -3px 0 0 var(--line),0 3px 0 0 var(--line),-3px 0 0 0 var(--line),3px 0 0 0 var(--line)}
+.mini:hover{background:var(--panel3)}
+.mini:focus-visible,.btn:focus-visible,.chipf:focus-visible{outline:3px dashed var(--acc);outline-offset:5px}
+#scene{display:block;width:100%;max-width:100%;aspect-ratio:128/56;image-rendering:pixelated;image-rendering:crisp-edges;background:#1a1c2c}
+.scenebox{padding:0;overflow:hidden}
+.hud{padding:10px 12px;display:flex;flex-direction:column;gap:8px}
+.who{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.who b{font-weight:700;color:var(--acc);font-size:18px}
+.tag{font-size:13px;color:var(--bg);background:var(--cool);padding:0 6px}
+.tag.y{background:var(--acc)}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px}
+.st{display:grid;grid-template-columns:2.6em 1fr 1.6em;align-items:center;gap:6px;font-size:13px}
+.st .v{font-family:var(--num);font-size:9px;text-align:right;color:var(--fg)}
+.bar{display:grid;grid-template-columns:repeat(10,1fr);gap:2px}
+.bar i{height:8px;background:#34325a}
+.bar i.on{background:var(--c,var(--ok))}
+.biz .bar{grid-template-columns:repeat(20,1fr)}
+.meta{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:13px;color:var(--mut)}
+.meta span b{font-weight:400;color:var(--fg);font-family:var(--num);font-size:9px}
+.stress{display:grid;grid-template-columns:2.6em 1fr 2.4em;gap:6px;align-items:center;font-size:13px}
+.stress .bar{grid-template-columns:repeat(20,1fr)}
+.sk{display:flex;flex-wrap:wrap;gap:4px}
+.sk span{font-size:12px;background:var(--panel2);color:var(--acc);padding:0 6px}
+.box{padding:14px 16px;min-height:120px}
+#txt{margin:0;white-space:normal;cursor:pointer;text-wrap:pretty}
+#txt .hl{font-weight:700;color:var(--acc)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chip{font-size:13px;padding:0 6px;background:var(--panel2)}
+.pv{background:var(--bg);box-shadow:0 0 0 3px var(--cool);margin:3px;padding:8px 12px;font-size:14px;line-height:1.7}
+.pv b{display:block;font-weight:700;color:var(--cool);margin-bottom:2px}
+.data{margin-top:8px;font-size:13px;color:var(--mut)}
+.data summary{cursor:pointer;color:var(--cool);font-size:13px;list-style:none}
+.data summary::-webkit-details-marker{display:none}
+.data summary::before{content:'▶ '}
+.data[open] summary::before{content:'▼ '}
+.data p{margin:4px 0;line-height:1.7}
+.chip.psyc{color:var(--cool);box-shadow:inset 0 -2px 0 var(--cool)}
+.sk span.t{color:var(--cool)}
+.chip.up{color:var(--ok)} .chip.dn{color:var(--bad)} .chip.skc{color:var(--acc)}
+.choices{display:flex;flex-direction:column;gap:6px}
+.btn{display:block;width:calc(100% - 6px);margin:3px;text-align:left;font:inherit;color:var(--fg);background:var(--panel2);border:0;padding:10px 14px 12px;cursor:pointer;box-shadow:0 -3px 0 0 var(--line),0 3px 0 0 var(--line),-3px 0 0 0 var(--line),3px 0 0 0 var(--line),inset 0 -4px 0 0 rgba(0,0,0,.4)}
+.btn:hover:not([disabled]){background:var(--panel3)}
+.btn:hover:not([disabled]) .l::before{content:'▶ ';color:var(--acc)}
+.btn:active:not([disabled]){transform:translateY(2px)}
+.btn .l{font-weight:500}
+.btn .s{display:block;font-size:13px;color:var(--mut);line-height:1.5;margin-top:2px}
+.btn[disabled]{opacity:.42;cursor:not-allowed}
+.btn.sm{padding:6px 12px 8px}
+.btn.primary{background:var(--hot);color:#1a1c2c}
+.btn.primary .s{color:#3a1f1a}
+.btn.primary:hover:not([disabled]){background:#ff9a74}
+.sep{font-size:13px;color:var(--mut);margin:8px 4px 0;letter-spacing:.1em}
+.extra{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.field{display:flex;flex-direction:column;gap:4px;font-size:14px;color:var(--mut)}
+.field input{font:inherit;font-size:16px;color:var(--fg);background:var(--bg);border:0;padding:6px 10px;box-shadow:0 0 0 3px var(--line);margin:3px;max-width:14em}
+.field input:focus-visible{outline:3px dashed var(--acc);outline-offset:4px}
+.radios{display:flex;gap:6px;flex-wrap:wrap}
+.chipf{font:inherit;font-size:14px;color:var(--fg);background:var(--panel2);border:0;padding:3px 10px;cursor:pointer;margin:3px;box-shadow:0 0 0 3px var(--line)}
+.chipf[aria-pressed="true"]{background:var(--acc);color:#1a1c2c}
+.statdesc{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:13px;color:var(--mut)}
+.statdesc b{font-weight:400;color:var(--fg)}
+.card{background:var(--bg);padding:10px 12px;box-shadow:0 0 0 3px var(--panel3);margin:3px;font-size:14px}
+.card h3{margin:0 0 4px;font-weight:700;font-size:16px;color:var(--acc)}
+.card p{margin:4px 0}
+.card .k{color:var(--mut)}
+.tl{list-style:none;margin:0;padding:0;font-size:14px;display:flex;flex-direction:column;gap:2px}
+.tl li{display:grid;grid-template-columns:3.2em 1fr;gap:8px}
+.tl li span{font-family:var(--num);font-size:9px;color:var(--cool);padding-top:5px}
+.big{font-family:var(--num);font-size:18px;color:var(--ok)}
+/* codex overlay */
+#codex{position:fixed;inset:0;background:var(--bg);z-index:20;overflow-y:auto;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+#codex .wrap{gap:10px}
+.cxhead{display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:0;background:var(--bg);padding-block:8px;z-index:2}
+.cxhead b{font-weight:900;font-size:20px;color:var(--acc);text-shadow:2px 2px 0 var(--hot)}
+.filters{display:flex;flex-wrap:wrap;gap:4px}
+details.cx{background:var(--panel);margin:4px;box-shadow:0 -3px 0 0 var(--line),0 3px 0 0 var(--line),-3px 0 0 0 var(--line),3px 0 0 0 var(--line)}
+details.cx summary{cursor:pointer;padding:8px 12px;list-style:none;display:flex;justify-content:space-between;gap:10px;align-items:baseline}
+details.cx summary::-webkit-details-marker{display:none}
+details.cx summary .n{color:var(--fg)}
+details.cx summary .p{font-family:var(--num);font-size:9px;color:var(--ok);white-space:nowrap}
+details.cx[open] summary{background:var(--panel2)}
+details.cx .body{padding:6px 12px 12px;font-size:14px;display:flex;flex-direction:column;gap:6px}
+details.cx .body .k{color:var(--acc)}
+.star{color:var(--acc)}
+.note{font-size:12px;color:var(--mut)}
+@media (max-width:400px){.stats{grid-template-columns:1fr}.logo b{font-size:21px}}
+@media (prefers-reduced-motion:reduce){.btn:active:not([disabled]){transform:none}}
+</style>
+
+<div class="wrap" id="app">
+  <header>
+    <div class="logo"><b>人生岔路口</b><small>TAIWAN LIFE SIM</small></div>
+    <div class="tb">
+      <button class="mini" id="bCodex" type="button">職業圖鑑</button>
+      <button class="mini" id="bHome" type="button">標題</button>
+    </div>
+  </header>
+  <div class="pxb scenebox"><canvas id="scene" width="128" height="56" aria-label="像素場景"></canvas></div>
+  <section class="pxb hud" id="hud" hidden></section>
+  <section class="pxb box" id="box" aria-live="polite">
+    <p id="txt"></p>
+    <div id="data"></div>
+    <div class="chips" id="chips"></div>
+    <div class="extra" id="extra" hidden></div>
+  </section>
+  <div class="choices" id="ch"></div>
+  <p class="note">資料參考：勞動部 2025 年新鮮人起薪（大學平均約 3.6 萬、碩士約 5.3 萬、約 17% 領基本工資）、2026 年基本工資月薪 29,500 元、主計總處家庭收支調查（最高與最低 20% 家戶可支配所得約 245 萬與 40 萬）、115 學測五標、高普考與律師、藥師、護理師、心理師、警察特考、教師資格考的近年錄取率、兒福聯盟 2025 網路霸凌調查、1111 人力銀行 2026 職場霸凌調查、Stop AAPI Hate 2025 調查、日本法務省外國居民調查、勞動部懷孕友善職場調查、勞動部原住民族與身心障礙者就業調查、各縣市新住民子女統計、警政署跟騷統計、2025 年勞動部職類別薪資調查（機師月薪約 29.8 萬、精算師約 20.3 萬、醫師約 18 萬）、內政部房價所得比與總生育率、警政署詐騙統計、各縣市人口、大學宿舍補貼與租金行情、勞動部性別薪資差距與職場平等調查、衛福部女性生活狀況調查（家務照顧時間）、財政部拋棄繼承性別統計、主計總處女性勞參率、衛福部自殺統計、育嬰留停統計、各國留學費用、日本學生支援機構學費資料、教育部 2025 公費留學名額。各職業薪資為含常見獎金的概略值，科系門檻與部分錄取率為遊戲化估計。</p>
+  <p class="note" style="text-align:center;margin:0;color:var(--acc)">人生岔路口 · made by may22</p>
+</div>
+
+<div id="codex" hidden>
+  <div class="wrap">
+    <div class="cxhead"><b>職業圖鑑</b><button class="mini" id="cxClose" type="button">關閉</button></div>
+    <p class="note" style="margin:0">點開每個職業，看要走哪條路、要學什麼、會遇到什麼挑戰。<span class="star">★</span> = 你曾在模擬中走到這裡。</p>
+    <div class="filters" id="cxF"></div>
+    <div id="cxList"></div>
+    <div class="cxhead" style="position:static"><b>性別視角</b></div>
+    <p class="note" style="margin:0">男生和女生在台灣可能遇到的不同處境。理解彼此，才能互相尊重。</p>
+    <div id="cxG"></div>
+    <div class="cxhead" style="position:static"><b>心理小百科</b></div>
+    <p class="note" style="margin:0">在模擬中遇到的心理學概念會收集在這裡。</p>
+    <div id="cxPsy"></div>
+  </div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const ri=(a,b)=>Math.floor(rnd(a,b+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const STN={INT:'智力',LAN:'語文',ART:'創意',PHY:'體能',SOC:'社交',WIL:'意志'};
+const STD={INT:'邏輯、數理、讀書效率',LAN:'閱讀、寫作、外語、表達',ART:'美感、點子、動手做',PHY:'體力、耐操、手腳協調',SOC:'溝通、人緣、說服力',WIL:'抗壓、自律、堅持'};
+const STC={INT:'#41a6f6',LAN:'#73eff7',ART:'#ef7d57',PHY:'#a7f070',SOC:'#ffcd75',WIL:'#c08cf0'};
+const TRAITS={
+ '社交焦慮':{p:.12,d:'在人前說話、被注視時特別緊張，怕被負面評價。國際研究約 7%～12% 的人一生中會經歷。跟內向不一樣，而且可以透過練習慢慢減輕。'},
+ '內向':{p:.3,d:'從獨處中充電，社交後需要休息。這是個性，不是缺點。'},
+ '完美主義':{p:.18,d:'標準很高、表現加分，但容易對自己太嚴苛，壓力累積得比較快。'},
+ '高敏感':{p:.2,d:'對環境和情緒很敏銳，容易共感別人，也比較容易被刺激累到。'},
+ '樂觀':{p:.2,d:'比較能從挫折中恢復，壓力累積得比較慢。'},
+};
+const ABROAD={
+ us:{n:'美國',c:165,yrsM:2,lang:'英文'},
+ uk:{n:'英國',c:145,yrsM:1,lang:'英文'},
+ au:{n:'澳洲',c:115,yrsM:2,lang:'英文'},
+ ca:{n:'加拿大',c:105,yrsM:2,lang:'英文'},
+ jp:{n:'日本',c:55,yrsM:2,lang:'日文',pre:1,est:1},
+ de:{n:'德國',c:42,yrsM:2,lang:'德文',pre:1},
+};
+const FAMSUP=[0,0,0,15,50,200];
+const TRIPS=[
+ {l:'菲律賓語言學校一個月',s:'約 6 萬（含學費、住宿、機票）',c:6,e:{LAN:1,sk:'外語'},r:'每天八小時一對一英文課。一個月後，你終於敢開口了。'},
+ {l:'日本語言學校三個月',s:'約 15 萬（遊戲估計）',c:15,e:{LAN:1,SOC:1,sk:'外語'},r:'你在東京的便利商店打工，聽懂了店長的關西腔。'},
+ {l:'英國或澳洲遊學一個月',s:'約 12 萬（遊戲估計）',c:12,e:{LAN:1,sk:['外語','海外經驗']},r:'你跟來自巴西、韓國、義大利的同學一起上課，世界變大了。'},
+ {l:'交換學生一學期',ex:1,s:'要通過校內甄選；學費繳台灣學校，只付生活費；需要語文 5 以上',c:15,need:()=>S.st.LAN>=5,e:{LAN:1,SOC:1,sk:['外語','海外經驗'],soc:1},r:'一個學期改變了你看世界的方式，也讓你更清楚自己是誰。'},
+];
+const famPay=n=>S.fam>=5?0:S.fam===4?Math.ceil(n/2):n;
+const PSY={
+ '文化衝擊':'剛到新國家的人，心情常經歷「蜜月期 → 衝擊期 → 調整期 → 適應期」的 U 型曲線。第二、三個月最容易想家、覺得孤單。主動建立在地的人際連結，是適應最好的方法。',
+ '社交焦慮':'害怕在社交或表現場合被負面評價，會心跳加快、腦袋空白、想逃走。和內向不同：內向的人可以自在獨處，社交焦慮的人是「想參與但很怕」。認知行為治療和漸進式暴露練習對它很有效。',
+ '負增強與逃避':'逃開讓人焦慮的場合，焦慮會立刻下降。大腦因此學到「逃避有用」，下一次反而更焦慮。這就是為什麼很多焦慮會越躲越大。',
+ '漸進式暴露':'從比較不可怕的小情境開始，一步步面對害怕的事，讓大腦重新學到「其實沒那麼危險」。這是治療焦慮最有證據支持的方法之一。',
+ '旁觀者效應':'在場的人越多，每個人越不會出手，因為責任被分散了，大家都以為別人會處理。兒福聯盟 2025 年調查：39.4% 的國高中生看到同學被霸凌時什麼都不做。',
+ '網路霸凌':'兒福聯盟 2025 年調查兩萬多名國高中生，18.6% 親身經歷過網路霸凌，7.5% 同時遭遇三種以上的攻擊。保存截圖證據、告訴信任的大人，是最重要的第一步。',
+ '校園霸凌':'學校接到霸凌通報後，依《校園霸凌防制準則》要啟動調查和輔導。教育部有 24 小時反霸凌專線 1953。被霸凌不是你的錯。',
+ '社群比較':'在社群上看到的多半是別人的精華片段，拿來跟自己的日常比，很容易覺得自己很失敗，這叫「向上比較」。調查發現台灣青少年平均每天花 4.2 小時在社群媒體，七成對自己的身材不滿意。',
+ '冒牌者現象':'明明有能力，卻覺得自己的成就只是運氣，怕被別人「拆穿」。在高成就的人和剛進新環境的人身上很常見。它不是疾病，說出來常會發現很多人都有一樣的感覺。',
+ '職業倦怠':'世界衛生組織把它列為一種職業現象，有三個特徵：身心耗竭、對工作越來越冷漠疏離、覺得自己做不好。休息有幫助，但常常也需要調整工作本身。',
+ '職場霸凌':'1111 人力銀行 2026 年調查，84.7% 上班族表示曾遭職場霸凌，最常見是言語貶低；72.1% 選擇忍耐，只有 19.6% 走正式申訴。2026 年 7 月起，僱用 30 人以上的企業要設申訴處理單位，霸凌者是老闆時可以直接向地方主管機關申訴。勞工諮詢申訴專線 1955。',
+ '習得無助':'心理學家 Seligman 發現，反覆經歷「怎麼做都沒用」，人會漸漸放棄嘗試，即使後來情況改變了。打破它的方法是累積小小的成功經驗。',
+ '成長型思維':'心理學家 Dweck 的研究：相信能力可以透過努力和方法改變的人，面對失敗時比較會調整策略再試，而不是認定「我就是不行」。',
+};
+const FAM=['','經濟困難','小康偏緊','小康','中上','富裕'];
+const FAMINC=['','約 40 萬','約 75 萬','約 100 萬','約 145 萬','約 245 萬'];
+const SURN=['陳','林','黃','張','李','王','吳','劉','蔡','楊','許','鄭','謝','郭','洪','曾','邱','廖','賴','周','徐','蘇','葉','莊','江','何'];
+const GIVEN={m:['冠宇','承恩','宥廷','柏翰','品睿','彥廷','家豪','宇軒','子傑','俊宏','睿恩','書豪','柏宇','承翰','冠廷','奕辰'],f:['品妤','思妤','宥蓁','詠晴','子涵','芷晴','欣妤','雨彤','佳穎','語彤','以晴','郁婷','怡君','筱涵','亮妤','映彤']};
+const genName=g=>pick(SURN)+pick(GIVEN[g==='x'?pick(['m','f']):g]);
+const NUMS=['一','二','三','四','五','六','七'];
+
+/* ---------- 科系 ---------- */
+const D={
+ med:{n:'醫學系',tr:'nat',th:59,y:6,k:['INT','WIL']},
+ dent:{n:'牙醫學系',tr:'nat',th:57,y:6,k:['INT','ART']},
+ phar:{n:'藥學系',tr:'nat',th:53,y:4,k:['INT','WIL']},
+ ee:{n:'電機工程學系',tr:'nat',th:54,y:4,k:['INT','WIL']},
+ cs:{n:'資訊工程學系',tr:'nat',th:54,y:4,k:['INT','ART']},
+ pt:{n:'物理治療學系',tr:'nat',th:49,y:4,k:['PHY','SOC']},
+ arch:{n:'建築學系',tr:'nat',th:49,y:5,k:['ART','INT']},
+ chem:{n:'化工與材料學系',tr:'nat',th:48,y:4,k:['INT','WIL']},
+ bio:{n:'生命科學系',tr:'nat',th:47,y:4,k:['INT','WIL']},
+ mech:{n:'機械工程學系',tr:'nat',th:47,y:4,k:['INT','PHY']},
+ civil:{n:'土木工程學系',tr:'nat',th:44,y:4,k:['INT','PHY']},
+ nurse:{n:'護理學系',tr:'nat',th:44,y:4,k:['WIL','PHY']},
+ agri:{n:'農藝／園藝學系',tr:'nat',th:41,y:4,k:['PHY','WIL']},
+ law:{n:'法律學系',tr:'soc',th:52,y:4,k:['LAN','WIL']},
+ psy:{n:'心理學系',tr:'both',th:50,y:4,k:['LAN','SOC']},
+ fin:{n:'財務金融學系',tr:'soc',th:50,y:4,k:['INT','SOC']},
+ mis:{n:'資訊管理學系',tr:'both',th:48,y:4,k:['INT','SOC']},
+ acct:{n:'會計學系',tr:'soc',th:48,y:4,k:['INT','WIL']},
+ biz:{n:'企業管理學系',tr:'soc',th:47,y:4,k:['SOC','LAN']},
+ eng:{n:'外國語文學系',tr:'soc',th:47,y:4,k:['LAN','SOC']},
+ jour:{n:'新聞傳播學系',tr:'soc',th:47,y:4,k:['LAN','SOC']},
+ des:{n:'設計學系',tr:'both',th:45,y:4,k:['ART','WIL']},
+ edu:{n:'教育學系',tr:'soc',th:45,y:4,k:['LAN','SOC']},
+ chi:{n:'中國文學系',tr:'soc',th:44,y:4,k:['LAN','ART']},
+ sw:{n:'社會工作學系',tr:'soc',th:42,y:4,k:['SOC','WIL']},
+ tour:{n:'觀光餐旅學系',tr:'soc',th:38,y:4,k:['SOC','PHY']},
+ kee:{n:'科大電機系',tr:'v_ee',th:36,y:4,k:['INT','PHY']},
+ knur:{n:'科大護理系',tr:'v_nur',th:34,y:4,k:['WIL','PHY']},
+ kdes:{n:'科大商業設計系',tr:'v_des',th:33,y:4,k:['ART','WIL']},
+ kfood:{n:'科大餐飲管理系',tr:'v_food',th:31,y:4,k:['PHY','ART']},
+ kbiz:{n:'科大企管行銷系',tr:'v_biz',th:31,y:4,k:['SOC','LAN']},
+};
+const VOC={
+ v_ee:{n:'電機電子群',d:'配電、電子電路、冷凍空調',k:'INT',sk:'證照'},
+ v_food:{n:'餐旅群',d:'中西餐、烘焙、飲調、旅館服務',k:'PHY',sk:'證照'},
+ v_des:{n:'設計群',d:'平面設計、廣告、室內設計',k:'ART',sk:'作品集'},
+ v_biz:{n:'商業與管理群',d:'會計、行銷、電子商務',k:'SOC',sk:'證照'},
+ v_nur:{n:'護理（衛護類）',d:'基礎護理、照顧技術，可接科大護理',k:'WIL',sk:'證照'},
+};
+
+/* ---------- 考試 ---------- */
+const EX={
+ mdx:{n:'醫師國考（兩階段）',b:.72,w:{INT:.04,WIL:.02},d:'第一階段 7 月場近年多在五到六成，1 月場多是重考生，及格率只有一到四成，曾低到 10.5%。兩階段都過才能執業。'},
+ ddx:{n:'牙醫師國考',b:.7,w:{INT:.04,ART:.02},d:'通過率不低，難關在牙醫系的精細實作訓練。（遊戲估計）'},
+ phx:{n:'藥師國考',b:.32,w:{INT:.05,WIL:.02},d:'2026 年藥師第一階段全國平均通過率約 31%，很多人要考第二次。'},
+ rnx:{n:'護理師國考',b:.56,w:{WIL:.04,INT:.03},d:'114 年第二次護理師考試錄取率約 58%，是近年新高；一年辦三次，可以多考幾次。'},
+ ptx:{n:'物理治療師國考',b:.5,w:{INT:.03,PHY:.03},d:'解剖、肌動學是大魔王。（遊戲估計）'},
+ lawx:{n:'律師考試',b:.12,w:{LAN:.04,WIL:.03,INT:.02},d:'分兩試，114 年第二試各組錄取率約 33%，加上第一試的篩選，整體只有一成多，很多人考好幾年。'},
+ govx:{n:'高普考',b:.18,w:{LAN:.03,INT:.03,WIL:.03},d:'115 年高普考報名約 5.4 萬人、到考約 3.8 萬人，依需用名額估算錄取率約 19%；熱門類科更難。'},
+ tchx:{n:'教師資格考＋教甄',b:.22,w:{LAN:.03,SOC:.04,WIL:.02},d:'先考教師資格考（115 年全國通過率約 56%），再參加各縣市教師甄試。正式缺額少，很多人先當幾年代理老師。'},
+ psyx:{n:'心理師高考',b:.8,w:{LAN:.02,INT:.02},d:'諮商心理師近三年及格率約 79%～85%，臨床約 80%～91%。真正的窄門在前面：熱門心理所報名錄取比常是個位數百分比，研究所含一年全職實習最快 3 年。'},
+ polx:{n:'一般警察特考',b:.33,w:{PHY:.05,WIL:.03},d:'114 年四等一般警察特考錄取率約 33.5%（行政警察約 31%、消防約 39.5%），還有體能測驗。'},
+};
+
+/* ---------- 職業 ---------- */
+const CAREERS=[
+{id:'swe',n:'軟體工程師',cat:'科技',pay:[4.6,15],lv:[[3,10,'資深工程師']],deg:['cs','ee','mis'],alt:['程式'],k:['INT','ART'],
+ learn:'資料結構與演算法、一種主力程式語言、Git、資料庫與雲端服務，還有讀英文技術文件的習慣。',
+ chal:'技術更新很快，AI 寫程式工具正在改變這份工作，要一直學新東西；系統出包時可能半夜被叫醒。',
+ ev:{q:'系統上線前一晚出了大 bug，主管問誰能留下來處理。',o:[['我來，通宵修好',{WIL:1,st:20,perf:1},'凌晨四點修好了。大家記住了你，你的黑眼圈也是。'],['先退回舊版本，明天大家一起查',{INT:1,st:5,perf:.5},'冷靜的決定避免了更大的災難。主管說這才是資深的做法。'],['找同事一起分工',{SOC:1,st:10,perf:.5},'三個人兩小時就找到原因，還多了革命情感。']]}},
+{id:'fab',n:'晶圓廠製程工程師',cat:'科技',pay:[6.2,15],lv:[[3,11,'主任工程師']],deg:['ee','chem','mech','kee'],pref:'研究所',k:['INT','PHY'],
+ learn:'半導體元件物理、統計製程管制（SPC）、良率分析，還要能用英文跟設備廠商溝通。',
+ chal:'輪班或 on-call，機台出問題假日也要回廠；多在新竹、台中、台南、高雄的科學園區，壓力大但分紅高。多數職缺偏好碩士。',
+ ev:{q:'凌晨兩點，機台異常、良率掉了 5%，你的手機響了。',o:[['立刻回廠處理',{WIL:1,st:20,perf:1.5},'清晨六點良率回穩。你在停車場的車上睡了一小時。'],['遠端指導值班同仁',{SOC:1,st:10,perf:.5},'同仁照著你的步驟排除了問題，你也學會了帶人。'],['裝沒聽到',{st:-5,perf:-2},'隔天早會被點名，主管的眼神很冷。']]}},
+{id:'md',n:'醫師',cat:'醫療',pay:[11,40],lv:[[2,22,'主治醫師']],deg:['med'],exam:'mdx',k:['INT','WIL'],
+ learn:'基礎與臨床醫學、病情告知與溝通、實證醫學，選定專科後還要持續訓練好幾年。',
+ chal:'2025 年職類別薪資調查，醫師平均月薪約 18 萬；主治醫師依科別差很多，有醫院的心臟、胸腔外科主治平均月薪破百萬。但住院醫師工時長、值班多，還有醫療糾紛的壓力；內外婦兒急重症辛苦，醫美收入高但爭議也多。',
+ ev:{q:'值班到第 30 個小時，急診又送來一位重症病人。',o:[['撐住，親自處理',{WIL:1,st:25,perf:1.5},'病人穩定了。你在值班室睡著，手上還拿著病歷。'],['請學長支援',{SOC:1,st:10,perf:.5},'學長二話不說趕來。醫院是團隊工作。'],['向科部反映排班不合理',{SOC:1,st:5},'沒有立刻改變，但你說出了很多人不敢說的話。']]}},
+{id:'dds',n:'牙醫師',cat:'醫療',pay:[8,30],lv:[[2,16,'開業牙醫師']],deg:['dent'],exam:'ddx',k:['INT','ART'],
+ learn:'口腔解剖、精細手部操作、植牙與矯正等專科技術，開業後還要懂診所經營。',
+ chal:'長時間低頭彎腰，肩頸容易受傷；都會區診所密集，開業競爭激烈。',
+ ev:{q:'有診所邀你合夥開業，但要投資 300 萬。',o:[['合夥開業（存款 -30 萬）',{m:-30,st:15,sal:1.25,WIL:1},'前兩年很辛苦，病人慢慢多了起來。'],['繼續當受僱醫師',{st:-5},'收入穩定，你有更多時間精進技術。'],['先去進修植牙',{m:-10,INT:1,sal:1.1},'回來後你成了診所的植牙專門醫師。']]}},
+{id:'ph',n:'藥師',cat:'醫療',pay:[5,7.5],deg:['phar'],exam:'phx',k:['INT','WIL'],
+ learn:'藥理學、藥物交互作用、健保給付規定，還有把用藥說明講成阿公阿嬤聽得懂的話。',
+ chal:'醫院藥局處方量大、一點都不能出錯；社區藥局要兼顧經營與銷售。',
+ ev:{q:'醫師開的劑量看起來不太對，但他是出了名的兇。',o:[['打電話確認',{WIL:1,SOC:1,perf:1},'果然是筆誤。醫師嘟囔一聲謝謝，你可能救了一個人。'],['照開，應該沒事吧',{perf:-1.5,st:15},'你整晚睡不著。幸好家屬自己發現回來詢問。'],['請資深藥師一起判斷',{SOC:1,st:5,perf:.5},'學姐教你怎麼有技巧地跟醫師溝通。']]}},
+{id:'rn',n:'護理師',cat:'醫療',pay:[4.6,6.2],deg:['nurse','knur'],exam:'rnx',k:['WIL','PHY'],
+ learn:'臨床照護技術、急救、給藥安全、跟病人和家屬溝通，以及在三班輪值中照顧好自己。',
+ chal:'三班制、護病比高、情緒勞務重，離職率高；但需求大，可走專科護理師、長照或出國工作。',
+ ev:{q:'一個人顧 12 床，有家屬因為等太久對你大吼。',o:[['深呼吸，耐心解釋',{SOC:1,st:15,perf:1},'家屬冷靜後跟你道歉。你躲進茶水間哭了五分鐘，然後回去工作。'],['請護理長協助',{SOC:1,st:8},'護理長出面處理，也向上反映人力不足。'],['開始看長照或診所的職缺',{st:-5,sal:.95},'你開始思考自己還能撐多久，以及其他可能。']]}},
+{id:'pt',n:'物理治療師',cat:'醫療',pay:[4.3,7],deg:['pt'],exam:'ptx',k:['PHY','SOC'],
+ learn:'肌肉骨骼解剖、運動治療、徒手治療與衛教；運動傷害和長照都是熱門方向。',
+ chal:'常見按次抽成制，收入看病人量；體力消耗大，要自費上課進修技術。',
+ ev:{q:'國中籃球選手十字韌帶受傷，家長希望他三個月內回球場。',o:[['誠實說明需要半年，訂完整計畫',{SOC:1,WIL:1,perf:1},'家長一開始失望，半年後孩子健康地回到球場。'],['照家長要求加快進度',{st:15,perf:-1},'選手提早上場又受傷了。專業有時候要說不。'],['找運動醫學醫師一起評估',{INT:1,SOC:1,perf:.5},'團隊合作讓家長更信任你。']]}},
+{id:'law',n:'律師',cat:'公職法務',pay:[5.5,15],lv:[[3,12,'合夥律師']],deg:['law'],exam:'lawx',k:['LAN','WIL'],
+ learn:'民法、刑法、訴訟程序、法律寫作與邏輯論證，還要學會管理當事人的期待。',
+ chal:'律師考試錄取率低，常要考好幾年；新進律師工時長，之後能否成長看能不能累積案源。',
+ ev:{q:'當事人要你「想辦法」藏起一份對他不利的證據。',o:[['拒絕，說明律師倫理',{WIL:1,st:10,perf:.5},'當事人氣得換律師，但你晚上睡得很安穩。'],['用合法策略降低影響',{INT:1,LAN:1,st:15,perf:1},'你找到程序上的突破口，案子打得漂亮。'],['……照做',{st:30,perf:-2},'你提心吊膽好幾個月。律師的信譽一次就會毀掉。']]}},
+{id:'acct',n:'會計／審計員',cat:'商管',pay:[3.9,10],lv:[[3,8,'會計師（考取執照）']],deg:['acct','fin','biz','kbiz'],k:['INT','WIL'],
+ learn:'會計準則、稅法、審計流程、Excel 與資料分析工具；想大幅加薪要考會計師。',
+ chal:'每年 1 到 5 月是忙季，加班到半夜很常見；會計師考試很難，要邊工作邊考。',
+ ev:{q:'忙季第 80 天，你已經三週沒在晚上十點前下班。',o:[['撐過去，忙季總會結束',{WIL:1,st:20,perf:1},'五月底，你睡了整整一個週末。'],['跟經理談工作分配',{SOC:1,st:5},'經理沒想到你會開口，調整了你的案子。'],['邊上班邊準備會計師考試',{sk:'備考',INT:1,st:25,sal:1.15},'你考過了兩科，這張證照讓薪水往上跳。']]}},
+{id:'fin',n:'金融業（銀行／證券）',cat:'商管',pay:[3.9,8],deg:['fin','acct','biz','mis','eng'],k:['INT','SOC'],
+ learn:'財報分析、投資商品知識、金融證照（證券營業員、投信投顧、理財人員等）、客戶經營。',
+ chal:'業績壓力大、證照考不完；市場不好時要面對客戶抱怨，還有銷售道德的灰色地帶。',
+ ev:{q:'主管要你把高風險商品推給剛退休的阿姨，說月底業績還差一點。',o:[['照實說明風險，推薦保守商品',{WIL:1,st:10,sal:.97},'這個月沒達標，但阿姨後來介紹了三個朋友給你。'],['照主管說的推',{st:25,perf:1},'業績達標。半年後市場大跌，阿姨在分行哭著找你。'],['先問法遵這樣是否合規',{INT:1,SOC:1},'法遵提醒了適合度評估規定，主管也不好再說什麼。']]}},
+{id:'gov',n:'公務員',cat:'公職法務',pay:[5,6.5],deg:'any',exam:'govx',k:['LAN','WIL'],
+ learn:'國文、行政法、法學緒論等考科；上任後要熟悉公文、法規與跨單位協調。',
+ chal:'考試通常要準備一到三年；工作穩定、福利好，但升遷看年資，流程繁瑣，也要面對民眾陳情。',
+ ev:{q:'民代辦公室來電，要你「通融」一件不合規定的申請案。',o:[['依法行政，委婉拒絕',{WIL:1,st:10},'壓力很大，但長官最後挺你。'],['呈報長官決定',{SOC:1,st:5},'你學會了公部門保護自己的方式。'],['在規定內找可行方案',{INT:1,LAN:1,perf:1,st:10},'申請人補件後順利通過，大家都滿意。']]}},
+{id:'tch',n:'教師',cat:'文教',pay:[4.8,7],deg:['edu'],alt:['教育學程'],exam:'tchx',k:['LAN','SOC'],
+ learn:'學科專業、教學設計、班級經營、輔導知能，還有跟家長溝通的技巧。',
+ chal:'教甄名額少，很多人要當好幾年代理代課；學生狀況多元、家長期待高，行政工作也不少。',
+ ev:{q:'班上有個學生總在上課睡覺，你發現他每天晚上打工養家。',o:[['私下關心，協助申請補助',{SOC:1,WIL:1,st:10,perf:1},'他開始願意下課跟你聊天。這是你當老師最有成就感的一刻。'],['照校規處理',{st:5,perf:-.5},'規定是遵守了，但他的眼神更遠了。'],['跟輔導室一起處理',{SOC:1,st:5,perf:.5},'輔導老師幫他連結了社福資源。']]}},
+{id:'sw',n:'社工師',cat:'文教',pay:[3.6,4.8],deg:['sw','psy'],k:['SOC','WIL'],
+ learn:'社會福利法規、個案管理、會談技巧、資源連結，以及自我照顧與督導。',
+ chal:'案量大、情緒負荷重，有時要面對危險的家訪；薪資偏低，但意義感很高。',
+ ev:{q:'你負責的家暴個案半夜傳訊息說她很害怕。',o:[['立刻聯繫警方與值班社工',{WIL:1,st:15,perf:1},'警方及時趕到。你一夜沒睡，但她安全了。'],['先電話安撫，隔天再處理',{SOC:1,st:20},'幸好沒事。督導提醒你，安全計畫要更早建立。'],['跟督導討論怎麼劃界線',{SOC:1,st:5,perf:.5},'你學會在幫助別人的同時保護自己。']]}},
+{id:'psy',n:'心理師',cat:'醫療',pay:[4.5,7],deg:['psy'],sk:['研究所'],exam:'psyx',k:['LAN','SOC'],
+ learn:'心理衡鑑、諮商理論與技術、研究所全職實習，執業後持續接受督導與進修。',
+ chal:'要讀到碩士並完成一年實習才能考照；剛開始常是按件計酬的兼職，個案的情緒也會影響你。',
+ ev:{q:'一位個案說，他最近常常想到不想活了。',o:[['冷靜評估風險，一起擬安全計畫',{SOC:1,WIL:1,st:15,perf:1},'他答應下週一定會回來。你在督導時說出了自己的害怕。'],['依規定轉介精神科並聯繫家屬',{INT:1,st:10,perf:.5},'處置即時又正確。'],['下班後一直想著這件事',{st:20},'你發現心理師也需要自己的心理師。']]}},
+{id:'des',n:'設計師（平面／UI）',cat:'設計創作',pay:[3.3,6],deg:['des','kdes','arch'],alt:['作品集'],k:['ART','SOC'],
+ learn:'Figma 與 Adobe 工具、排版與色彩、使用者研究與介面設計，還有一份能說服人的作品集。',
+ chal:'起薪偏低、改稿可能無限輪迴；作品集決定一切，要學會跟不懂設計的人溝通。',
+ ev:{q:'客戶第八次要求「logo 放大，但整體要更簡約」。',o:[['問清楚他真正在意的是什麼',{SOC:1,ART:1,perf:1},'原來老闆是想讓品牌在手機上更好認。問對問題，一稿就過。'],['照改，反正有錢拿',{st:15},'第九版、第十版……你開始懷疑自己為什麼學設計。'],['合約加上修改次數上限',{WIL:1,sal:1.05},'從下個案子開始，你學會保護自己的時間。']]}},
+{id:'arc',n:'建築設計師',cat:'設計創作',pay:[3.6,8],deg:['arch'],k:['ART','INT'],
+ learn:'建築設計、結構與法規、3D 建模（Revit、Rhino）、工地溝通；累積年資才能考建築師。',
+ chal:'事務所加班文化普遍、起薪不高；建築師考試錄取率低，通常要熬很多年才能獨立執業。',
+ ev:{q:'事務所又在趕競圖，你這週已經睡在辦公室三天了。',o:[['拚了，這次想拿下',{ART:1,st:25,perf:1.5},'拿到首獎！牆上掛著你畫的透視圖。'],['跟主持建築師溝通工作量',{SOC:1,st:5},'他沒有不高興，反而重新分配了人力。'],['開始準備建築師考試',{sk:'備考',WIL:1,st:15,sal:1.1},'你考過了好幾科，離掛牌又近一步。']]}},
+{id:'jr',n:'記者／編輯',cat:'文教',pay:[3.5,5],deg:['jour','chi','eng'],k:['LAN','SOC'],
+ learn:'採訪與查證、新聞寫作、影音剪輯、資料新聞與社群經營。',
+ chal:'截稿壓力大、流量導向；AI 生成內容大量出現，查證與深度報導的價值反而更重要。',
+ ev:{q:'主管要你下一個聳動標題衝點閱，但內容沒那麼誇張。',o:[['堅持標題要符合事實',{WIL:1,LAN:1,st:10},'點閱少一點，但有讀者留言說「難得看到不誇張的標題」。'],['照下，流量就是業績',{st:15,perf:1},'點閱破十萬，你看著留言區吵成一團，心裡不太舒服。'],['提議改做深度專題',{ART:1,LAN:1,perf:1.5,st:15},'專題入圍新聞獎。原來深度內容也有人看。']]}},
+{id:'mkt',n:'行銷企劃',cat:'商管',pay:[3.5,6.5],deg:'any',k:['SOC','ART'],
+ learn:'市場分析、文案、社群經營、廣告投放與數據分析工具。',
+ chal:'KPI 看數字，演算法一變成效就掉；常同時顧好幾個專案。',
+ ev:{q:'你花三週策劃的活動上線後，數據慘淡。',o:[['分析數據、快速調整投放',{INT:1,perf:1},'第二週轉換率翻倍，原來是受眾設錯了。'],['怪演算法',{st:10,perf:-1},'主管不太買單。'],['去聽業務和客服的第一線意見',{SOC:1,perf:1},'你發現客人在意的根本不是你主打的賣點。']]}},
+{id:'sales',n:'業務',cat:'商管',pay:[3.5,9],k:['SOC','WIL'],
+ learn:'產品知識、開發客戶、談判、客戶關係管理，還有被拒絕後的復原力。',
+ chal:'底薪低、靠獎金，收入不穩；每天面對拒絕，但做得好收入天花板高，不太看學歷。',
+ ev:{q:'這個月被拒絕了 47 次，底薪快撐不下去。',o:[['改變方法，先聽需求再推銷',{SOC:1,perf:1.5},'第 48 個客戶簽約了，而且是大單。'],['跟業績王學長偷學',{SOC:1,INT:1,perf:1},'學長分享了他整理客戶名單的方法。'],['開始懷疑自己適不適合',{st:15},'有時候該換方法，有時候該換工作。你還在想。']]}},
+{id:'chef',n:'廚師',cat:'技職',pay:[3,6],k:['PHY','ART'],bonus:['kfood'],
+ learn:'刀工、火候、食品衛生（中餐／西餐丙級證照）、成本控管；想當主廚還要懂管理。',
+ chal:'長時間站立、高溫環境，假日節日都要上班；多從學徒或助手做起，前幾年很辛苦。',
+ ev:{q:'中秋連假餐廳客滿，一位廚師突然請假。',o:[['一個人顧兩個爐台',{PHY:1,WIL:1,st:20,perf:1.5},'主廚拍拍你：「下個月升副廚。」'],['跟外場協調出餐順序',{SOC:1,INT:1,perf:1},'慢了一點，但一桌客訴都沒有。'],['燙傷了還硬撐',{PHY:-1,st:20},'傷口發炎休了一週。保護身體也是廚師的專業。']]}},
+{id:'elec',n:'水電／冷氣技師',cat:'技職',pay:[3.8,8],deg:['kee'],alt:['證照'],k:['PHY','INT'],
+ learn:'室內配線、冷凍空調等技術士證照（丙、乙、甲級），還有報價、接案與工安。',
+ chal:'體力活，夏天在頂樓或天花板裡作業很熱；有工安風險，但缺工嚴重，熟練師傅很搶手。',
+ ev:{q:'客戶家冷氣漏水，屋主一直盯著你，還嫌報價太貴。',o:[['邊做邊說明原因和材料差別',{SOC:1,perf:1},'屋主最後說：「以後家裡有事都找你。」口碑就是這樣來的。'],['降價搶單',{sal:.95,st:5},'案子接到了，但做完幾乎沒賺。'],['考乙級證照，接更大的案子',{sk:'證照',INT:1,sal:1.15,st:10},'你開始接公司行號的工程。']]}},
+{id:'yt',n:'內容創作者',cat:'自由業',pay:[1.5,6],alt:['自媒體','作品集'],k:['ART','SOC'],
+ learn:'企劃、拍攝剪輯、說故事、社群經營、商業合作與報稅。',
+ chal:'收入極度不穩，演算法一改流量就掉；要長期穩定產出，還要面對網路酸言酸語。',
+ ev:{q:'你的影片突然爆紅，但留言區湧入大量酸民。',o:[['趁勝追擊，連續產出',{ART:1,sal:1.4,st:25},'訂閱破十萬！但你已經三個月沒放假。'],['關掉留言休息幾天',{st:-10},'你學會跟網路保持距離。'],['開始接業配',{SOC:1,sal:1.2,st:10},'收入穩定一些，只是要在誠信和業配之間拿捏。']]}},
+{id:'prof',n:'研究員／大學教授',cat:'文教',pay:[5,9],sk:['博士'],k:['INT','WIL'],
+ learn:'研究方法、論文寫作與發表、申請研究計畫經費、教學與指導學生。',
+ chal:'博士要讀四到七年，之後常要當幾年博士後；教職名額少，論文發表壓力大。',
+ ev:{q:'你的論文第三次被退稿，教職申請也還沒消息。',o:[['照審查意見大改再投',{INT:1,WIL:1,perf:1},'第四次終於被接受了！'],['出國當博士後累積經歷',{LAN:1,sk:'外語',st:15},'國外實驗室兩年，研究視野完全不同了。'],['考慮轉去業界研發',{SOC:1,sal:1.2},'業界的薪水讓你嚇一跳。']]}},
+{id:'game',n:'遊戲企劃',cat:'設計創作',pay:[3.8,6.5],deg:['cs','des','mis','chi','kdes'],alt:['作品集'],k:['ART','INT'],
+ learn:'遊戲系統與關卡設計、數值平衡、企劃文件撰寫，最好自己做過小遊戲。',
+ chal:'台灣產業規模不大、職缺有限，專案被砍很常見；上線前常要趕工。',
+ ev:{q:'做了一年半的專案被公司喊停了。',o:[['整理成作品，準備下一個專案',{ART:1,WIL:1,perf:1},'新主管看了你的企劃書，讓你當主企劃。'],['下班自己做獨立遊戲',{ART:1,sk:'作品集',st:15},'你的小遊戲上架了，好評率 92%。'],['轉做遊戲營運，比較穩',{SOC:1,st:-5},'少了創作的興奮，多了準時下班。']]}},
+{id:'farm',n:'新農人',cat:'自由業',pay:[2.5,5],k:['PHY','WIL'],bonus:['agri'],
+ learn:'作物栽培、病蟲害管理、農業補助與保險，還有品牌行銷和網路銷售。',
+ chal:'看天吃飯，颱風一來可能血本無歸；初期收入低，要自己找通路。',
+ ev:{q:'颱風前一天，果園還有一半的芒果沒採。',o:[['全家連夜搶收',{PHY:1,WIL:1,st:20,perf:1},'搶下七成。雨中採收的畫面你會記一輩子。'],['申請農業保險和災損補助',{INT:1},'損失降到最低。務農也是經營。'],['開始做網路預購分散風險',{SOC:1,ART:1,sk:'自媒體',sal:1.2},'熟客預購比通路商可靠多了。']]}},
+{id:'pol',n:'警察／消防員',cat:'公職法務',pay:[5,6.5],exam:'polx',k:['PHY','WIL'],
+ learn:'體能訓練、法律、急救與救災技術；考上後要進警專、警大或消防訓練受訓。',
+ chal:'輪班、危險性高，常面對情緒激動的民眾；但收入與退休保障相對穩定。',
+ ev:{q:'深夜有一名酒醉民眾在路口鬧事。',o:[['耐心勸導並保護現場',{SOC:1,WIL:1,perf:1},'平和落幕。沒上新聞就是最好的結果。'],['依法強制處理',{PHY:1,st:10,perf:.5},'處理完你手臂多了一道擦傷。'],['等支援到再處理',{INT:1,st:5},'安全第一，你是對的。']]}},
+{id:'startup',n:'科技新創創辦人',cat:'創業',pay:[2,15],alt:['程式','創業經驗'],seed:30,startup:true,k:['INT','SOC'],
+ learn:'找到真正有人要的問題、做出最小可行產品（MVP）、募資簡報、帶團隊、看懂現金流和股權。',
+ chal:'大部分新創撐不過前幾年；收入很低、壓力極大，常常要在產品、募資、招人之間分身。成功的話回報也最大。',
+ ev:{q:'產品上線三個月，用戶成長卡住了。共同創辦人想轉做企業客戶。',o:[['訪談 30 個用戶找原因',{INT:1,SOC:1,biz:12},'你發現大家卡在註冊流程。改完後成長曲線終於往上翹。'],['同意轉向企業客戶',{biz:8,st:15},'第一張企業合約簽下來，現金流穩了一點。'],['砸錢下廣告硬衝',{m:-10,biz:-10,st:10},'流量來了又走了，錢也燒掉一大塊。']]}},
+{id:'ecom',n:'電商／個人品牌',cat:'創業',pay:[1.5,8],alt:['自媒體','作品集','創業經驗','人脈'],seed:10,startup:true,k:['ART','SOC'],
+ learn:'選品與供應鏈、品牌設計、社群和廣告投放、客服與物流、電商平台規則。',
+ chal:'門檻低所以競爭超多；廣告成本一直漲，被平台規則綁住；庫存壓錯就會賠錢。',
+ ev:{q:'有網紅開價 5 萬幫你業配，說保證爆單。',o:[['先要數據，挑受眾對的小網紅',{INT:1,biz:12},'三個小網紅加起來的訂單，比一個大網紅還多。'],['付 5 萬賭一把',{m:-5},()=>Math.random()<.4?['真的爆單了！倉庫被清空。',{biz:20,sal:1.2}]:['訂單只有十幾筆，你心在淌血。',{biz:-12,st:15}]],['自己拍內容，慢慢養粉絲',{ART:1,sk:'自媒體',biz:6,st:8},'粉絲成長慢，但每個都是真的喜歡你的品牌。']]}},
+{id:'cafe',n:'開店（咖啡／餐飲／手搖）',cat:'創業',pay:[2,10],seed:50,startup:true,k:['SOC','WIL'],
+ learn:'產品研發、成本與財務、店面選址、員工管理、社群行銷、食品衛生法規。',
+ chal:'房租、人事、原物料成本壓力大，很多小店撐不過前幾年；老闆通常是最晚下班的人。',
+ ev:{q:'開店第八個月還在虧錢，房東又說要漲租。',o:[['砍掉不賺錢的品項，專心做招牌',{INT:1,biz:15,st:10},'菜單變短了，營收反而成長。'],['加開外送、延長營業',{PHY:1,biz:8,st:25},'營收上來了，你也快倒了。'],['談續約條件，必要時搬家',{SOC:1,biz:5},'房東答應漲幅減半，換你簽三年。']]}},
+{id:'studio',n:'接案工作室',cat:'創業',pay:[2.5,8],alt:['作品集','程式','證照'],seed:5,startup:true,k:['ART','WIL'],
+ learn:'報價與合約、時間管理、找案源和經營口碑、報稅與勞健保自理。',
+ chal:'收入有一餐沒一餐，案子不是太多就是沒有；沒有公司幫你擋客戶，也沒有固定假期。',
+ ev:{q:'一個大客戶付款拖了三個月，你的帳戶快見底。',o:[['禮貌但堅定地催款，必要時寄存證信函',{WIL:1,biz:10},'錢進帳了。你從此在合約寫上分期付款。'],['先接一堆小案撐著',{st:20,biz:5},'撐過來了，但你兩個月沒睡好。'],['找其他接案者一起組團接大案',{SOC:1,sk:'人脈',biz:12},'團隊接案讓你們能接以前接不了的案子。']]}},
+{id:'fa',n:'空服員',cat:'服務',pay:[5,7],sk:['外語'],k:['LAN','SOC'],
+ learn:'英文（日韓語加分）、服務禮儀、緊急逃生與急救訓練。',
+ chal:'時差、作息不固定、長時間站立；招考競爭激烈，航空業景氣一波動就受影響。',
+ ev:{q:'航班遇到亂流，一位乘客恐慌發作。',o:[['蹲下陪他做呼吸練習',{SOC:1,WIL:1,perf:1},'落地時他握著你的手道謝。'],['依標準程序廣播並回座',{INT:1,perf:.5},'程序就是為了這種時候存在的。'],['自己也很怕但硬撐',{st:15,WIL:1},'下機後你的腿還在抖。']]}},
+{id:'meng',n:'機械／土木工程師',cat:'科技',pay:[4,6.5],deg:['mech','civil','kee','ee'],k:['INT','PHY'],
+ learn:'CAD 繪圖、材料與力學、設備維護或工程管理，技師證照加分。',
+ chal:'常跑工地或工廠、工時長；傳產薪資成長較慢，但經驗累積後很穩。',
+ ev:{q:'工地進度落後，主管要你簽一份還沒驗收完的報告。',o:[['堅持驗收完才簽',{WIL:1,st:15,perf:.5},'進度晚了兩天，但你發現了一個結構問題。'],['簽了，相信廠商',{st:20,perf:-1},'你每次經過那棟建築都有點心虛。'],['請主管一起到現場確認',{SOC:1,INT:1,perf:1},'主管看了現場也同意延後。']]}},
+{id:'bio',n:'生技研發人員',cat:'科技',pay:[4,6.5],deg:['bio','chem','phar','agri'],pref:'研究所',k:['INT','WIL'],
+ learn:'實驗技術、分子生物、法規與臨床試驗流程，通常需要碩士以上。',
+ chal:'研發週期長、失敗率高；台灣生技產業還在成長，好職缺多要碩博士。',
+ ev:{q:'你負責的實驗做了半年，數據還是不顯著。',o:[['重新檢查實驗設計',{INT:1,WIL:1,perf:1},'原來是對照組有問題，修正後終於有結果。'],['轉往臨床試驗或法規部門',{SOC:1,sk:'證照',sal:1.1},'你發現自己更喜歡跟人合作推動專案。'],['開始懷疑科研這條路',{st:15},'你在實驗室待到很晚，想了很多。']]}},
+{id:'hotel',n:'飯店／旅遊業',cat:'服務',pay:[3.3,5],deg:['tour','kfood','eng'],alt:['外語'],k:['SOC','LAN'],
+ learn:'外語、服務管理、訂房與行程系統；主管職需要營運與危機處理能力。',
+ chal:'旺季假日最忙、要輪班；疫情等事件一來整個產業會受衝擊。',
+ ev:{q:'連假客滿，系統出錯，一組外國旅客的房間被重複訂了。',o:[['用英文道歉並免費升等',{LAN:1,SOC:1,perf:1.5},'他們留了五星好評，還指名感謝你。'],['依規定幫他們找附近飯店',{INT:1,perf:.5},'處理得體，但旅客明顯不開心。'],['推給系統問題',{st:10,perf:-1},'客訴信寄到總經理信箱。']]}},
+{id:'overseas',n:'海外工作（之後返台）',cat:'海外',pay:[5.5,12],sk:['海外學歷','外語'],k:['LAN','WIL'],
+ learn:'當地語言到工作等級、當地職場文化、履歷與面試方式、工作簽證與稅務規定。',
+ chal:'要拿到工作簽證，常要靠公司擔保或抽籤；薪水看起來高，但房租和生活費也高；離家遠，生病或家人有事時最難熬。',
+ ev:{q:'工作簽證快到期了，公司說可以幫你續，但要你多簽三年約。',o:[['簽下來，繼續在國外拚',{WIL:1,sal:1.1,st:10},'你在這座城市慢慢有了家的感覺。'],['跳槽到更好的公司，重新申請簽證',{LAN:1,SOC:1,sal:1.2,st:20},'過程很煎熬，但你拿到了更好的機會。'],['想家了，回台灣發展',{st:-20,sal:.75},'回到台灣，你的海外經驗成了履歷上最亮的一行。']]}},
+{id:'svc',n:'服務業／外送員',cat:'服務',pay:[2.95,3.4],k:['PHY','SOC'],
+ learn:'時間管理、存錢理財，以及找出下一步方向。',
+ chal:'收入天花板低，外送等平台工作的勞保與職災保障不足；適合當過渡，但要規劃出路。',
+ ev:{q:'下雨天跑外送，一單才幾十塊，還差點摔車。',o:[['利用空檔上線上課程',{INT:1,sk:'證照',st:5},'你考到一張證照，開始有新的選擇。'],['多跑幾單存錢',{PHY:1,m:5,st:15},'存款多了一點，膝蓋也痠了一點。'],['好好想清楚想做什麼',{WIL:1,st:-10},'你列了一張清單。迷惘時，寫下來就是第一步。']]}},
+];
+const CAR=Object.fromEntries(CAREERS.map(c=>[c.id,c]));
+const CATS=['全部','創業','海外','醫療','科技','商管','公職法務','文教','設計創作','技職','服務','自由業'];
+const CATCOL={'醫療':'#f4f4f4','科技':'#333c57','商管':'#29366f','公職法務':'#257179','文教':'#5d275d','設計創作':'#ef7d57','技職':'#e0a040','服務':'#b13e53','自由業':'#38b764','創業':'#c08cf0','海外':'#73eff7'};
+/* ---------- 新增科系、考試、職業 ---------- */
+Object.assign(D,{
+ math:{n:'數學／統計學系',tr:'nat',th:49,y:4,k:['INT','WIL']},
+ vet:{n:'獸醫學系',tr:'nat',th:50,y:5,k:['INT','PHY']},
+ mt:{n:'醫事檢驗學系',tr:'nat',th:47,y:4,k:['INT','WIL']},
+ nutri:{n:'營養學系',tr:'nat',th:43,y:4,k:['INT','SOC']},
+});
+Object.assign(EX,{
+ pilotx:{n:'航空公司自訓機師甄選',b:.12,w:{LAN:.03,PHY:.03,WIL:.03},d:'要大學畢業、英文達標、通過體檢、心理測驗和模擬機考核，錄取比例很低。錄取後要出國受訓一兩年。（錄取率為遊戲估計）'},
+ judgex:{n:'司法官考試',b:.05,w:{LAN:.03,WIL:.03,INT:.02},d:'錄取人數很少，是法律人最難的考試之一，考上後還要到法官學院受訓。（錄取率為遊戲估計）'},
+ dipx:{n:'外交特考',b:.08,w:{LAN:.05,SOC:.02},d:'要考外語和國際關係，名額很少。（錄取率為遊戲估計）'},
+ vetx:{n:'獸醫師國考',b:.5,w:{INT:.04},d:'（錄取率為遊戲估計）'},
+ dietx:{n:'營養師國考',b:.4,w:{INT:.04},d:'（錄取率為遊戲估計）'},
+ mtx:{n:'醫事檢驗師國考',b:.35,w:{INT:.05},d:'通過率起伏很大，曾有一次全國只有約 9%。'},
+});
+CAREERS.push(
+{id:'pilot',n:'民航機師',cat:'交通運輸',pay:[12,38],deg:'any',sk:['外語'],need:{PHY:5,LAN:6},exam:'pilotx',k:['WIL','INT'],lv:[[2,26,'機長']],
+ learn:'英文、飛航原理、儀器飛行、機組資源管理（CRM），每半年要通過模擬機考核和體檢。',
+ chal:'勞動部 2025 年職類別薪資調查，機師平均月薪約 29.8 萬，是全台最高。但要長期面對時差、輪班、體檢不過就停飛的壓力，責任極重。',
+ ev:{q:'起飛前你發現一個小儀表異常，但航班已經延誤，塔台在催。',o:[['堅持檢查到確認安全',{WIL:1,perf:1},'延誤了四十分鐘，但你做了對的事。公司表揚了你的判斷。'],['跟副機師和機務一起快速排除',{SOC:1,INT:1,perf:1},'團隊合作十分鐘就解決了。'],['應該沒事，先飛再說',{st:25,perf:-2},'一路平安，但你整趟都很不安。安全不能賭。']]}},
+{id:'actuary',n:'精算師',cat:'商管',pay:[5.5,25],deg:['math','fin'],k:['INT','WIL'],lv:[[2,15,'正式精算師']],
+ learn:'機率統計、財務數學、保險商品定價、程式（R、Python），還要一關關考精算師資格。',
+ chal:'2025 年職類別薪資調查，精算師平均月薪約 20.3 萬，排第二。但資格考試要考很多年，邊工作邊讀書非常辛苦。'},
+{id:'trader',n:'證券交易員／投資分析師',cat:'商管',pay:[5,22],deg:['fin','math','acct','biz','eng'],k:['INT','WIL'],lv:[[3,14,'資深交易員']],
+ learn:'財報分析、總體經濟、金融商品、風險管理，以及證券分析師等證照。',
+ chal:'市場一波動壓力就爆表，績效好壞直接反映在獎金上；工時長，要追國際盤。'},
+{id:'pm',n:'產品經理',cat:'科技',pay:[5,14],deg:'any',alt:['實習','程式','創業經驗'],k:['SOC','INT'],
+ learn:'使用者研究、需求排序、數據分析、跟工程師和設計師溝通，把產品從想法做到上線。',
+ chal:'夾在老闆、工程師、使用者中間，什麼都要懂一點；產品失敗時常常是第一個被檢討的人。'},
+{id:'ai',n:'AI／資料科學家',cat:'科技',pay:[6.5,22],deg:['cs','math','ee','mis'],pref:'研究所',k:['INT','WIL'],lv:[[3,14,'資深 AI 工程師']],
+ learn:'統計、機器學習、深度學習、Python、資料處理，以及把模型變成產品的工程能力。',
+ chal:'領域變化極快，幾個月就有新技術；好職缺多要碩士以上，而且要跟全世界的人才競爭。'},
+{id:'sec',n:'資安工程師',cat:'科技',pay:[5,13],deg:['cs','mis','ee'],alt:['程式'],k:['INT','WIL'],
+ learn:'網路與作業系統、漏洞分析、資安證照，以及駭客的思考方式。',
+ chal:'攻擊隨時可能發生，出事時要 24 小時處理；但人才短缺，薪資成長快。'},
+{id:'vet',n:'獸醫師',cat:'醫療',pay:[4,10],deg:['vet'],exam:'vetx',k:['INT','PHY'],
+ learn:'動物解剖與疾病、外科手術、跟飼主溝通，還有面對動物離世的心理調適。',
+ chal:'工時長、會被抓咬，常常要面對飼主的情緒和經濟考量；開業後收入較高。'},
+{id:'diet',n:'營養師',cat:'醫療',pay:[3.6,5.5],deg:['nutri'],exam:'dietx',k:['INT','SOC'],
+ learn:'營養學、膳食設計、疾病營養、衛教溝通，長照和運動營養是成長方向。',
+ chal:'醫院職缺少、起薪不高；很多人轉往團膳、長照、食品業或自己經營衛教品牌。'},
+{id:'mtc',n:'醫事檢驗師',cat:'醫療',pay:[4,6],deg:['mt'],exam:'mtx',k:['INT','WIL'],
+ learn:'臨床生化、血液、微生物、分子檢驗，還有精準和不出錯的工作習慣。',
+ chal:'要輪班，一個數字錯了可能影響病人治療；國考通過率起伏大。'},
+{id:'judge',n:'法官／檢察官',cat:'公職法務',pay:[9,16],deg:['law'],exam:'judgex',k:['LAN','WIL'],lv:[[3,13,'資深司法官']],
+ learn:'所有法律科目、判決書寫作、證據判斷，以及面對壓力時的冷靜。',
+ chal:'案件量大，判決常受社會輿論批評；考試極難，考上後責任也極重。'},
+{id:'dip',n:'外交官',cat:'公職法務',pay:[5,9],deg:'any',sk:['外語'],exam:'dipx',k:['LAN','SOC'],
+ learn:'外語（英文加一種第二外語）、國際法、談判、禮賓，以及在各國生活的適應力。',
+ chal:'每幾年就要外派到不同國家，家人也要跟著搬；台灣的外交處境特別考驗耐心和韌性。'},
+{id:'army',n:'職業軍人（志願役）',cat:'公職法務',pay:[4,6.5],need:{PHY:5},k:['PHY','WIL'],
+ learn:'軍事專業、體能、領導統御，還能學到專長證照。',
+ chal:'規範嚴格、要配合部隊調動和演訓；但收入穩定、有退輔制度。'},
+{id:'care',n:'長照照顧服務員',cat:'醫療',pay:[3.3,4.5],k:['SOC','PHY'],
+ learn:'照顧服務員訓練與證照、移位技巧、失智症照護、跟家屬溝通。',
+ chal:'體力和情緒負擔都重，薪資天花板不高；但台灣已進入超高齡社會，需求非常大。'},
+{id:'kinder',n:'幼教老師',cat:'文教',pay:[3.3,4.5],deg:['edu'],alt:['教育學程'],k:['SOC','ART'],
+ learn:'幼兒發展、教保活動設計、親師溝通、急救。',
+ chal:'孩子安全責任大、家長期待高、薪水偏低；少子化讓幼兒園競爭變激烈。'},
+{id:'tutor',n:'補習班老師',cat:'文教',pay:[3,10],deg:'any',k:['LAN','SOC'],
+ learn:'學科專業、把難的東西講簡單、經營學生和家長、建立個人品牌。',
+ chal:'晚上和週末上班，收入看學生數；少子化下競爭激烈，名師可以收入很高。'},
+{id:'realtor',n:'房仲經紀人',cat:'商管',pay:[3,15],k:['SOC','WIL'],
+ learn:'不動產法規、市場行情、開發屋主和買方、談判，還要考不動產營業員證照。',
+ chal:'收入多半靠成交佣金，景氣一差就沒收入；工時長，假日最忙。'},
+{id:'insure',n:'保險業務員',cat:'商管',pay:[3,12],k:['SOC','WIL'],
+ learn:'保險商品、理財規劃、證照考試、經營人脈和長期客戶關係。',
+ chal:'業績壓力大、常被親友拒絕；但做出口碑後收入可以很高。'},
+{id:'drive',n:'職業駕駛（貨運／公車）',cat:'交通運輸',pay:[4,6],sk:['職業駕照'],k:['PHY','WIL'],
+ learn:'職業駕照、交通法規、車輛保養、長時間專注駕駛的身體管理。',
+ chal:'工時長、久坐，事故風險和精神壓力大；但缺工嚴重，工作機會多。'},
+{id:'beauty',n:'美容美髮師',cat:'技職',pay:[2.8,7],k:['ART','SOC'],bonus:['kdes'],
+ learn:'剪燙染技術、美容證照、色彩與造型、經營熟客和社群。',
+ chal:'學徒期薪水低、久站，手容易受傷；建立自己的客群後收入會明顯提高。'},
+{id:'coach',n:'健身教練',cat:'服務',pay:[3,8],need:{PHY:6},k:['PHY','SOC'],
+ learn:'運動科學、訓練計畫、運動傷害預防、教練證照、業務能力。',
+ chal:'收入常靠賣課抽成，業績壓力不小；要長期維持自己的體態和專業形象。'},
+{id:'athlete',n:'職業運動員',cat:'演藝運動',pay:[4,30],need:{PHY:8,WIL:6},k:['PHY','WIL'],
+ learn:'專項技術、體能訓練、運動心理、傷害管理，還有退役後的第二專長。',
+ chal:'2025 年職類別薪資調查，職業運動員進入月薪前十名；但只有極少數人打得上去，職業生涯短，一次受傷就可能結束。'},
+{id:'idol',n:'演員／藝人',cat:'演藝運動',pay:[1.5,30],need:{ART:7,SOC:7},k:['ART','SOC'],
+ learn:'表演、聲音訓練、鏡頭前的自我管理、經營個人形象與社群。',
+ chal:'收入極度不穩，大多數人兼職維生；爆紅的人收入驚人，但隱私和網路評論的壓力也很大。'},
+{id:'music',n:'音樂人',cat:'演藝運動',pay:[2,10],need:{ART:7},k:['ART','WIL'],
+ learn:'樂器與作曲、錄音編曲、演出經驗、版權和串流平台的經營。',
+ chal:'靠演出、教學、接案拼湊收入，很不穩定；但做出代表作就可能被很多人聽見。'},
+{id:'photo',n:'攝影師',cat:'設計創作',pay:[2.8,7],alt:['作品集'],k:['ART','SOC'],
+ learn:'攝影技術、燈光、後製修圖、商業接案與報價。',
+ chal:'器材很貴、接案收入不穩；手機和 AI 影像讓入門門檻降低，競爭變大。'},
+{id:'transl',n:'翻譯／口譯',cat:'文教',pay:[3.5,12],deg:['eng'],alt:['外語'],need:{LAN:7},k:['LAN','WIL'],
+ learn:'雙語到母語程度、專業領域知識（法律、醫學、科技）、口譯筆記技巧。',
+ chal:'AI 翻譯讓一般筆譯案量和價格下滑；高階口譯和專業領域翻譯仍然很吃香。'},
+{id:'interior',n:'室內設計師',cat:'設計創作',pay:[3.3,10],deg:['arch','des','kdes'],alt:['作品集'],k:['ART','SOC'],
+ learn:'空間規劃、建材與工法、3D 繪圖、預算控制、跟工班和屋主溝通。',
+ chal:'業主需求常改、工程延誤要負責；累積口碑後可以自己開工作室。'},
+{id:'tech',n:'科學園區技術員',cat:'技職',pay:[3.3,4.8],k:['PHY','WIL'],bonus:['kee'],
+ learn:'無塵室作業規範、機台操作、品質檢驗，可以邊做邊進修往工程師發展。',
+ chal:'輪班（常是做四休四或做二休二），作息顛倒；但有分紅和穩定收入。'},
+{id:'build',n:'營造技術工',cat:'技職',pay:[4,8],need:{PHY:6},k:['PHY','WIL'],
+ learn:'鋼筋、模板、水泥或焊接等技術士證照，以及工地安全。',
+ chal:'戶外高溫、高處作業，職災風險高；但嚴重缺工，熟練師傅日薪很高。'},
+);
+Object.assign(D,{});
+/* 霍蘭德興趣代碼與價值觀 */
+const HV={swe:['IC','成就','收入'],fab:['RI','收入','穩定'],md:['IS','意義','收入'],dds:['IR','收入','自由'],ph:['IC','穩定','意義'],rn:['SR','意義','穩定'],pt:['SR','意義','自由'],law:['EI','收入','成就'],acct:['CE','穩定','收入'],fin:['EC','收入','成就'],gov:['CS','穩定','生活平衡'],tch:['SA','意義','穩定'],sw:['SE','意義','生活平衡'],psy:['SI','意義','自由'],des:['AE','自由','成就'],arc:['AI','成就','自由'],jr:['AE','意義','自由'],mkt:['EA','成就','自由'],sales:['ES','收入','自由'],chef:['RA','成就','自由'],elec:['RC','收入','自由'],yt:['AE','自由','成就'],prof:['IA','成就','自由'],game:['AI','成就','自由'],farm:['RI','自由','生活平衡'],pol:['RS','穩定','意義'],startup:['EI','成就','自由'],ecom:['EA','自由','收入'],cafe:['ES','自由','成就'],studio:['AE','自由','生活平衡'],fa:['SE','自由','收入'],meng:['RI','穩定','收入'],bio:['IR','成就','意義'],hotel:['SE','生活平衡','自由'],overseas:['EI','成就','收入'],svc:['RS','自由','生活平衡'],
+ pilot:['RI','收入','成就'],actuary:['CI','收入','穩定'],trader:['EC','收入','成就'],pm:['EI','成就','收入'],ai:['IC','成就','收入'],sec:['IR','收入','成就'],vet:['IR','意義','成就'],diet:['IS','意義','生活平衡'],mtc:['IC','穩定','意義'],judge:['IE','意義','穩定'],dip:['ES','意義','成就'],army:['RE','穩定','意義'],care:['SR','意義','穩定'],kinder:['SA','意義','生活平衡'],tutor:['SE','收入','自由'],realtor:['ES','收入','自由'],insure:['ES','收入','自由'],drive:['RC','穩定','收入'],beauty:['AS','自由','成就'],coach:['SR','自由','成就'],athlete:['RE','成就','收入'],idol:['AE','成就','收入'],music:['AR','自由','成就'],photo:['AR','自由','成就'],transl:['AC','自由','成就'],interior:['AE','成就','收入'],tech:['RC','穩定','收入'],build:['RC','收入','穩定']};
+CAREERS.forEach(c=>{const x=HV[c.id]||['RS','穩定','生活平衡'];c.h=x[0];c.v=[x[1],x[2]]});
+Object.assign(CAR,Object.fromEntries(CAREERS.map(c=>[c.id,c])));
+['交通運輸','演藝運動'].forEach(c=>{if(!CATS.includes(c))CATS.push(c)});
+Object.assign(CATCOL,{'交通運輸':'#3b5dc9','演藝運動':'#ef7d57'});
+const IMPACT={'醫療':'你守護了很多人的健康，也撐起了台灣的醫療和照顧體系。','科技':'你參與打造的技術和產品，讓台灣在世界上被看見。','商管':'你讓企業和資金順利運作，背後是很多人的工作和家庭。','公職法務':'你維護制度、安全與公平，讓大家可以安心生活。','文教':'你教過、陪伴過的人，會把你的影響繼續傳下去。','設計創作':'你創作的作品，讓台灣的生活更美、更有溫度。','技職':'你的手藝讓這個社會每天都能順利運轉，這是很多人看不見卻離不開的力量。','服務':'你每天服務的每一個人，構成了台灣人情味的日常。','自由業':'你走了一條少有人走的路，也讓台灣多了一種可能。','創業':'你創造了工作機會和新的可能，讓台灣經濟更有活力。','海外':'你把在國外學到的眼界和經驗帶回台灣，讓這裡變得更好。','交通運輸':'你把人和貨物安全地送到目的地，台灣才能動起來。','演藝運動':'你讓很多人因為你的表演或比賽而感動、而相信自己。'};
+const HOL={R:'實作型',I:'研究型',A:'藝術型',S:'社會型',E:'企業型',C:'事務型'};
+const HOLD={R:'喜歡動手做、操作工具或機器、在現場解決實際問題。',I:'喜歡觀察、分析、搞懂事情背後的原理。',A:'喜歡創作、表達，不喜歡被框架限制。',S:'喜歡幫助、教導、陪伴別人。',E:'喜歡帶領、說服、推動事情，願意承擔風險。',C:'喜歡有條理地處理資料和細節，把事情做得精準。'};
+const HOLTRY={R:'參加實作課程或職訓局課程、跟師傅當幾天學徒、自己動手修東西。',I:'上線上課程、做科展或小研究、讀科普書，看看自己能不能一直追問下去。',A:'做一份作品集、參加比賽、經營一個創作帳號。',S:'當志工、家教，或去社福機構、醫院體驗。',E:'當社團幹部、擺一次市集攤位、試著帶一個小專案。',C:'做行政或會計類打工、學好 Excel、幫社團管帳。'};
+const HOLQ=[['R','動手做東西、修理、操作工具或機器'],['I','研究一件事，想搞懂背後的原理'],['A','創作、設計、寫東西或表演'],['S','幫助或教別人，陪別人聊心事'],['E','帶領大家、說服別人、把事情推動起來'],['C','整理資料、規劃細節，把事情排得井井有條']];
+const VALS=['收入','穩定','自由','意義','成就','生活平衡'];
+const VALD={'收入':'賺得多，生活有餘裕','穩定':'工作有保障，不怕被裁員','自由':'時間和做法可以自己決定','意義':'覺得自己在幫助別人或社會','成就':'不斷挑戰、成長、被肯定','生活平衡':'準時下班，有時間陪家人和做喜歡的事'};
+/* 出生地與地區 */
+const COUNTIES=[['新北市',404,'北',1],['臺北市',248,'北',1],['桃園市',233,'北',1],['臺中市',287,'中',1],['高雄市',272,'南',1],['臺南市',184,'南',1],['新竹市',45,'北',1],['新竹縣',59,'北',0],['基隆市',36,'北',0],['宜蘭縣',45,'東',0],['苗栗縣',53,'中',0],['彰化縣',122,'中',0],['南投縣',47,'中',0],['雲林縣',66,'中',0],['嘉義市',26,'南',0],['嘉義縣',48,'南',0],['屏東縣',79,'南',0],['花蓮縣',32,'東',0],['臺東縣',21,'東',0],['澎湖縣',11,'離島',0],['金門縣',14,'離島',0],['連江縣',1.4,'離島',0]];
+const REG={'北':{n:'北部',dorm:.45,ya:.8,tao:1.4,th:1},'中':{n:'中部',dorm:.6,ya:.5,tao:.8,th:0},'南':{n:'南部',dorm:.6,ya:.45,tao:.7,th:0},'東':{n:'東部',dorm:.75,ya:.4,tao:.6,th:-3},'離島':{n:'離島',dorm:.8,ya:.4,tao:.6,th:-4}};
+const TIER_REG={'頂尖國立大學':['北','中','南'],'一般國立大學':['北','中','南','東','離島'],'私立大學':['北','中','南','東'],'國立科技大學':['北','中','南','東','離島'],'私立科技大學':['北','中','南']};
+const FAMLIV=[0,0,3,8,15,30];
+const HOUSE={home:'住家裡通勤',dorm:'學校宿舍',ya:'外宿雅房',tao:'外宿套房'};
+const tripCost=(h,s)=>h===s?.5:(h==='離島'||s==='離島')?3:(h==='東'||s==='東')?2:1.2;
+function livingCost(){
+ if(S.abroad||!S.house)return 0;const r=REG[S.sreg];let c;
+ if(S.house==='home')c=3.5;
+ else{c=7+tripCost(S.home,S.sreg)+(S.house==='dorm'?1:S.house==='ya'?r.ya*10:r.tao*10);if(S.rentSub&&S.house!=='dorm')c-=2.4}
+ return Math.round(c*10)/10;
+}
+
+/* ---------- 事件池 ---------- */
+const HS_EV=[
+{q:'班上幾個同學開始在群組傳你的醜照，故意在你經過時竊笑，分組也沒人要找你。',o:[['告訴信任的老師或家人',{SOC:1,st:-5,psy:'校園霸凌'},'說出口比想像中難，但老師很快通報了學校。調查開始後，那幾個人收斂了。你發現自己不是一個人。'],['保存截圖證據，先封鎖',{INT:1,st:8,psy:'網路霸凌'},'你把每張截圖都存了起來。證據讓之後的處理有了依據。'],['忍下來，不想把事情鬧大',{st:22,WIL:1},'你每天上學前都肚子痛。長期獨自承受霸凌，很容易累積成焦慮和憂鬱。下次，請考慮讓大人知道。']]},
+{q:'你看到隔壁班一個同學被一群人推來推去，書包被丟到垃圾桶。走廊上很多人在看。',o:[['去找老師，或直接上前制止',{WIL:1,SOC:1,st:10,psy:'旁觀者效應'},'你一開口，旁邊幾個人也跟著站出來了。原來大家都在等第一個人。'],['事後私下關心被欺負的同學',{SOC:1,st:3,psy:'旁觀者效應'},'他說：「謝謝你，你是第一個來問我的人。」'],['假裝沒看到',{st:8,psy:'旁觀者效應'},'你快步走開了。那天晚上，你一直想起他的表情。']]},
+{q:'IG 上大家都在曬補習班榜單、出國、交男女朋友。你越滑越覺得自己很失敗，連自己的長相都討厭了起來。',o:[['設定每天的使用時間',{WIL:1,st:-10,psy:'社群比較'},'少滑一小時，你多出了好多時間，心情也穩定了一些。'],['退追讓你焦慮的帳號',{st:-6,psy:'社群比較'},'動態變乾淨了，你開始看自己真正有興趣的東西。'],['繼續滑，停不下來',{st:12},'凌晨兩點，你還在滑。比較會讓人越來越累。']]},
+{q:'下週要上台報告，光是想到全班盯著你看，你的手心就開始冒汗。',when:()=>hasT('社交焦慮')||Math.random()<.4,o:[['先對鏡子、再對朋友練習幾次',{LAN:1,soc:1,psy:'漸進式暴露'},'上台時聲音還是在抖，但你撐完了。比想像中好，大家其實沒那麼在意。'],['請假逃避這次報告',{st:-5,avoid:1,psy:'負增強與逃避'},'那天你鬆了一口氣。但下一次報告前，你反而更怕了。'],['去找輔導老師聊聊',{st:-10,psy:'社交焦慮'},'老師教你辨認腦中的「大家一定覺得我很蠢」，那是想法，不是事實。']]},
+{q:'晚餐時，爸媽說希望你以後當醫生或工程師：「這樣比較穩定。」',o:[['好好跟他們說自己的想法',{SOC:1,WIL:1,st:-5},'他們沒有完全同意，但答應陪你多了解看看。'],['先照他們的期待努力',{study:1,st:15},'你更拚了，但半夜常想：這是我想要的嗎？'],['吵了一架，開始冷戰',{st:12},'家裡安靜了好幾天。']]},
+{q:'老師提醒：要開始整理「學習歷程檔案」和自主學習計畫了。',o:[['認真做一個專題',{ART:1,INT:1,st:10},'你做了一份家鄉老街的小研究，發現自己喜歡做調查。'],['找學長姐的範本參考',{SOC:1,st:3},'學姐分享了她上大學的經驗，你開始想像大學生活。'],['隨便交一交',{st:-5},'交出去了。這也是一種選擇。']]},
+{q:'段考數學考了 32 分。',o:[['下課去找老師問',{INT:1,WIL:1,st:5},'老師花了半小時幫你從基礎補起。'],['放棄數學，專攻其他科',{LAN:1,st:-5},'你把時間移到國英文。但這會影響之後能選的科系。'],['去補數學（存款 -2 萬）',{study:.8,m:-2,st:8},'補習班老師講很快，但題型你總算見過了。',()=>S.m>=2]]},
+{q:'颱風假！',o:[['在家把進度補完',{study:.6},'窗外風雨交加，你難得專心了一整天。'],['追劇耍廢',{st:-15},'一口氣追完一整季，心情超好。'],['跟朋友線上打電動',{SOC:1,st:-10},'你們打到半夜，笑到肚子痛。']]},
+{q:'家裡最近經濟有點緊，爸媽沒說，但你感覺得到。',when:()=>S.fam<=3,o:[['去夜市打工幫忙',{m:3,SOC:1,PHY:1,study:-.3,st:10},'你學會跟客人聊天，也更懂錢的重量。'],['申請清寒獎學金',{WIL:1,m:2},'寫申請書時，你第一次認真寫下自己的目標。'],['裝作不知道',{st:8},'這件事一直放在你心上。']]},
+{q:'學校在找人組隊參加科展或小論文競賽。',o:[['報名參加',{INT:1,ART:1,sk:'競賽',st:12},'做到最後一週才有結果，拿到縣市佳作！'],['我不是那塊料',{},'也許吧。也許只是還沒試過。']]},
+{q:'看著同學好像都知道自己要讀什麼，你卻越來越迷惘，晚上睡不著。',o:[['去輔導室做興趣與性向測驗',{st:-10},()=>{const t=topStats();return `測驗結果：你的強項是【${STN[t[0]]}】和【${STN[t[1]]}】。\n老師說：「強項是起點，不是限制。會迷惘，代表你在認真想。」\n可以探索看看：${recsFor(3).map(x=>x.n).join('、')}。`}],['跟好朋友聊聊',{SOC:1,st:-10,soc:1},'原來他也很迷惘。你們約好一起去大學博覽會。'],['先硬撐，不想讓人擔心',{WIL:1,st:12},'你把情緒藏起來了。記得，求助不是麻煩別人。']]},
+{q:'暑假有大學辦的科系體驗營。',o:[['醫療／理工營',{INT:1,SOC:1,st:-5},'你第一次走進大學實驗室，眼睛發亮。'],['法商／傳播營',{LAN:1,SOC:1,st:-5},'模擬法庭和採訪體驗讓你覺得很新鮮。'],['設計／藝術營',{ART:1,SOC:1,st:-5},'三天做出一件作品，你捨不得回家。']]},
+{q:'你好像喜歡上隔壁班的同學。',o:[['鼓起勇氣告白（看社交）',{soc:1},()=>Math.random()<.35+S.st.SOC*.04?['對方說：「我也是。」那天的夕陽特別好看。',{SOC:1,st:-15}]:['對方說：「我們當朋友就好。」你難過了一週，然後發現世界還在轉。',{WIL:1,st:8}]],['默默放在心裡',{ART:1},'你在筆記本後面寫了很多沒人看過的句子。']]},
+{q:'班導問你要不要當班長。',o:[['好啊',{SOC:1,WIL:1,st:10,soc:1},'收班費、處理糾紛，你學會了負責任。'],['婉拒',{},'你推薦了更適合的人。']]},
+];
+const UNI_EV=[
+{q:'身邊的同學好像都比你聰明。你開始覺得自己能考上只是運氣，總有一天會被拆穿。',o:[['跟同學聊這種感覺',{SOC:1,st:-10,psy:'冒牌者現象'},'沒想到他說：「我也是，我一直覺得自己是混進來的。」'],['更拚命證明自己',{perf:1,st:15,psy:'冒牌者現象'},'成績上去了，但那種感覺沒有消失。'],['預約學校的諮商中心',{st:-15,psy:'冒牌者現象'},'大學的諮商通常是免費的。心理師陪你看見，你其實付出了很多努力。']]},
+{q:'有人在匿名論壇發文影射你，底下一堆人跟著留言嘲笑。',o:[['截圖存證，向學校或平台檢舉',{INT:1,WIL:1,st:10,psy:'網路霸凌'},'文章被刪了。你學到，網路上的攻擊也可以追究。'],['找朋友陪你一起看待這件事',{SOC:1,st:-5},'朋友說：「那些人根本不認識你。」你好受多了。'],['一直重看留言',{st:22},'你一直刷新那篇文。網路霸凌對心理的傷害，一點都不比當面少。']]},
+{q:'小組報告要你負責上台講。你一想到就整晚睡不著。',when:()=>hasT('社交焦慮')||hasT('內向')||Math.random()<.3,o:[['接下來，先講一小段就好',{LAN:1,soc:1,psy:'漸進式暴露'},'你講了三分鐘。下台時你想：好像也沒那麼糟。'],['跟組員交換，改負責做簡報',{ART:1,avoid:1,psy:'負增強與逃避'},'這次躲過了，但你知道總有一天還是要面對。'],['照講，但一直覺得自己表現很爛',{st:12,soc:1},'其實同學都覺得你講得很清楚，只有你自己不這麼認為。']]},
+{q:'教授課後叫住你：「要不要進我的實驗室當專題生？」',o:[['加入實驗室',{INT:1,sk:'研究',st:10},'你跟學長姐一起跑實驗，第一次感受到研究的樂趣和煩悶。'],['婉拒，時間想留給別的事',{st:-5},'教授點點頭：「想清楚就好。」']]},
+{q:'系學會要辦迎新宿營，學長姐問你要不要當總召。',o:[['接下總召',{SOC:1,WIL:1,sk:'人脈',st:18,perf:-1,soc:1},'三天兩夜辦完，你學會跟廠商殺價、處理突發狀況，還有睡地板。'],['當小隊輔就好',{SOC:1,st:5},'輕鬆參與，認識了一群學弟妹。']]},
+{q:'讀了一陣子，你開始懷疑：「我是不是選錯系了？」',when:()=>deptFit()<6,o:[['申請轉系',{},'',()=>!S.transferred,'transfer'],['修輔系或雙主修',{WIL:1,sk:'跨領域',st:15},'學分爆量，但你開始看到兩個領域的交集。'],['先把本科念完再說',{WIL:1,st:5},'很多人的方向，是做著做著才清楚的。']]},
+{q:'學校有交換學生名額，可以出國一學期。',o:[['申請交換（存款 -8 萬）',{LAN:1,SOC:1,sk:'外語',m:-8,st:-5},'一個學期改變了你看世界的方式。',()=>S.st.LAN>=5&&S.m>=8],['錢或外語還不夠，先不去',{st:5},'你把這件事記在心裡，畢業後還有打工度假。']]},
+{q:'同學找你組隊參加黑客松或創意競賽。',o:[['參加，熬夜 48 小時',{ART:1,INT:1,sk:'作品集',st:12},'只拿到佳作，但作品可以放進履歷了。'],['不了，週末要休息',{st:-8},'你睡了整整兩天。']]},
+{q:'期中考週，三科排在同一天。',o:[['連續通宵',{st:22,perf:1.2},'考完你在公車上睡過站。'],['放掉一科，顧好另外兩科',{INT:1,perf:-.3,st:8},'你學會了取捨。'],['組讀書會互相講解',{SOC:1,perf:.8,st:10},'講給別人聽，比自己讀更有效。']]},
+{q:'打工的店長很欣賞你，問你要不要多排班，以後當店長。',o:[['謝謝，我想先顧好學業',{WIL:1},'店長說：「隨時歡迎。」'],['多排一點班',{m:5,SOC:1,perf:-1,st:8},'你多賺了錢，也提早看見職場的樣子。']]},
+{q:'一家你很嚮往的公司開放暑期實習，競爭超激烈。',o:[['認真準備履歷和面試（看社交）',{soc:1},()=>Math.random()<.3+S.st.SOC*.04+((has('作品集')||has('程式')||has('研究'))?.15:0)?['錄取了！這個暑假你真正走進了想去的產業。',{sk:'實習',SOC:1}]:['沒錄取。名額 3 個、報名 800 人。你把面試題目記下來，明年再戰。',{WIL:1,st:10}]],['算了，應該上不了',{st:-3},'沒試就沒有機會，但也沒有失落。']]},
+{q:'朋友想做一個校園品牌，找你一起創業。',o:[['加入（存款 -3 萬）',{ART:1,SOC:1,sk:'創業經驗',m:-3,st:12},'產品沒大賣，但你學會了成本、行銷，還有跟朋友吵架後怎麼和好。'],['婉拒',{},'你祝他成功。']]},
+{q:'學校開放修教育學程，修完可以考教師。',when:()=>!has('教育學程'),o:[['申請修教育學程',{sk:'教育學程',st:10,perf:-.3},'多了幾十個學分，也多了一條路。'],['沒興趣當老師',{},'你把名額留給更想要的人。']]},
+{q:'你談了一場戀愛。',o:[['用心經營',{SOC:1,st:-10,perf:-.3},'有人陪伴的日子，連報告都沒那麼可怕了。'],['以課業為重',{WIL:1},'對方說能理解，但你們漸漸疏遠了。']]},
+];
+const ABROAD_EV=[
+{q:'到國外第三個月，課聽不太懂，也交不到朋友，晚上常一個人想家。',o:[['參加當地社團和語言交換',{LAN:1,SOC:1,soc:1,psy:'文化衝擊'},'你認識了第一個當地朋友。他說：「你的口音很可愛。」'],['跟台灣同學待在一起',{st:-10,psy:'文化衝擊'},'有人可以說中文真好。只是語言進步得比較慢。'],['每天跟家人視訊',{st:-5,psy:'文化衝擊'},'家人的聲音讓你撐了過去。']]},
+{q:'台幣貶值，加上房租漲價，生活費突然多了一成多。',o:[['在合法範圍內打工',{m:3,st:12,LAN:1},'你在學校餐廳打工，順便練了口說。'],['省吃儉用，自己煮',{st:10,WIL:1},'你學會了十道便宜的料理。'],['跟家裡求助',{st:5},()=>S.fam>=4?['家裡多匯了一筆錢過來。',{m:5}]:['家裡也很吃緊。你掛上電話後哭了一下，然後決定自己想辦法。',{WIL:1,st:8}]]]},
+{q:'有同學模仿你的口音，旁邊的人跟著笑。',o:[['平靜但清楚地說：「這讓我不舒服。」',{WIL:1,SOC:1,st:5},'對方愣了一下，道了歉。'],['向學校的國際學生辦公室反映',{SOC:1,st:3},'學校很重視，還辦了一場跨文化工作坊。'],['笑笑帶過，心裡很難受',{st:15},'你開始不太敢在課堂上發言。']]},
+{q:'國外的課堂要求每個人都要發言，不發言就沒有參與分數。',o:[['每堂課逼自己至少說一句',{LAN:1,soc:1,psy:'漸進式暴露'},'一學期後，你發現自己的意見其實很有價值。'],['寫信請教授讓你用書面補充',{LAN:1,avoid:1},'教授同意了，但建議你慢慢試著開口。'],['乾脆不講',{st:8,perf:-1},'參與分數拿得很低。']]},
+];
+const WORK_EV=[
+{q:'主管在會議上當眾貶低你，把你踢出工作群組，又故意塞給你做不完的工作。',o:[['記錄時間和證據，走公司申訴管道',{WIL:1,st:10,psy:'職場霸凌'},'依照新制，公司要受理調查。過程很煎熬，但主管被調離了。'],['打 1955 諮詢自己的權益',{INT:1,st:5,psy:'職場霸凌'},'專員告訴你可以怎麼申訴、要保留哪些證據。知道有路可走，你沒那麼無助了。'],['看身心科或諮商，同時準備離職',{st:-10,sal:.95,psy:'職場霸凌'},'你換了工作。有時候離開不是逃避，是保護自己。'],['忍下來',{st:25,psy:'習得無助'},'你越來越不想說話，週日晚上就開始焦慮。']]},
+{q:'最近每天醒來都很累，對工作越來越提不起勁，覺得自己做什麼都不對。',when:()=>S.stress>=55,o:[['請一段長假，好好休息',{st:-30,perf:-1,psy:'職業倦怠'},'你去了一趟沒有網路的山上。回來後，你知道哪些事需要改變。'],['跟主管談調整工作內容',{SOC:1,st:-15,psy:'職業倦怠'},'主管讓你換了專案。倦怠常常不只是「你不夠努力」，是工作本身需要調整。'],['撐著，大家都這樣',{st:15,psy:'職業倦怠'},'你撐著。但身體和心裡的警訊越來越大聲。']]},
+{q:'公司尾牙，主管點名要新人上台表演。',when:()=>hasT('社交焦慮')||hasT('內向')||Math.random()<.4,o:[['上台，跟同事一起準備',{SOC:1,soc:1},'你們跳了一支很爛的舞，全場笑翻。你發現大家其實很友善。'],['婉拒，改負責幕後',{ART:1,avoid:1},'你負責音控和影片，做得很好。不是每個人都要站在台前。'],['找藉口請假',{avoid:1,st:-3,psy:'負增強與逃避'},'躲過了。但下次聚餐，你又更怕了。']]},
+{q:'同學會上，大家在聊年薪和買房，你覺得自己落後了好多。',o:[['回家想想自己真正在乎什麼',{WIL:1,st:-8,psy:'社群比較'},'你列出自己在乎的三件事。薪水只是其中一項。'],['回去更拚，一定要追上',{perf:1,st:15},'你開始每天加班。比較能帶來動力，也能帶來壓力。'],['之後不太想參加同學會了',{st:5},'你退出了群組。']]},
+{q:'公司導入 AI 工具，你手上一部分工作被自動化了。',o:[['主動學會用 AI 提升效率',{INT:1,sk:'AI協作',perf:1.5},'你成了部門的 AI 小老師，主管開始交給你更重要的任務。'],['照舊做事，先觀望',{st:10,perf:-1},'半年後部門開始調整人力。'],['把重心放在 AI 做不到的溝通與判斷',{SOC:1,perf:1},'人與人之間的信任，是工具取代不了的。']]},
+{q:'獵頭來電，說有公司願意加薪 20% 挖你。',pvk:'raise',o:[['跳槽',{sal:1.2,st:12},'薪水變高，一切也要重新適應。'],['拿去跟現在的主管談（看社交）',{},()=>Math.random()<.3+S.st.SOC*.05?['主管幫你爭取到加薪 10%。',{sal:1.1,SOC:1}]:['主管說預算凍結，氣氛有點尷尬。',{st:10}]],['留下，喜歡現在的團隊',{st:-5},'你知道自己為什麼留下。']]},
+{q:'主管把專案延誤的責任推到你身上。',o:[['拿出紀錄據理力爭',{WIL:1,st:10},'真相大白。主管對你客氣了，也提防了。'],['先吞下來',{st:20},'你回家對著枕頭大叫。'],['找 HR 或更高層談',{SOC:1,st:8},'公司開始注意這位主管的管理問題。']]},
+{q:'健康檢查出現好幾個紅字。',o:[['開始固定運動、早點睡',{PHY:1,st:-15,perf:-.3},'三個月後複檢，數字都回到正常。'],['沒時間啦',{PHY:-1,st:10},'你把報告塞進抽屜。身體記得一切。']]},
+{q:'家裡長輩生病，需要有人照顧。',o:[['調整工作陪伴家人',{SOC:1,perf:-1,st:10},'那段時間很累，但你慶幸自己在。'],['請看護，自己繼續拚（存款 -10 萬）',{m:-10,st:15},'錢解決了一部分，但你常感到愧疚。'],['跟兄弟姊妹輪流分擔',{SOC:1,st:8},'第一次全家坐下來好好談。']]},
+{q:'公司宣布組織重整，部門要裁員。',o:[['主動爭取轉調',{SOC:1,WIL:1,st:12},'你換到新部門，學到全新的業務。'],['憑實力賭一把',{},()=>S.st[CAR[S.career].k[0]]>=6?['你留下來了，還接手了離職同事的工作。',{st:15,perf:1}]:['你在名單上。拿了資遣費，也拿回了時間。',{st:-10,m:10,sal:.92}]]]},
+{q:'同期進公司的同事升官了，你沒有。',o:[['找主管談發展方向',{SOC:1,perf:1},'主管給了你具體的目標。'],['默默更拚',{WIL:1,st:15,perf:1},'你把不甘心化成加班時數。'],['想想：升官是我要的嗎？',{st:-5},'你重新整理了自己在乎的東西。']]},
+{q:'朋友要去澳洲打工度假一年，問你要不要一起。',when:()=>S.age<=30,o:[['辭職出發！',{LAN:1,SOC:1,sk:'外語',m:5,sal:.95,st:-25},'在農場摘了半年藍莓，你看見了世界，也看見了自己。'],['不了，現在穩定比較重要',{},'你送朋友去機場。']]},
+{q:'下班後，你想替自己做點什麼。',o:[['經營副業',{ART:1,sk:'副業',m:5,st:10},'每月多了幾千塊，更多的是成就感。'],['報名有興趣的課',{LAN:1,st:-5},'你重新感受到學習的樂趣。'],['好好休息，陪重要的人',{SOC:1,st:-15},'生活不只有工作。']]},
+{q:'年終獎金只有一個月，跟面試時說的不一樣。',o:[['開始投履歷',{st:5},'你開始留意更好的機會。'],['跟主管反映',{SOC:1},'主管說明年會再爭取。'],['算了，至少有工作',{st:8},'你嘆了口氣。']]},
+];
+
+const BIZ_EV=[
+{q:'共同創辦人跟你對公司方向意見不合，吵到要拆夥。',o:[['坐下來把股權和分工講清楚',{SOC:1,WIL:1,biz:8},'很難的一次對話，但公司因此更穩了。'],['讓他退出，買回股份（存款 -10 萬）',{m:-10,st:15,biz:-5},'一個人扛起所有事，很累但方向一致了。'],['你退讓，照他的方向走',{st:10},'你心裡有點不甘，但先觀察看看。']]},
+{q:'有投資人想投資，但要你一年內營收翻三倍。',o:[['接受，全力擴張',{biz:15,st:25,sal:1.2},'錢進來了，壓力也是。'],['婉拒，穩穩成長',{WIL:1,biz:3},'你保住了節奏和主導權。'],['談更合理的條件',{SOC:1,INT:1,biz:10},'投資人欣賞你的冷靜，條件改成兩年。']]},
+{q:'最重要的員工說要離職，去大公司領更高薪。',o:[['給股份留住他',{SOC:1,biz:6},'他留下來了，說是因為你願意分享。'],['祝福他，趕快找人接手',{st:15,biz:-8},'交接期一團亂，你學到不能把關鍵都壓在一個人身上。'],['把流程寫成文件，讓公司不靠單一個人',{INT:1,biz:4,st:10},'下次再有人離職，公司也不會停擺。']]},
+{q:'你的產品被大公司抄了，而且賣得更便宜。',o:[['專攻大公司照顧不到的小眾客戶',{INT:1,biz:12},'小眾市場的忠誠度，大公司搶不走。'],['打價格戰',{biz:-12,st:15},'利潤被吃光，撐得很辛苦。'],['更用心做服務和社群',{SOC:1,biz:8},'客戶說：「便宜的到處有，但你們會回訊息。」']]},
+{q:'媒體報導了你的公司，訂單突然暴增。',o:[['趕快擴充人力和產能',{biz:15,st:20,sal:1.15},'接住了這波流量，公司上了一個台階。'],['限量供應，維持品質',{WIL:1,biz:8},'排隊的人反而更多了。'],['把握機會募資',{SOC:1,biz:12,m:10},'有了資金，你終於可以規劃明年。']]},
+{q:'景氣轉差，客戶紛紛砍預算。',o:[['減少支出，自己先降薪',{WIL:1,sal:.8,biz:6},'撐過寒冬的關鍵，是現金。'],['開發新的收入來源',{INT:1,ART:1,biz:10,st:15},'新服務意外成了公司的第二支柱。'],['申請政府紓困與創業補助',{INT:1,biz:6},'補助金讓你多撐了半年。']]},
+];
+/* ---------- 學院與新增科系 ---------- */
+Object.assign(D,{
+ phys:{n:'物理學系',tr:'nat',th:48,y:4,k:['INT','WIL']},
+ chems:{n:'化學系',tr:'nat',th:46,y:4,k:['INT','WIL']},
+ geo:{n:'大氣／地球科學系',tr:'nat',th:43,y:4,k:['INT','PHY']},
+ opt:{n:'光電工程學系',tr:'nat',th:48,y:4,k:['INT','WIL']},
+ ie:{n:'工業工程與管理學系',tr:'nat',th:47,y:4,k:['INT','SOC']},
+ bme:{n:'生醫工程學系',tr:'nat',th:49,y:4,k:['INT','WIL']},
+ env:{n:'環境工程學系',tr:'nat',th:42,y:4,k:['INT','WIL']},
+ ot:{n:'職能治療學系',tr:'nat',th:45,y:4,k:['SOC','ART']},
+ rad:{n:'醫學影像暨放射科學系',tr:'nat',th:47,y:4,k:['INT','WIL']},
+ pubh:{n:'公共衛生學系',tr:'nat',th:46,y:4,k:['INT','SOC']},
+ food:{n:'食品科學系',tr:'nat',th:41,y:4,k:['INT','PHY']},
+ econ:{n:'經濟學系',tr:'both',th:48,y:4,k:['INT','LAN']},
+ ib:{n:'國際企業學系',tr:'soc',th:46,y:4,k:['SOC','LAN']},
+ polsci:{n:'政治學系',tr:'soc',th:46,y:4,k:['LAN','SOC']},
+ socio:{n:'社會學系',tr:'soc',th:44,y:4,k:['LAN','SOC']},
+ jp:{n:'日本語文學系',tr:'soc',th:43,y:4,k:['LAN','SOC']},
+ hist:{n:'歷史學系',tr:'soc',th:41,y:4,k:['LAN','WIL']},
+ phil:{n:'哲學系',tr:'soc',th:41,y:4,k:['LAN','INT']},
+ adv:{n:'廣告學系',tr:'soc',th:44,y:4,k:['ART','SOC']},
+ pe:{n:'體育／運動科學系',tr:'both',th:38,y:4,k:['PHY','WIL']},
+ musicd:{n:'音樂學系',tr:'both',th:40,y:4,k:['ART','WIL']},
+ fine:{n:'美術學系',tr:'both',th:39,y:4,k:['ART','WIL']},
+ drama:{n:'戲劇學系',tr:'both',th:40,y:4,k:['ART','SOC']},
+});
+const COLLEGES=[
+ ['醫學院','醫師、牙醫、藥師、護理、治療師、醫檢、放射',['med','dent','phar','nurse','pt','ot','mt','rad','pubh']],
+ ['電資與工學院','電機、資工、機械、化工、土木、光電、工工',['ee','cs','opt','bme','chem','mech','ie','civil','env']],
+ ['理學院','數學、物理、化學、生科、大氣地科',['math','phys','chems','bio','geo']],
+ ['生農學院','農藝園藝、獸醫、食品、營養',['vet','agri','food','nutri']],
+ ['管理學院','財金、會計、企管、資管、國企、觀光',['fin','acct','mis','ib','biz','tour']],
+ ['社會科學院','經濟、政治、社會、心理、社工',['econ','psy','polsci','socio','sw']],
+ ['文學院','中文、外文、日文、歷史、哲學',['chi','eng','jp','hist','phil']],
+ ['法律學院','法律',['law']],
+ ['教育學院','教育、體育運動',['edu','pe']],
+ ['傳播學院','新聞、廣告',['jour','adv']],
+ ['藝術設計學院','設計、建築、音樂、美術、戲劇（多數要考術科）',['des','arch','musicd','fine','drama']],
+];
+const collegeOf=id=>{const c=COLLEGES.find(x=>x[2].includes(id));return c?c[0]:'科技大學'};
+/* 科系與職業的相關性（科系之外，也算本科相關的職業） */
+const REL={
+ phys:['fab','ai','meng','prof','actuary'],chems:['fab','bio','foodrd'],geo:['gov','prof','meng'],opt:['fab','meng','tech'],ie:['scm','pm','meng','fab'],bme:['bio','meng','fab'],env:['meng','gov'],
+ ot:['otc','care'],rad:['radc'],pubh:['gov','bio','diet'],food:['foodrd','bio','chef'],
+ econ:['fin','trader','actuary','econr','gov'],ib:['fin','mkt','sales','scm','overseas','hotel'],polsci:['gov','dip','jr','pr'],socio:['sw','mkt','jr','pr'],jp:['transl','hotel','fa','tutor'],hist:['curator','tch','jr','tutor'],phil:['jr','tutor','pr'],adv:['mkt','des','yt','pr'],
+ pe:['coach','athlete','tch','army'],musicd:['music','tch','tutor'],fine:['des','photo','interior','curator'],drama:['idol','yt','tch'],
+ cs:['pm','sec','ai','game'],ee:['sec','fab','tech','elec'],mis:['pm','sec','swe'],math:['ai','actuary','trader','econr'],fin:['actuary','trader','econr','insure','realtor'],biz:['pm','mkt','sales','scm','realtor','insure'],acct:['fin'],eng:['transl','hotel','fa','tutor','dip'],chi:['jr','tutor','pr','curator'],jour:['pr','mkt','yt'],des:['interior','photo','game'],arch:['interior'],
+ nurse:['care'],kee:['elec','tech','meng'],kfood:['chef','cafe','foodrd'],kdes:['des','photo','interior','beauty'],kbiz:['mkt','sales','realtor','insure','acct'],knur:['care'],tour:['hotel','fa'],
+};
+Object.assign(EX,{
+ otx:{n:'職能治療師國考',b:.5,w:{INT:.03,SOC:.02},d:'（錄取率為遊戲估計）'},
+ radx:{n:'醫事放射師國考',b:.45,w:{INT:.04},d:'（錄取率為遊戲估計）'},
+});
+CAREERS.push(
+{id:'otc',n:'職能治療師',cat:'醫療',pay:[4,6],deg:['ot'],exam:'otx',k:['SOC','ART'],h:'SA',v:['意義','生活平衡'],
+ learn:'日常生活功能訓練、輔具評估、兒童發展與精神復健，常要發揮創意設計治療活動。',
+ chal:'很多人不知道職能治療在做什麼，要花力氣解釋；兒童早療和長照需求越來越大。'},
+{id:'radc',n:'醫事放射師',cat:'醫療',pay:[4.5,7],deg:['rad'],exam:'radx',k:['INT','WIL'],h:'IR',v:['穩定','意義'],
+ learn:'X 光、電腦斷層、核磁共振、放射治療的操作與輻射防護。',
+ chal:'要輪班、值夜班，面對急診和重症病人；設備更新快，要持續學習。'},
+{id:'econr',n:'經濟研究員',cat:'商管',pay:[4.5,9],deg:['econ','fin','math'],pref:'研究所',k:['INT','LAN'],h:'IC',v:['成就','穩定'],
+ learn:'計量經濟、統計軟體、產業分析、把複雜數據寫成看得懂的報告。',
+ chal:'智庫、銀行、研究機構職缺不多，多要碩士；研究常被要求「快點給結論」。'},
+{id:'curator',n:'策展人／文化工作者',cat:'設計創作',pay:[3.2,5.5],deg:['hist','fine','chi','des'],k:['ART','LAN'],h:'AS',v:['意義','自由'],
+ learn:'展覽企劃、文化資產與歷史研究、寫作、申請補助、跟藝術家和場館溝通。',
+ chal:'薪資偏低、很多是專案約聘；但能讓更多人認識台灣的文化和歷史。'},
+{id:'scm',n:'生產管理／供應鏈管理',cat:'商管',pay:[4,9],deg:['ie','biz','mech','ib','kbiz'],k:['INT','SOC'],h:'CE',v:['穩定','收入'],
+ learn:'生產排程、庫存管理、採購、ERP 系統、跟工廠和供應商協調。',
+ chal:'交期一延誤，所有人都來找你；國際局勢和關稅一變，整條供應鏈都要重排。'},
+{id:'pr',n:'公關／企業溝通',cat:'商管',pay:[3.6,8],deg:'any',k:['SOC','LAN'],h:'ES',v:['成就','自由'],
+ learn:'新聞稿寫作、媒體關係、危機處理、社群輿情監測、活動企劃。',
+ chal:'危機爆發時要 24 小時待命；要在公司利益和對外誠實之間拿捏分寸。'},
+{id:'foodrd',n:'食品研發人員',cat:'科技',pay:[3.8,6.5],deg:['food','nutri','chems','chem','bio','kfood'],k:['INT','ART'],h:'IR',v:['成就','穩定'],
+ learn:'食品化學、配方開發、食品安全法規、感官品評、量產放大。',
+ chal:'一個新產品可能試做上百次；食安事件一發生，整個產業都會被檢視。'},
+);
+['otc','radc','econr','curator','scm','pr','foodrd'].forEach(id=>{const c=CAREERS.find(x=>x.id===id);CAR[id]=c});
+/* 新科系也可以走這些職業 */
+[['fab',['phys','opt','bme','chems']],['bio',['bme','food','pubh']],['meng',['ie','opt','env','bme']],['fin',['econ','ib']],['trader',['econ']],['actuary',['econ','phys']],['gov',[]],['transl',['jp']],['jr',['polsci','socio','hist','phil','adv']],['des',['fine','adv']],['coach',[]],['ai',['phys']],['tch',[]]].forEach(([id,ds])=>{const c=CAR[id];if(Array.isArray(c.deg))ds.forEach(d=>{if(!c.deg.includes(d))c.deg.push(d)})});
+function relOf(c){
+ if(S.career===c.id)return 'same';
+ const core=(Array.isArray(c.deg)&&S.deg&&c.deg.includes(S.dept))||(S.dept&&(REL[S.dept]||[]).includes(c.id));
+ if((S.pastCats||[]).includes(c.cat))return core?'core':'exp';
+ if(core)return 'core';
+ if(S.voc&&(REL[VOC_D[S.voc]]||[]).includes(c.id))return 'core';
+ return 'none';
+}
+const VOC_D={v_ee:'kee',v_food:'kfood',v_des:'kdes',v_biz:'kbiz',v_nur:'knur'};
+const RELN={core:'本科相關',exp:'有相關經驗',none:'跨領域',same:'目前的工作'};
+/* ---------- 常見人生事件 ---------- */
+Object.assign(PSY,{
+ '詐騙心理':'詐騙集團利用的是人性：貪心（保證獲利）、恐懼（你的帳戶涉案）、急迫（現在不處理就來不及）和權威（假冒警察、檢察官）。警政署統計 2025 年全年詐騙約 16.2 萬件、財損約 893 億元，假投資是財損最大的類型。有疑慮就打 165 反詐騙專線。',
+ '霍蘭德興趣理論':'心理學家 Holland 把職業興趣分成六型：實作 R、研究 I、藝術 A、社會 S、企業 E、事務 C。一個人通常是兩三型的組合，跟工作環境越相符，越容易做得久、做得開心。學校輔導室的興趣測驗很多都是根據這個理論。',
+ '城鄉差距':'教育資源、補習班、醫療和工作機會都集中在都市。偏鄉的孩子常常要花更多時間通勤，或靠線上資源自學。但城鄉差距不等於能力差距，很多人反而因此更早學會自主學習。',
+});
+HS_EV.push(
+{q:'你住的地方附近沒有補習班，最近的也要搭一小時客運。',when:()=>!S.urban,o:[['用免費的線上課程自學',{study:1,WIL:1,psy:'城鄉差距'},'均一教育平台和學校的線上資源，讓你在家也能補進度。'],['每週搭客運到市區補習（存款 -3 萬）',{study:1.5,m:-3,st:12,psy:'城鄉差距'},'來回三小時的車程，你都在車上背單字。',()=>S.m>=3],['跟同學組讀書會互相教',{SOC:1,study:.8},'講給別人聽，自己也更懂了。']]},
+{q:'爸媽最近常常吵架，昨晚說要分開。',o:[['找信任的老師或朋友說',{SOC:1,st:-5},'說出來後，你發現自己不是一個人在扛。大人的關係出問題，不是你的錯。'],['把心思放在自己的事情上',{WIL:1,st:8},'你更專心讀書，也把難過暫時收了起來。記得，情緒放太久還是要找地方放。'],['覺得一定是自己不夠好',{st:18},'你把錯攬到自己身上。輔導室的老師可以陪你把這件事想清楚。']]},
+{q:'離大考剩一百天，你開始失眠，一翻開書就心悸。',when:()=>S.age>=17,o:[['規律睡覺、每天運動半小時',{PHY:1,st:-15,study:.4},'睡飽之後，讀書效率反而更好。'],['熬夜衝刺',{study:1,st:20},'進度是追上了，但你白天常常恍神。'],['跟爸媽說自己的壓力',{SOC:1,st:-10},'爸媽說：「考怎樣我們都愛你。」你哭了，也輕鬆了。']]},
+);
+UNI_EV.push(
+{q:'到了大學，同學幾乎都騎機車上下課。',when:()=>!has('機車駕照'),o:[['考駕照，買一台二手機車（存款 -3 萬）',{sk:'機車駕照',m:-3},'生活範圍一下子變大了。騎車要戴好安全帽、別趕時間。',()=>S.m>=3],['搭公車、捷運或騎腳踏車',{PHY:1},'慢一點，但安全又省錢。']]},
+{q:'網路上看到「輕鬆日領三千、包吃包住、可出國工作」的打工廣告。',o:[['上網查證，發現是詐騙，順手檢舉',{INT:1,psy:'詐騙心理'},'這類廣告常是求職詐騙，有人因此被騙到國外、被控制或被當成車手。你救了自己。'],['心動了，私訊對方',{},()=>Math.random()<.5?['對方要你先交出存摺和提款卡「辦薪轉」。你覺得不對勁，及時打 165 確認，果然是詐騙。',{st:10,psy:'詐騙心理'}]:['你交出了帳戶，結果帳戶被拿去當人頭，還被警察約談。',{st:30,m:-3,psy:'詐騙心理'}]],['問學長姐和家人的意見',{SOC:1,psy:'詐騙心理'},'學長說：「好康到不像真的，通常就不是真的。」']]},
+{q:'租屋到期要搬走，房東卻用各種理由不退押金。',when:()=>S.house==='ya'||S.house==='tao',o:[['拿出入住時拍的照片和租約據理力爭',{WIL:1,INT:1},'房東沒話說，退了押金。入住時拍照存證真的很重要。'],['去區公所申請租賃糾紛調解',{SOC:1,st:5},'調解委員幫你們談出結果，拿回了大部分押金。'],['算了，自認倒楣（存款 -1 萬）',{m:-1,st:10},'你學到了一課。']]},
+{q:'你聽說可以申請政府的租金補貼，學生也能申請。',when:()=>(S.house==='ya'||S.house==='tao')&&!S.rentSub,o:[['上網申請',{INT:1},()=>{S.rentSub=1;return['申請通過了！每個月補助幾千元，房租壓力小很多。（補助金額依縣市不同）',{st:-8}]}],['好麻煩，算了',{},'錢就這樣少拿了。']]},
+{q:'宿舍室友每天打電動到凌晨三點，還很大聲。',when:()=>S.house==='dorm',o:[['找時間好好跟他溝通',{SOC:1,soc:1},'他說不知道會吵到你，之後都戴耳機了。'],['申請換寢室',{st:5},'換到新寢室後，你終於睡得著了。'],['默默忍耐',{st:15},'你的黑眼圈越來越深。']]},
+{q:'手機行推薦你「零利率分期」買最新手機，每月只要一千多。',o:[['先存錢，或買比較便宜的',{WIL:1},'你的帳戶裡還有錢，心裡很踏實。'],['辦分期買下去（存款 -4 萬）',{m:-4,st:5},'新手機很好用，但之後每個月都要繳。'],['辦信用卡分期，還順便刷了很多東西',{m:-8,st:15},'帳單來的時候，你嚇了一跳。卡債的循環利息非常高。']]},
+);
+WORK_EV.push(
+{q:'主管離職了，老闆問你要不要接部門主管。',pvk:'manager',when:()=>S.ct>=2&&!['svc','startup','ecom','cafe','studio','yt','athlete','idol','music'].includes(S.career),o:[['接下來',{SOC:1,WIL:1,st:15,sal:1.3,sk:'管理'},()=>{log('升任部門主管');return'你從做事的人，變成帶人的人。薪水變高，煩惱也變多了。'}],['想專心做專業，不想管人',{st:-5},'不是每個人都要當主管。專業路線也能走得很遠。']]},
+{q:'有人在社群上找你加入「老師帶單」投資群組，說保證每月獲利 20%。',o:[['封鎖並打 165 檢舉',{INT:1,psy:'詐騙心理'},'你差點成為假投資詐騙的受害者。保證獲利的投資，就是詐騙。'],['先投一點點試試（存款 -5 萬）',{},()=>['一開始真的「賺錢」了，你又投了更多。最後平台關掉，錢全部拿不回來。',{m:-Math.min(30,Math.max(5,Math.round(S.m*.4))),st:25,psy:'詐騙心理'}]],['問懂投資的朋友',{SOC:1,psy:'詐騙心理'},'朋友一看就說：「這是假投資詐騙，2025 年財損最大的就是這種。」']]},
+{q:'存款慢慢多了，你開始想要理財。',when:()=>S.m>=20&&!S.inv,o:[['定期定額買大盤指數型 ETF',{INT:1},()=>{S.inv=1;return['你每個月固定投入一點，長期來看讓錢跟著市場一起成長。（投資有風險，不保證獲利）',{st:-3}]}],['全部押一檔朋友報的熱門股',{},()=>Math.random()<.4?['運氣好，賺了一筆！但你知道這不是每次都會發生。',{m:Math.round(S.m*.3)}]:['股價腰斬，你半年都不敢看帳戶。',{m:-Math.round(S.m*.4),st:20}]],['放定存，求安心',{st:-3},'利息不多，但你睡得很好。']]},
+{q:'公司常常要你加班，卻說「責任制」不給加班費。',o:[['查勞基法，跟公司爭取',{WIL:1,INT:1,st:8},'依法，多數工作加班都要給加班費或補休。公司最後補發了。'],['打 1955 勞工諮詢申訴專線',{INT:1,psy:'職場霸凌'},'專員告訴你怎麼保存出勤紀錄、怎麼申訴。'],['忍下來',{st:18},'你的時薪其實比想像中低很多。']]},
+{q:'交往多年的另一半問你：「我們要不要結婚？」',pvk:'marry',when:()=>S.age>=27&&!S.married,o:[['結婚（存款 -15 萬）',{SOC:1,st:-10,m:-15},()=>{S.married=1;log('結婚了');return'你們辦了一場溫馨的婚禮。2025 年台灣結婚對數只有十萬出頭，創下新低；能找到想一起走下去的人，很珍貴。'}],['再等等，先穩定經濟',{WIL:1,st:5},'你們約好，三年後再談。'],['你們想好了，選擇不婚',{st:-5},'不婚也是一種完整的人生選擇。']]},
+{q:'你們討論要不要生小孩。',pvk:'kids',when:()=>S.married&&!S.kids,o:[['生一個',{SOC:1,st:15},()=>{S.kids=1;log('有了第一個孩子');return'孩子出生了。睡眠不足、花費變多，但看著他笑，一切都值得。2025 年台灣總生育率只有約 0.695，是世界最低之一。'}],['先不要，等經濟和工作更穩定',{st:-3},'你們想先把自己的生活顧好。'],['決定不生',{st:-5},'這是你們兩個人的選擇，沒有對錯。']]},
+{q:'你開始考慮買房。2025 年第二季全國房價所得比約 9.89 倍，台北市約 15.41 倍，也就是要不吃不喝快十年。',when:()=>S.age>=28&&!S.house2&&S.m>=60,o:[['付兩成頭期款，背 30 年房貸',{},()=>{const price=Math.round(S.sal*12*1.6*9.89);const down=Math.round(price*.2);if(S.m<down)return[`你算了一下，總價約 ${price} 萬，頭期款要 ${down} 萬，存款還不夠。先繼續存吧。`,{st:5}];S.house2=1;S.mort=price-down;log(`買了房子（總價約 ${price} 萬）`);return[`你買了總價約 ${price} 萬的房子，背了 ${price-down} 萬的房貸。有家的感覺很好，但每個月薪水要先繳房貸。`,{m:-down,st:15}]}],['繼續租房，把錢拿去投資或進修',{INT:1},'租房也有自由，不用被房貸綁住。'],['搬回老家或去房價低的城市',{st:-8},'通勤遠了一點，但存款多了很多。']]},
+{q:'騎車上班時，被轉彎的車擦撞，住院一週。',when:()=>has('機車駕照'),o:[['好好休養，用勞健保和保險處理',{st:5,perf:-.5},'有勞保、健保和保險，醫藥費沒有壓垮你。保險的意義就在這種時候。'],['趕快回去上班',{PHY:-1,st:15},'傷沒好全就上班，復原得更慢。']]},
+{q:'外商公司開出年薪三百萬挖角，但要求英文流利、工作強度很高。',when:()=>['swe','ai','sec','pm','fab','trader'].includes(S.career)&&S.age>=27,o:[['接受挑戰（看語文）',{LAN:1,st:20},()=>S.st.LAN>=6?['你通過了全英文面試，年薪直接翻倍。',{sal:1.6}]:['英文面試沒過，對方說你技術很好，但溝通還要加強。',{st:5,sk:'外語'}]],['留在原公司',{st:-5},'你喜歡現在的團隊和節奏。']]},
+{q:'第一次自己報所得稅。',when:()=>!S.tax,o:[['用手機報稅，順便研究扣除額',{INT:1},()=>{S.tax=1;return['你發現有些保險費、房租可以列舉扣除，省了一點稅。',{m:1}]}],['請家人或朋友幫忙',{SOC:1},()=>{S.tax=1;return'下次你就會自己來了。'}]]},
+{q:'家裡的毛小孩生病了，醫藥費要好幾萬。',o:[['好好治療（存款 -5 萬）',{m:-5,st:8},'牠康復了。牠陪你度過很多難熬的日子，你也想陪牠。'],['跟獸醫討論比較保守的照顧方式',{SOC:1,st:10},'你們選了讓牠最舒服的方式。']]},
+);
+/* ---------- 各行業專屬事件 ---------- */
+const SELF=['farm','yt','studio','cafe','startup','ecom','music','photo','idol','athlete','transl'];
+const CAT_EV={
+'醫療':[
+{q:'急診裡，一位等太久的家屬情緒失控，伸手推了你。',o:[['按下警鈴，請警衛和警察處理',{WIL:1,st:10},'妨礙醫療在台灣是違法的。醫院支持你提告，你也申請了心理支持。'],['先退開保護自己，再請同事協助安撫',{SOC:1,st:12},'你沒有受傷。事後團隊一起檢討了急診的動線和等候說明。'],['默默承受，繼續工作',{st:25},'下班後，你一個人在車上發抖了很久。醫療暴力不應該被當成「工作的一部分」。']]},
+{q:'交班時，你發現前一班漏給了一位病人一劑藥。',o:[['立刻補救，並通報異常事件',{WIL:1,perf:1,st:8},'病人沒事。醫院的異常通報系統是為了改善流程，不是為了抓戰犯。'],['跟前一班同事溝通，一起通報',{SOC:1,perf:.5,st:5},'同事很感謝你，你們一起提出交班清單的改善建議。'],['偷偷補上，不說出去',{st:20,perf:-1},'這次沒出事，但同樣的錯誤可能會再發生在別人身上。']]},
+{q:'醫院推出新制度：看越多病人獎金越多，但每位病人平均只能看三分鐘。',o:[['照制度衝量',{st:15,sal:1.1},'獎金變多了，但你常常覺得沒有真的聽懂病人在說什麼。'],['堅持每個病人看仔細',{WIL:1,sal:.97},'你的量比別人少，但病人和家屬特別信任你。'],['跟團隊討論，改善看診流程',{SOC:1,INT:1,perf:1},'你們用分流和衛教單張省下時間，量和品質都兼顧了一些。']]},
+{q:'連續值班 30 個小時後，你開車回家時差點睡著。',o:[['跟主管爭取改善排班',{SOC:1,st:-5},'值班制度沒有馬上改，但主管開始注意到人力問題。'],['之後值完班改搭計程車（存款 -2 萬）',{m:-2,st:-5},'花點錢換安全，值得。'],['撐著就好',{st:15,PHY:-1},'疲勞駕駛的反應時間，跟酒駕差不多。']]},
+],
+'科技':[
+{q:'你接手一套沒有文件、前人都離職了的老系統，大家叫它「祖傳程式碼」。',o:[['一邊修，一邊補文件和測試',{INT:1,perf:1,st:10},'半年後，這套系統成了團隊裡最好維護的部分。'],['提案整套重寫',{},()=>Math.random()<.45?['老闆同意了。新系統上線後效率大增，你也學到了架構設計。',{perf:1.5,INT:1,st:15}]:['重寫拖了一年還沒完成，舊系統還要同時維護。技術債是會累積利息的。',{st:20,perf:-1}]],['能動就好，不要碰',{st:5,perf:-.5},'系統還能跑，但每次改一行都提心吊膽。']]},
+{q:'團隊跟美國客戶合作，時差讓你每週有三天要半夜開會。',o:[['爭取會議時段輪流',{SOC:1,st:-5},'客戶同意了。跨國合作要互相遷就。'],['全部配合',{st:15,perf:1},'客戶很滿意，但你的睡眠被切得零零碎碎。'],['把英文練好，讓會議更短更有效率',{LAN:1,sk:'外語',perf:.5},'會議從一小時變成二十分鐘。']]},
+{q:'產品上線前一週，你發現一個資安漏洞，修補要讓上線延後兩週。',o:[['堅持修好再上線',{WIL:1,perf:.5,st:10},'業務很不開心，但幾個月後同業因為類似漏洞被駭，老闆私下謝謝你。'],['先上線再修',{},()=>Math.random()<.35?['上線後真的被攻擊了，用戶資料外洩，公司上了新聞。',{st:30,perf:-2}]:['運氣好，兩週內補上了，沒出事。但你知道這是在賭。',{st:12}]],['把風險寫清楚，讓主管決定',{SOC:1,INT:1},'主管看完評估報告，決定延後上線。']]},
+{q:'團隊決定全面改用新技術，你用了五年的工具要被淘汰。',o:[['週末自學，搶先上手',{INT:1,st:10,perf:1},'你成了團隊裡最懂新技術的人。'],['參加公司安排的訓練',{INT:1,perf:.5},'按部就班也能跟上。'],['抗拒，覺得舊的就很好',{perf:-1,st:8},'半年後，你發現自己在會議上常常聽不懂。']]},
+],
+'商管':[
+{q:'季末業績差 5%，主管暗示把下一季的訂單「先認列」到這一季。',o:[['拒絕，說明這是財報不實',{WIL:1,st:10},'主管臉色很難看，但你保住了自己的專業和名字。'],['照做',{st:22},()=>Math.random()<.4?['一年後稽核查到，你也被約談。',{st:20,perf:-2,sal:.9}]:['這次沒人發現，但你知道自己越線了。',{st:10}]],['私下詢問法遵或內部稽核',{SOC:1,INT:1},'法遵出面提醒，主管也收手了。']]},
+{q:'最大的客戶一直要求降價，再降就沒有利潤了。',o:[['用數據說明你們提供的價值',{INT:1,SOC:1,perf:1},'客戶接受了小幅降價，換你們增加一項服務。雙贏。'],['降價保住客戶',{sal:.97},'客戶留住了，但部門今年的獎金縮水。'],['放掉這個客戶，開發新客戶',{WIL:1,st:12},()=>Math.random()<.5?['半年後，新客戶補上了缺口。',{perf:1}]:['新客戶開發得很慢，那一季業績很難看。',{perf:-1}]]]},
+{q:'晚上九點，主管要你做一份明天早上九點的簡報。',o:[['熬夜做完',{st:15,perf:1},'簡報很漂亮。你在會議上撐著不打呵欠。'],['先做重點版，說明時間不夠',{SOC:1},'主管說：「重點清楚就好。」原來可以溝通。'],['跟主管協商延後',{st:5},()=>Math.random()<.5?['會議改到下午，你多了半天。',{st:-5}]:['主管不太高興，但還是答應了。',{st:5}]]]},
+{q:'你負責一個跨部門專案，但其他部門都覺得「這不是我們的事」。',o:[['先一個一個私下聊，找出他們在意的點',{SOC:1,perf:1},'你發現每個部門都有自己的 KPI 壓力。把專案跟他們的利益綁在一起，事情就動了。'],['請高層出面協調',{perf:.5,st:5},'事情推動了，但其他部門對你有點冷淡。'],['自己全部扛下來',{st:22,perf:.5},'專案做完了，你也燒乾了。']]},
+],
+'公職法務':[
+{q:'一位民眾在櫃台大吼，說你們辦事太慢，還開始錄影說要上傳。',o:[['依程序冷靜解釋，把流程說清楚',{SOC:1,st:10},'他慢慢冷靜下來，最後還說了聲謝謝。'],['請主管或警衛協助',{st:5},'主管出面處理，你學到了該怎麼保護自己。'],['被激怒，跟他吵起來',{st:15,perf:-1},'影片真的被上傳了，只剪了你生氣的那段。']]},
+{q:'一份公文要跑七個單位蓋章，期限只剩三天。',o:[['親自跑每個單位說明',{PHY:1,perf:1,st:10},'你在期限前一天完成了，也認識了各單位的承辦人。'],['照流程等',{st:8},()=>Math.random()<.5?['剛好趕上。',{}]:['逾期了，被長官提醒。',{perf:-1,st:5}]],['提出簡化流程的建議',{INT:1,SOC:1,perf:1},'你的建議被採納，之後同類公文少跑三個單位。']]},
+{q:'你承辦的案子上了新聞，網路上一面倒地批評。',o:[['依法依程序說明，不隨輿論起舞',{WIL:1,st:15},'風頭過後，事實證明你的處理是對的。'],['交給發言人統一回應',{SOC:1,st:8},'機關統一對外，你專心把事情做好。'],['自己上網回留言',{st:20,perf:-1},'越回越糟。網路論戰沒有贏家。']]},
+{q:'公務體系每隔幾年要輪調，你剛熟悉的業務又要換人了。',o:[['把握機會學新業務',{INT:1,SOC:1},'新單位讓你看到政府運作的另一面。'],['爭取留任，深耕專業',{WIL:1},'長官同意了，你成了這個領域的專家。'],['抱怨一直重來',{st:10},'抱怨完，還是得重新開始。']]},
+],
+'文教':[
+{q:'家長在班級 LINE 群組公開質疑你的教學方式。',o:[['私下約家長面談',{SOC:1,st:8},'面談後才知道，家長是擔心孩子跟不上。誤會解開了。'],['在群組公開說明理念',{LAN:1,st:12},'有家長支持你，也有家長更不滿。群組不是溝通的好地方。'],['請主任或校長協助',{st:5},'學校出面說明，家長的態度緩和了。']]},
+{q:'新課綱要你設計跨領域的素養課程，但沒有多給時間。',o:[['跟其他科老師一起共備',{SOC:1,perf:1},'你們合作出一門很受學生歡迎的課。'],['自己熬夜設計',{ART:1,st:15},'課程很精彩，但你的週末都沒了。'],['先沿用舊教材',{perf:-.5},'學生說：「這個跟以前一樣啊。」']]},
+{q:'評鑑、計畫書、各種表單，行政工作佔掉了一半的時間。',o:[['用數位工具簡化流程',{INT:1,st:-5},'你做的表單模板，全校老師都在用。'],['婉拒兼任行政',{st:-5,perf:-.5},'時間回到教學上，但也錯過了一些升遷機會。'],['默默做完',{st:15},'你常常晚上十點還在學校。']]},
+{q:'你發現班上很多學生用 AI 寫作業。',o:[['重新設計作業，要學生說明思考過程',{ART:1,perf:1},'作業變得更有意思，學生也開始真的思考。'],['教學生怎麼正確使用 AI',{INT:1,sk:'AI協作',perf:1},'你把 AI 變成學習工具，而不是作弊工具。'],['全面禁止',{st:8},'禁不完。學生只是更會藏了。']]},
+],
+'設計創作':[
+{q:'你發現自己的作品被一個大品牌抄襲，還印在商品上。',o:[['蒐集證據，寄存證信函主張著作權',{WIL:1,st:10},()=>Math.random()<.6?['品牌下架並賠償，你拿回了應有的權益。',{m:5}]:['對方不認，打官司要花錢花時間，你決定先保留證據。',{st:8}]],['在社群公開說明',{SOC:1},()=>Math.random()<.5?['網友聲援，品牌出面道歉。',{st:-5}]:['網路上吵成一團，有人反過來攻擊你。',{st:20}]],['算了，沒力氣處理',{st:15},'你把作品集設成私人。']]},
+{q:'客戶說：「用 AI 生成一張就好，為什麼要付這麼多？」',o:[['說明專業的價值和著作權風險',{SOC:1,perf:1},'客戶理解了。你的專業在於判斷、溝通和完整的品牌思考。'],['學會用 AI 加速，接更多案子',{INT:1,sk:'AI協作',sal:1.05},'你把重複的工作交給 AI，自己專心在創意上。'],['降價接下來',{sal:.9},'收入少了一成。']]},
+{q:'連續兩週，你什麼都做不出來，打開軟體就發呆。',o:[['出去走走、看展、充電',{ART:1,st:-15},'一場展覽讓你重新找到感覺。'],['跟同行聊聊',{SOC:1,st:-8},'原來大家都會卡關。'],['硬擠',{st:15},'擠出來的東西，你自己都不喜歡。']]},
+],
+'技職':[
+{q:'現場同事沒戴安全裝備就上工，主管說趕進度沒關係。',o:[['堅持做好防護才開始',{WIL:1,perf:.5},'慢了半小時，但大家都平安下班。'],['跟著趕',{st:10},()=>Math.random()<.3?['你受傷了，休養了一個月。職災往往就發生在「趕一下」的時候。',{PHY:-1,st:15,perf:-1}]:['這次沒事。',{}]],['向工安人員反映',{SOC:1},'工安人員來巡查，主管也收斂了。']]},
+{q:'師傅只叫你做雜事，不教你技術。',o:[['主動觀察，下班自己練',{WIL:1,sk:'證照'},'你偷學了不少，還考到了證照。'],['直接問師傅',{SOC:1,soc:1},'師傅說：「終於有人敢問了。」他開始教你。'],['換一個師傅',{st:5},'新師傅比較願意教人。']]},
+{q:'客人嫌貴，還要求額外的服務不加錢。',o:[['清楚說明報價內容',{SOC:1,perf:1},'客人理解了，之後還介紹朋友來。'],['送一點小服務，維持關係',{SOC:1,sal:.98},'客人很開心，你多花了一點時間。'],['堅持不做',{WIL:1},'客人不太高興，但你守住了專業。']]},
+{q:'年輕人不願意進這行，店裡嚴重缺工，你一個人做兩個人的工作。',o:[['跟老闆談加薪',{SOC:1},()=>Math.random()<.6?['老闆知道你難找，幫你加薪了。',{sal:1.12}]:['老闆說再撐一下。',{st:10}]],['開始帶新人',{SOC:1,sk:'管理',st:8},'你帶出了兩個徒弟，工作終於分得出去。'],['硬撐',{st:20},'你的腰開始痛了。']]},
+],
+'服務':[
+{q:'一位客人大聲辱罵你，要求退款還要你下跪道歉。',o:[['冷靜依規定處理，必要時請他離開',{WIL:1,st:10},'主管支持你。服務業不等於要被羞辱。'],['請主管出面',{st:5},'主管接手處理，你在後場深呼吸。'],['照他說的做',{st:20},'他滿意地走了，你卻難受了好幾天。']]},
+{q:'排班表一直臨時更改，你的休假被取消了兩次。',o:[['了解勞基法對排班和休假的規定，跟店長溝通',{INT:1,st:5},'店長調整了排班方式，提前公告。'],['找同事互相換班',{SOC:1},'你們建立了互助的換班群組。'],['全部配合',{st:15},'你已經一個月沒跟朋友見面了。']]},
+{q:'店長問你想不想往管理職發展，但要先完成內部訓練。',o:[['參加訓練',{SOC:1,sk:'管理',st:10,sal:1.1},'你升上了副店長，開始學排班、成本和帶人。'],['先不要，現在這樣就好',{st:-5},'你知道自己想要的是穩定的生活。']]},
+],
+'交通運輸':[
+{q:'連續出勤很疲勞，調度又要你多跑一趟。',o:[['拒絕疲勞出勤',{WIL:1},'安全第一。法規對工時和休息都有規定。'],['跟調度協調換人',{SOC:1},'調度找到其他人，你回家休息。'],['硬撐',{st:20},()=>Math.random()<.3?['途中差點出事，你嚇出一身冷汗。',{st:15}]:['平安完成，但你累到一句話都不想說。',{}]]]},
+{q:'颱風來了，風雨很大，上面要你照常出勤。',o:[['依安全規定，評估後決定延誤或取消',{WIL:1,INT:1,perf:.5},'有乘客抱怨，但沒有人受傷。'],['照常出勤，小心一點',{st:15},'你一路緊握方向盤，平安抵達。'],['跟主管確認標準作業程序',{SOC:1},'公司有明確的天候標準，照做就對了。']]},
+{q:'年度體檢出現異常，可能影響你的執照。',o:[['好好治療、調整作息',{PHY:1,st:10,perf:-1},'三個月後複檢通過了。'],['隱瞞不說',{st:25},'這不只是你的安全，也是所有乘客的安全。'],['尋求醫師和公司的協助',{SOC:1,st:5},'公司幫你暫時調到地面工作，等你康復。']]},
+],
+'演藝運動':[
+{q:'練習中受傷了，醫生說要休養三個月，但下個月有最重要的比賽／演出。',o:[['好好復健',{PHY:1,perf:-1,st:8},'錯過了一次機會，但你的職業生涯更長了。'],['打止痛針上場',{perf:1,PHY:-2,st:15},'你撐完了，但傷勢變嚴重。'],['找運動醫學團隊評估',{INT:1},'團隊幫你設計了安全的上場方式。']]},
+{q:'經紀公司給你一份十年的合約，分潤只有兩成。',o:[['找律師看合約，再談條件',{INT:1,m:-1},'律師幫你把年限改成五年、分潤提高。'],['直接簽，先有機會再說',{st:12},'你有了曝光，但之後很多決定都不能自己做。'],['拒絕，自己經營',{WIL:1,st:15},'很辛苦，但收入和方向都在自己手上。']]},
+{q:'一段被斷章取義的影片，讓你被網路圍攻。',o:[['冷靜說明事實，然後暫停社群',{WIL:1,st:5},'大部分人看到完整影片後，輿論翻轉了。'],['找公司或律師處理',{SOC:1},'惡意攻擊的帳號被提告，留言少了很多。'],['回嗆網友',{st:20},'越吵越大。']]},
+],
+'海外':[
+{q:'台灣的分公司邀請你回去當主管，負責新部門。',o:[['回台灣，把經驗帶回去',{SOC:1,st:-10,sal:.95},()=>{S.returned=1;log('受邀回台灣分公司當主管');return'薪水少了一點，但你能用國外學到的東西，帶一個台灣的團隊。'}],['再留幾年，累積更多經驗',{INT:1},'你答應三年後再談。']]},
+{q:'所在國家的簽證政策突然收緊，你的工作簽證續簽變得不確定。',o:[['請公司協助申請，準備好所有文件',{INT:1,st:15},'過程很煎熬，終於續簽成功。'],['同時準備回台灣的計畫',{WIL:1,st:5},'有備案，你心裡比較踏實。']]},
+{q:'台灣的家人生病了，你在地球的另一端。',o:[['請長假回台灣陪伴',{SOC:1,st:5,perf:-1},'能在家人身邊，比什麼都重要。'],['每天視訊',{st:15},'隔著螢幕的陪伴，讓你很無力。'],['開始認真考慮回台灣工作',{st:-5},'你上網看了台灣的職缺。']]},
+],
+'自由業':[
+{q:'收入連續三個月斷炊。',o:[['接一些不太想做的案子撐過去',{st:10,m:3},'撐過去了。現金流是自由工作者的命脈。'],['大幅減少開銷',{WIL:1,st:8},'你學會了用很少的錢生活。'],['找一份兼職穩定收入',{st:-5,sal:.9},'少了一點自由，多了一點安心。']]},
+{q:'沒有公司幫你處理，健保、國民年金和所得稅都要自己來。',o:[['研究清楚，建立自己的記帳系統',{INT:1},'你發現有些費用可以列為成本，省了不少稅。'],['加入職業工會投保勞健保',{SOC:1},'有了勞保，生病受傷也比較有保障。'],['拖著不管',{st:10},'後來收到補繳通知，還有滯納金。']]},
+{q:'一個人工作，常常一整天沒跟人說話。',o:[['去共同工作空間（存款 -1 萬）',{SOC:1,m:-1,st:-8},'你認識了一群也在接案、創作的人。'],['加入同業社群',{SOC:1,st:-5},'大家互相介紹案子、分享經驗。'],['習慣就好',{st:8},'孤獨感慢慢累積。']]},
+],
+};
+CAT_EV['創業']=[];
+const FIRST_EV={q:'上班第三個月，你發現工作跟想像的差很多：薪水不如預期、每天做重複的事，常常懷疑自己在幹嘛。\n1111 人力銀行 2025 年調查應屆畢業生，36.6% 畢業半年內就換過工作，最常見的原因是「趁年輕多方嘗試」「不滿意薪資」「沒有成就感」。',o:[['再撐撐，給自己一年',{WIL:1,perf:.5},'一年後，你開始被交付更重要的工作。很多工作的有趣之處，要熟練了才看得到。'],['找主管或前輩聊聊',{SOC:1,soc:1},'前輩說他第一年也很想離職。他教了你很多做事的訣竅。'],['開始投履歷，找下一份工作',{},'',null,'swapjob']]};
+const CROSS_EV={q:'你是部門裡唯一不是本科系出身的人，很多專業名詞都聽不懂。\n1111 人力銀行 2026 年調查，76% 上班族覺得學校所學不能完全應付工作，67% 靠自學補上。',o:[['下班自學，把基礎補起來',{INT:1,st:10,perf:1,psy:'冒牌者現象'},'三個月後，你已經能跟上大家的討論了。'],['請同事帶，不懂就問',{SOC:1,soc:1,perf:.5},'大家其實很樂意教。'],['用原本科系的角度，帶來不一樣的想法',{ART:1,perf:1},'你的「外行」觀點，反而解決了一個大家卡很久的問題。跨領域就是你的優勢。']]};
+// 通用事件依職業過濾
+WORK_EV.forEach(e=>{if(/獵頭|專案延誤|組織重整|同期進公司|年終獎金|加班費|主管在會議上|主管離職/.test(e.q)){const w=e.when;e.when=()=>!SELF.includes(S.career)&&(!w||w())}});
+/* ---------- 性別處境 ---------- */
+Object.assign(PSY,{
+ '性別刻板印象':'社會對「男生應該怎樣、女生應該怎樣」的預設，例如男生要堅強、會賺錢，女生要溫柔、顧家。它會悄悄影響每個人選科系、選工作、表達情緒的方式。刻板印象傷害的是所有性別。',
+ '男性求助困境':'「男兒有淚不輕彈」讓很多男性覺得求助很丟臉。衛福部統計 2024 年男性自殺死亡人數約是女性的 1.8 倍，醫師指出很大原因是男性比較少求助。衛福部男性關懷專線 0800-013-999 每天早上 7 點到晚上 11 點免費諮詢。',
+ '軍中霸凌':'學長學弟制、私下惡整、言語羞辱，都可能發生在軍中。國防部的 1985 申訴專線可以協助被霸凌的官兵，包括調離和輔導。民間團體也指出，如果長官就是霸凌者，現行機制仍有不足。',
+ '月經平權':'月經是正常的生理現象，卻常被當成髒的、要藏起來的事。台灣女性一生大約要花 10 萬元買生理用品。教育部從 2023 年 8 月起，在各級學校提供免費生理用品，希望讓月經可以被自然地談論。',
+ '性騷擾':'讓人感到被冒犯的性相關言語或行為，例如評論身材、開黃腔、不當碰觸、偷拍。勞動部 2025 年調查，過去一年在職場被性騷擾的女性受僱者約 3.3%，男性約 0.7%，女性約是男性的 4.7 倍。男性也會被騷擾，而且常因為「男生被摸又沒差」更難說出口。保護專線 113 可以協助。',
+ '性別薪資差距':'2025 年台灣女性平均時薪約是男性的 83.9%，女性要多工作約 59 天，才能領到男性一年的薪水。勞動部研究指出，「同工同酬」大致已經做到，差距主要來自男女集中在不同職業、高薪主管和研發職位男性比較多。',
+ '婚育職涯中斷':'比薪水 2025 年調查，女性常在面試時被問懷孕計畫，男性很少被問。主計總處資料顯示，因生育離職的人復職率約 55.6%，平均要隔 5 年 5 個月才回到職場。女性勞參率從 40 歲起明顯下滑。',
+ '育嬰假與男性':'育嬰留職停薪是父母雙方都可以申請的權利。2026 年起可以「以日」申請後，男性在以日申請中的占比一度達到 44.3%；2025 年全年男性占比約 27.8%。爸爸請育嬰假，越來越常見。',
+ '多元性別':'性別不只有兩種，性傾向也有很多樣貌。台灣在 2019 年成為亞洲第一個同性婚姻合法化的國家。每年 4 月 20 日是「性別平等教育日」，紀念 2000 年因性別氣質被霸凌、在校園廁所倒下的葉永鋕。',
+});
+const GEV={
+ hs:{
+  m:[
+   {q:'打球時你扭傷了腳，痛到眼眶泛紅，旁邊有人說：「男生哭什麼哭，很娘欸。」',o:[['說：「會痛就會痛，跟是不是男生無關。」',{WIL:1,st:-3,psy:'性別刻板印象'},'空氣安靜了一下，有個同學說：「對啊，我上次也痛到哭。」'],['硬忍下來，笑著說沒事',{st:12,psy:'男性求助困境'},'你忍住了眼淚，也忍住了「需要幫忙」的感覺。很多男生就是這樣學會什麼都自己扛。'],['去保健室，不管別人怎麼說',{PHY:1,psy:'性別刻板印象'},'護理師幫你冰敷。照顧自己的身體不丟臉。']]},
+   {q:'你對語文和藝術很有興趣，想選社會組，親戚卻說：「男生讀文組以後沒出息，養不起家。」',o:[['照自己的興趣選',{WIL:1,LAN:1,psy:'性別刻板印象'},'你知道自己為什麼選。「男生一定要讀理工」也是一種刻板印象。'],['聽親戚的，改選自然組',{st:12},'你說服自己是為了以後好。'],['跟爸媽好好討論',{SOC:1},'爸媽說：「你喜歡的，我們支持。」']]},
+  ],
+  f:[
+   {q:'上課時月經突然來了，你把衛生棉藏在袖子裡去廁所，被幾個男同學看到後一直笑。',o:[['大方說：「月經而已，每個月都會來。」',{WIL:1,SOC:1,psy:'月經平權'},'幾個男生愣住了，有一個還小聲說對不起。'],['跟老師反映，希望班上上一堂月經的課',{SOC:1,psy:'月經平權'},'健康教育課上，老師讓全班一起認識月經。大家對它的態度變了。'],['覺得很丟臉，之後都忍著不去換',{st:15,psy:'月經平權'},'月經不是髒東西，也不是秘密。學校現在有免費的生理用品，可以放心去拿。']]},
+   {q:'學測前一天生理痛到冒冷汗，但明天就要考試。',when:()=>S.age>=17,o:[['先看醫生，跟醫師討論止痛方式',{st:-5,psy:'月經平權'},'醫生說嚴重經痛不是「忍一下就好」，可能需要檢查和治療。'],['吃止痛藥硬撐',{st:10},'你撐完了考試。很多女生每個月都在跟疼痛一起生活。'],['跟家人說，請他們幫忙準備熱敷和輕食',{SOC:1,st:-5},'媽媽說她年輕時也一樣。']]},
+   {q:'老師在課堂上說：「女生數學本來就比較差，沒關係。」',o:[['用成績證明',{INT:1,WIL:1,psy:'性別刻板印象'},'下次段考你數學全班第一。能力跟性別無關。'],['課後跟老師說這句話讓你不舒服',{SOC:1,psy:'性別刻板印象'},'老師想了想，跟你道歉了。'],['開始覺得自己真的不擅長數學',{st:10,INT:-1},'刻板印象最可怕的，是讓人開始相信它。這叫「刻板印象威脅」。']]},
+  ],
+ },
+ uni:{
+  m:[
+   {q:'第一次約會，大家都覺得「男生本來就要請客、要有車接送」。',o:[['跟對方討論各付各的',{SOC:1,psy:'性別刻板印象'},'對方說：「好啊，這樣我比較自在。」'],['全部自己出（存款 -2 萬）',{m:-2,st:8},'你一個月的生活費少了一大截。'],['覺得自己條件不夠，不敢約會',{st:10},'「男生要有錢才有資格戀愛」也是一種壓力。']]},
+   {q:'你想讀護理或幼教，朋友笑說：「男護士？以後是要幫人換尿布喔？」',when:()=>['nurse','edu','knur'].includes(S.dept),o:[['驕傲地說：「對，照顧人是很專業的事。」',{WIL:1,psy:'性別刻板印象'},'男性護理師和幼教老師越來越多，很多病人和孩子特別需要你們。'],['默默不說自己讀什麼',{st:10},'你不需要為自己的選擇感到抱歉。']]},
+  ],
+  f:[
+   {q:'晚上搭捷運，你發現有人在用手機偷拍你的裙底。',o:[['大聲喊出來，請站務人員和警察協助',{WIL:1,st:10,psy:'性騷擾'},'對方被警察帶走了。偷拍是犯罪，被害人不需要感到羞恥。'],['拍下對方，下車後報警',{INT:1,st:12,psy:'性騷擾'},'你的證據讓警察順利找到人。'],['太害怕了，趕快下車',{st:20,psy:'性騷擾'},'你那晚睡不著。如果想談談，可以打 113 保護專線或找學校諮商中心。']]},
+   {q:'教授在辦公室一直評論你的身材，還說「女生讀研究所幹嘛，早點嫁人比較實在」。',o:[['向學校性平會申訴',{WIL:1,st:15,psy:'性騷擾'},'學校依法啟動調查。過程很煎熬，但你保護了下一屆的學妹。'],['找信任的學姐和老師討論',{SOC:1,st:8,psy:'性騷擾'},'你發現不只你遇過，你們決定一起申訴。'],['忍下來，只想趕快畢業',{st:20},'權力不對等的騷擾特別難說出口。這不是你的錯。']]},
+  ],
+ },
+ work:{
+  m:[
+   {q:'長輩說：「男人就是要賺得比老婆多，不然很沒面子。」',when:()=>S.married,o:[['跟另一半討論你們自己的分工',{SOC:1,st:-5,psy:'性別刻板印象'},'你們決定誰擅長什麼就做什麼。家是兩個人的。'],['拚命加班，一定要賺更多',{st:20,sal:1.05},'錢多了一點，但你很少在家。'],['覺得自己很失敗',{st:15,psy:'男性求助困境'},'「養家」的壓力壓在很多男生身上，說出來會好一點。']]},
+   {q:'小孩出生了，你想請育嬰假，同事笑說：「這不是女生的事嗎？」',when:()=>S.kids,o:[['照請，陪孩子長大',{SOC:1,st:-10,sal:.97,psy:'育嬰假與男性'},'你學會換尿布、哄睡。孩子第一次叫的是「爸爸」。'],['只請幾天以日申請的育嬰假',{SOC:1,psy:'育嬰假與男性'},'2026 年起可以以日申請，你在重要的日子都能陪在家人身邊。'],['怕被說閒話，不請',{st:12},'你錯過了很多孩子第一次的時刻。']]},
+   {q:'工作壓力大到每天失眠，但你覺得「男人不能說累」。',o:[['打男性關懷專線或看身心科',{st:-20,psy:'男性求助困境'},'說出來之後，你才發現自己撐了多久。求助是勇敢，不是軟弱。'],['跟好朋友喝一杯，第一次說出真心話',{SOC:1,st:-12},'朋友說：「早說嘛，我也是。」'],['繼續撐',{st:20,psy:'男性求助困境'},'很多男性就是這樣，一直撐到撐不住。']]},
+   {q:'公司聚餐，一位女主管喝醉後一直摸你的手，同事都在起鬨。',o:[['明確說「請不要這樣」，事後向公司申訴',{WIL:1,st:10,psy:'性騷擾'},'性騷擾跟性別無關。你的感受是真的，公司依法處理了。'],['笑笑躲開',{st:12,psy:'性騷擾'},'大家都說「男生被摸又沒差」，但你心裡很不舒服。'],['找信任的同事討論',{SOC:1,psy:'性騷擾'},'同事說他也遇過，只是不敢說。']]},
+  ],
+  f:[
+   {q:'面試時，主管問你：「有打算結婚生小孩嗎？」',o:[['禮貌回答：「這和工作能力無關。」',{WIL:1,psy:'婚育職涯中斷'},'依《性別平等工作法》，雇主不能因婚育而差別待遇。主管尷尬地換了話題。'],['說「沒有打算」，先拿到工作再說',{st:10,psy:'婚育職涯中斷'},'你拿到工作了，但心裡很不舒服。男性面試者很少被問這個問題。'],['事後向勞工局檢舉',{INT:1,st:8,psy:'婚育職涯中斷'},'勞工局受理了。你讓下一個面試者少遇到一次。']]},
+   {q:'你發現跟你同時進公司、做一樣工作的男同事，薪水比你高。',o:[['蒐集資料，跟主管談加薪',{WIL:1,SOC:1,psy:'性別薪資差距'},()=>Math.random()<.55?['主管調整了你的薪水。依法同工必須同酬。',{sal:1.1}]:['主管說「他比較會談」。你決定向勞工局諮詢。',{st:10}]],['問 1955 勞工諮詢專線',{INT:1,psy:'性別薪資差距'},'專員說同工不同酬違反《性別平等工作法》，可以申訴。'],['算了，可能是我能力不夠',{st:12,psy:'性別薪資差距'},'你懷疑自己，但問題可能不在你身上。']]},
+   {q:'會議上你提的點子沒人理，十分鐘後男同事講了一模一樣的話，大家卻說：「好主意！」',o:[['說：「謝謝你支持我剛剛提的想法。」',{WIL:1,SOC:1,perf:1,psy:'性別刻板印象'},'大家愣了一下，主管說：「對，這是你先提的。」'],['會後跟主管說清楚',{SOC:1,perf:.5},'主管說他會注意。'],['下次就不說了',{st:12,perf:-1},'被看不見久了，很多人就真的不說了。']]},
+   {q:'客戶聚餐時，對方一直開黃腔，還要你坐他旁邊「陪喝酒」。',o:[['明確拒絕，並向公司反映',{WIL:1,st:10,psy:'性騷擾'},'依法，雇主要防治客戶對員工的性騷擾。主管換了人負責這個客戶。'],['找藉口提早離開',{st:12,psy:'性騷擾'},'你保護了自己，但為什麼要躲的是你？'],['忍下來，怕丟了案子',{st:22,psy:'性騷擾'},'工作不應該用這種方式換來。可以打 113 或找勞工局諮詢。']]},
+   {q:'孩子出生後，大家都預設是你要請育嬰假、你要減少工作。',when:()=>S.kids,o:[['跟另一半輪流請育嬰假',{SOC:1,psy:'育嬰假與男性'},'另一半也請了假，你們都沒有離開職場太久。'],['自己請兩年育嬰假',{st:-5,sal:.9,perf:-1,psy:'婚育職涯中斷'},'陪伴孩子很珍貴。回到職場時，你發現一切都變了，要重新追上。'],['辭職全職照顧孩子',{st:5,sal:.75,psy:'婚育職涯中斷'},'因生育離職的人，平均要五年多才回到職場，只有一半多的人回得去。']]},
+   {q:'爸媽年紀大了需要照顧，兄弟說：「你是女兒，比較細心，你來吧。」',when:()=>S.age>=29,o:[['召開家庭會議，大家輪流分擔',{SOC:1,WIL:1,psy:'性別刻板印象'},'照顧是全家的事，不是女兒的事。'],['一個人扛下來',{st:22,perf:-1},'你蠟燭兩頭燒。女性勞參率從 40 歲起明顯下滑，家庭照顧是很大的原因。'],['申請長照 2.0 的居家服務',{INT:1,st:-5},'政府的長照服務幫你分擔了很多。']]},
+  ],
+ },
+};
+const GBOTH=[{q:'好朋友鼓起勇氣跟你說：「我喜歡的是同性。」',o:[['謝謝他願意告訴你，一切照舊',{SOC:1,psy:'多元性別'},'他鬆了一口氣，說你是第一個知道的人。'],['有點驚訝，問他想不想聊聊',{SOC:1,psy:'多元性別'},'你們聊到半夜，你更懂他了。'],['不知道該說什麼',{st:5,psy:'多元性別'},'沒關係，願意聽就是很好的開始。']]}];
+const GSUM={
+ m:['可能因為一年兵役，比同齡女生晚一年進職場，也可能在軍中遇到學長學弟制或霸凌（1985 申訴專線）。','從小被教「男生不能哭」，比較少求助。2024 年男性自殺死亡人數約是女性的 1.8 倍。','被期待要賺錢養家、約會要請客、讀理工才有出息。','想請育嬰假可能被笑「這是女生的事」，不過 2026 年以日申請的育嬰假中，男性一度占 44.3%。','被性騷擾時常被說「男生又沒差」，更難說出口。','另一方面，面試很少被問生育計畫，在科技業和主管職裡比較常見到同性別的前輩，升遷路上的阻力通常比較小。'],
+ f:['月經常被當成丟臉的事，一生大約要花 10 萬元買生理用品；2023 年起學校有免費生理用品。','2025 年在職場被性騷擾的比例約是男性的 4.7 倍，也比較常遇到偷拍和夜歸安全問題。','平均時薪約是男性的 83.9%，要多工作約 59 天才能領到男性一年的薪水，主要因為高薪職位男性比較多。','面試常被問結婚生子的計畫；因生育離職的人平均五年多才回到職場，照顧長輩也常被預設是女兒的事。','提的意見比較容易被忽略，或被說「女生數學比較差」。','另一方面，從小比較被允許表達情緒、向朋友求助，也不用服一年兵役。'],
+};
+function genderPool(stage){
+ const arr=((GEV[stage]||{})[S.g]||[]).concat(stage==='uni'?GBOTH:[]);
+ return arr.filter(e=>!S.used.includes(e.q)&&(!e.when||e.when()));
+}
+/* ---------- 換位思考 ---------- */
+const STEM=['ee','cs','mech','civil','phys','opt','chem','ie','bme','env','math','kee','arch'];
+const CAREGIVE=['nurse','knur','edu','sw','ot','nutri','kfood'];
+const PV={
+ promo:{m:'如果你是女生：同樣的表現，女性升上主管的機會常常比較少。2025 年調查有 48.7% 的人說公司主管男多女少，科技業更高達 63.7%。女性也常被擔心「之後要生小孩，顧得了工作嗎」。',f:'如果你是男生：同樣的升遷，比較少被質疑「顧得了家庭嗎」。但男生也常被期待一定要往上爬、賺得更多，不想當主管反而會被說沒企圖心。'},
+ manager:{m:'如果你是女生：女性主管帶人時，態度堅定常被說「很兇、很強勢」，溫和又會被說「不夠有魄力」。',f:'如果你是男生：男性主管態度強硬常被稱讚「有魄力」，但想表達脆弱或請假顧小孩，反而比較難開口。'},
+ army:{m:'換位思考：這一年，同齡的女生可能已經開始工作、累積年資，或去讀研究所。但她們進入職場後，也可能在面試時被問「有沒有打算生小孩」。',f:''},
+ job1:{m:'',f:'換位思考：同齡的男生很多才剛服完一年兵役，比你晚一年開始工作。但他們面試時，很少被問到結婚生子的計畫。'},
+ stemF:{f:'換位思考：理工科系的男生比例明顯比較高，你可能是班上少數的女生，常會被說「女生讀理工很辛苦喔」。如果你是男生，沒有人會這樣說。教育部也有專門補助 STEM 領域女性人才的計畫。',m:'換位思考：如果你是女生，進到這個系常常是班上少數，還會被說「女生讀理工很辛苦喔」。'},
+ careF:{m:'換位思考：這類科系女生比例很高。以護理為例，男性護理人員只有約 4%。你可能是班上少數的男生，被問「男生讀這個要幹嘛」；如果你是女生，大家會覺得理所當然。',f:'換位思考：如果你是男生，讀這個系常被問「男生讀這個要幹嘛」。全台男性護理人員只有約 4%。'},
+ natTrack:{f:'換位思考：如果你是男生，選自然組很少會被說「女生數學比較差」。',m:'換位思考：如果你是女生，選自然組可能會被說「女生數學比較差，選社會組比較輕鬆」。'},
+ socTrack:{m:'換位思考：如果你是女生，選社會組通常不會被說「以後沒出息、養不起家」。',f:'換位思考：如果你是男生，選社會組可能會被親戚說「男生讀文組沒出息」。'},
+ raise:{m:'如果你是女生：女性主動談加薪，常被覺得「太計較」或「很強勢」，而同樣的行為在男性身上會被稱讚有企圖心。',f:'如果你是男生：男性談加薪通常被視為理所當然，但也承擔著「要養家」的期待。'},
+ marry:{m:'如果你是女生：婚後常被問「什麼時候生？」「會不會離職？」，面試時也比較常被問婚育計畫。',f:'如果你是男生：婚後常被期待成為家裡的主要經濟來源，「有房才能結婚」的壓力也常落在男生身上。'},
+ kids:{m:'如果你是女生：懷孕和生產要承受身體的劇烈變化，產假 8 週，有些人會經歷產後憂鬱。回到職場時，常被認為「心思都在小孩身上」；因生育離職的人平均五年多才回到職場。',f:'如果你是男生：可以請 7 天陪產檢及陪產假，也可以請育嬰假，但常被同事笑「這是女生的事」。不過以日申請的育嬰假裡，男性一度占到 44.3%。'},
+ night:{m:'如果你是女生：晚上一個人走在路上，常常要握著鑰匙、跟朋友視訊、避開暗巷，計程車也要傳車牌給家人。',f:'如果你是男生：晚上走路回家，通常不太需要想這麼多。'},
+ health:{m:'換位思考：女性平均壽命 84.75 歲，男性只有 77.93 歲，差了將近 7 歲。原因之一是男性比較少看醫生、比較晚求助。',f:'換位思考：男性平均壽命比女性少將近 7 歲（77.93 比 84.75），原因之一是男性比較少看醫生、覺得「忍一下就好」。'},
+};
+const pvOf=k=>PV[k]&&PV[k][S.g]||'';
+/* 資質影響讀書效率 */
+const studyEff=()=>clamp(.55+S.st.INT*.07+S.st.WIL*.035,.6,1.6);
+const effWord=()=>{const e=studyEff();return e>=1.15?'很高':e>=.9?'普通':'偏低'};
+/* 新增兩性處境事件 */
+GEV.hs.m.push(
+ {q:'數學課老師常點男生上台解題，你得到很多練習和被看見的機會。',o:[['把握機會，認真準備',{INT:1,study:.5},'你越講越有自信。'],['注意到班上女生很少被點，跟老師說',{SOC:1,psy:'性別刻板印象'},'老師愣了一下，之後點人變得比較平均。']],pv:{m:'換位思考：女生常常比較少被老師點到上台解數學題，久了會以為「數學不是我的事」。',f:''}},
+);
+GEV.hs.f.push(
+ {q:'跟好朋友聊到深夜，你把壓力都說出來，哭了一場，心情好多了。',o:[['謝謝朋友，也約好下次換你聽她說',{SOC:1,st:-15},'有人可以說心事，是很大的力量。'],['把心情寫成日記',{LAN:1,st:-10},'寫下來，就沒那麼重了。']],pv:{f:'換位思考：很多男生從小被教「不能哭」，跟朋友談心反而覺得尷尬，壓力常常只能自己吞。這是女生比較常擁有的支持。',m:''}},
+);
+GEV.uni.m.push(
+ {q:'系上辦活動到很晚，你一個人走回宿舍，路上沒什麼人，你也沒特別擔心。',o:[['想到女同學，傳訊息確認她們有沒有平安到家',{SOC:1,psy:'性騷擾'},'學妹說：「謝謝，其實我剛剛有點怕。」'],['戴上耳機慢慢走回去',{st:-3},'夜晚很安靜。']],pv:{m:'如果你是女生：晚上一個人走在路上，常常要握著鑰匙、跟朋友視訊、避開暗巷，搭計程車也要傳車牌給家人。',f:''}},
+ {q:'畢業前，同學開始討論工作，你想到自己畢業後還要先當一年兵。',o:[['先查好替代役、志願役或專長兵的選項',{INT:1},'你發現兵役也有不同的選擇，可以規劃得跟未來的方向連在一起。'],['有點焦慮，覺得會落後別人',{st:10},'晚一年進職場是真的，但人生不是短跑。']],when:()=>S.g==='m'&&!S.army,pv:{m:'換位思考：女同學畢業就能直接工作或升學。但她們之後在職場上，可能要面對婚育帶來的職涯中斷。',f:''}},
+);
+GEV.uni.f.push(
+ {q:'實驗室裡只有你一個女生，大家下意識叫你負責做紀錄、訂便當、整理環境。',when:()=>STEM.includes(S.dept),o:[['提議大家輪流做雜事',{SOC:1,WIL:1,psy:'性別刻板印象'},'學長想了想說：「好像真的都是你在做，對不起。」'],['專心做實驗，雜事交給輪值表',{INT:1,perf:1},'你的研究成果，讓教授推薦你去國際研討會。'],['默默全部做完',{st:12},'你的實驗進度落後了。']],pv:{f:'換位思考：如果你是男生，大概不會被預設要負責訂便當和做紀錄。',m:''}},
+ {q:'你不用當兵，畢業後可以直接工作或讀研究所。',o:[['直接投入職場，提早累積年資',{WIL:1},'你比同齡男生早一年開始工作。'],['先申請研究所',{INT:1},'你可以更早規劃下一步。']],pv:{f:'換位思考：同齡的男生要先服一年兵役，晚一年進職場，有人在軍中遇到霸凌。這是女生相對少有的負擔。',m:''}},
+);
+GEV.work.m.push(
+ {q:'你主動爭取公司最重要的專案，老闆一口答應：「年輕男生就是要衝！」',o:[['全力以赴',{WIL:1,perf:1.5,st:12},'專案成功，你成了老闆眼中的明日之星。'],['邀請一位很有能力、但常被忽略的女同事一起帶',{SOC:1,perf:1,psy:'性別刻板印象'},'你們合作得很好，她的能力終於被看見。']],pv:{m:'換位思考：女同事爭取同樣的專案時，老闆問的是：「你家裡顧得來嗎？」',f:''}},
+ {q:'過年回家，長輩問：「三十歲了，薪水多少？有沒有買房？沒房怎麼娶老婆？」',when:()=>S.age>=27,o:[['說自己有自己的規劃',{WIL:1,st:-3,psy:'性別刻板印象'},'你知道自己的步調。'],['壓力很大，回去更拚命存錢',{st:15,m:5},'「男生要有房」的期待壓在很多人身上。']],pv:{m:'換位思考：女生過年常被問的是「什麼時候結婚？女生年紀大了不好生。」',f:''}},
+ {q:'公司提醒做健康檢查，你已經好幾年沒去，覺得「身體還行，忍一下就好」。',o:[['去做健檢，結果發現血壓偏高',{PHY:1,st:-5},'早點發現，早點調整。'],['繼續拖',{st:5,PHY:-1},'「忍一下就好」是很多男生的習慣。']],pv:{m:'換位思考：女性平均壽命 84.75 歲，男性只有 77.93 歲，差了將近 7 歲。原因之一是男性比較少看醫生。',f:''}},
+);
+GEV.work.f.push(
+ {q:'生理痛到站不起來，你請了生理假，主管卻說：「又來了？」',o:[['平靜說明這是法律保障的權利',{WIL:1,psy:'月經平權'},'依《性別平等工作法》，女性每月可以請一天生理假，全年三天以內不併入病假。主管沒再說什麼。'],['跟人資反映主管的態度',{SOC:1,psy:'月經平權'},'人資提醒主管，不可以因此給員工差別待遇。'],['之後都不敢請，吃止痛藥撐著',{st:15},'很多女生每個月都這樣撐著。']],pv:{f:'換位思考：如果你是男生，不會每個月都要面對這種身體的疼痛，也不用解釋「為什麼又要請假」。',m:''}},
+ {q:'談判時你態度堅定，事後聽到同事私下說你「很兇、很強勢」。',o:[['不在意，結果說明一切',{WIL:1,perf:1},'你談到的條件是公司這幾年最好的。'],['開始刻意放軟語氣',{st:10},'你發現自己要花很多力氣管理「別人怎麼看你」。']],pv:{f:'換位思考：男同事用一樣的態度談判，被稱讚的是「很有魄力」。',m:''}},
+ {q:'過年回家，親戚一直問：「什麼時候結婚？女生年紀大了不好生喔。」',when:()=>S.age>=27&&!S.married,o:[['笑笑說自己有規劃',{WIL:1,st:-3,psy:'性別刻板印象'},'人生的時間表，由你自己決定。'],['壓力很大，開始懷疑自己是不是哪裡不對',{st:15},'這不是你的問題，是社會給的時間表。']],pv:{f:'換位思考：男生過年常被問的是「薪水多少？有沒有買房？」',m:''}},
+);
+/* 為原本的性別事件補上換位思考 */
+[['打球時你扭傷了腳',{m:'換位思考：如果你是女生，受傷哭出來比較不會被笑。但女生也常被說「太情緒化」。兩種都是刻板印象。'}],
+ ['你對語文和藝術很有興趣',{m:'換位思考：如果你是女生，選社會組很少被說沒出息；但選自然組時，可能會被說「女生數學比較差」。'}],
+ ['上課時月經突然來了',{f:'換位思考：男生不用每個月處理月經，也不用擔心褲子沾到、被同學笑。了解它，就是尊重的開始。'}],
+ ['學測前一天生理痛',{f:'換位思考：男生考試前不用擔心剛好遇到生理期。很多女生每個月都要在疼痛中照常上課、考試、上班。'}],
+ ['老師在課堂上說：「女生數學',{f:'換位思考：男生很少因為性別被說「你數學一定比較差」。'}],
+ ['第一次約會',{m:'換位思考：女生約會時比較少被期待要付錢，但常被評論穿著、外表，也比較需要擔心約會的安全。'}],
+ ['你想讀護理或幼教',{m:'換位思考：女生讀護理或幼教很少被質疑，但這些工作也常被認為「女生本來就該會照顧人」，專業被看輕。'}],
+ ['晚上搭捷運',{f:'換位思考：男生被偷拍的機率低得多，搭夜車也比較少需要提防。'}],
+ ['教授在辦公室一直評論',{f:'換位思考：男生比較少被問「讀研究所幹嘛，早點嫁人」這種問題。'}],
+ ['長輩說：「男人就是要賺得比老婆多',{m:'換位思考：女生比較少被期待要賺錢養家，但常被期待要負責家務和照顧，就算她們也是全職工作。'}],
+ ['小孩出生了，你想請育嬰假',{m:'換位思考：女生請育嬰假被視為理所當然，但回到職場時常被認為「心思都在小孩身上」，升遷因此受影響。'}],
+ ['工作壓力大到每天失眠',{m:'換位思考：女生比較被允許說「我好累」，也比較常主動求助，這是女生相對擁有的保護。'}],
+ ['公司聚餐，一位女主管',{m:'換位思考：女生在職場被性騷擾的比例約是男生的 4.7 倍，但不管哪個性別，被騷擾的感受都是真的。'}],
+ ['面試時，主管問你',{f:'換位思考：男生面試時，很少被問結婚生子的計畫。'}],
+ ['你發現跟你同時進公司',{f:'換位思考：2025 年女性平均時薪是男性的 83.9%。男生比較少需要懷疑「是不是因為我的性別」才拿得比較少。'}],
+ ['會議上你提的點子沒人理',{f:'換位思考：男生講一樣的話，比較容易被認真聽見。'}],
+ ['客戶聚餐時，對方一直開黃腔',{f:'換位思考：男生在應酬場合比較少被要求「坐旁邊陪喝酒」。'}],
+ ['孩子出生後，大家都預設',{f:'換位思考：爸爸請育嬰假會被說「好新好男人」，媽媽請卻被視為理所當然。'}],
+ ['爸媽年紀大了需要照顧',{f:'換位思考：兒子比較少被預設要辭職照顧爸媽，但常被期待要出錢。'}],
+].forEach(([k,pv])=>{for(const st of ['hs','uni','work'])for(const g of ['m','f'])GEV[st][g].forEach(e=>{if(e.q.startsWith(k))e.pv=pv})});
+/* ---------- 家庭資源與家務分工 ---------- */
+Object.assign(PSY,{
+ '家務分工':'衛福部 2024 年調查：15 到 64 歲女性每天花在家務和照顧的無酬時間平均 3.03 小時；有伴侶的女性更長，每天 4.41 小時，是伴侶的 2.6 倍。93.9% 有伴侶的女性婚後要做家務。家事不是「幫忙」，是住在一起的人共同的責任。',
+ '重男輕女':'「女兒是別人家的」「兒子要傳宗接代」，這些觀念會影響家裡怎麼分配補習、出國、買房和遺產。財政部統計，2021 年拋棄繼承的人當中女性約占 55.4%，受贈人則約六成是男性。依民法，兒子和女兒的繼承權完全相同。',
+});
+GEV.hs.m.push(
+ {q:'週末大掃除，媽媽叫姊姊洗碗、拖地，卻跟你說：「你去讀書就好。」',o:[['放下書，跟姊姊一起做',{SOC:1,psy:'家務分工'},'姊姊愣了一下，笑著說：「難得喔。」家事本來就是大家的。'],['跟媽媽說，家事應該大家輪流',{WIL:1,psy:'重男輕女'},'媽媽說：「你說得對。」從那天起，家裡排了值日表。'],['照媽媽說的，回房間讀書',{study:.4},'你的讀書時間多了一點，是姊姊替你做掉的。']],pv:{m:'換位思考：如果你是女生，可能從小就被預設要幫忙做家事，男生卻可以「去讀書就好」。',f:''}},
+ {q:'家裡錢不多，只能讓一個孩子補習。爸媽說：「你是兒子，以後要養家，錢先給你。」',when:()=>S.fam<=3,o:[['跟爸媽說姊妹也應該有一樣的機會',{SOC:1,WIL:1,psy:'重男輕女'},'爸媽沉默了一陣子，最後決定兩個人輪流。'],['接受，但跟姊妹分享補習講義',{SOC:1,study:.8},'你每天晚上教妹妹今天學的東西。'],['接受，覺得理所當然',{study:1.2},'你多了補習的機會。很多女生就是這樣，把機會讓給了兄弟。']],pv:{m:'換位思考：如果你是女生，可能就是那個被說「女生讀那麼多幹嘛」、把補習機會讓出去的人。',f:''}},
+ {q:'阿公說你是長孫，以後要傳宗接代、照顧全家，還要你一定要讀到碩士。',o:[['跟家人說出自己的想法',{WIL:1,st:-3,psy:'性別刻板印象'},'你不只是「長孫」，你是你自己。'],['把期待當成動力',{study:.6,st:10},'你很努力，但有時候覺得自己是為了別人而活。'],['壓力大到失眠',{st:18,psy:'男性求助困境'},'被寄予厚望，也是一種重量。']],pv:{m:'換位思考：女孫比較少被要求「傳宗接代」，但也常常因此被忽略，家裡的資源和期待比較少放在她們身上。',f:''}},
+);
+GEV.hs.f.push(
+ {q:'週末大掃除，媽媽叫你洗碗、拖地，卻跟哥哥說：「你去讀書就好。」',o:[['跟媽媽說，家事應該大家輪流',{WIL:1,SOC:1,psy:'家務分工'},'媽媽想了想，排了全家的值日表，哥哥也要洗碗。'],['邊做邊生悶氣',{st:12,psy:'重男輕女'},'你的讀書時間少了一截。'],['做完家事再熬夜讀書',{WIL:1,st:15,study:.3},'你比哥哥更累，也更努力。']],pv:{f:'換位思考：如果你是男生，可能從小就被說「去讀書就好」，不太需要做家事。',m:''}},
+ {q:'家裡錢不多，只能讓一個孩子補習。爸媽說：「弟弟以後要養家，錢先給他。女生讀那麼多幹嘛。」',when:()=>S.fam<=3,o:[['跟爸媽爭取一樣的機會',{WIL:1,SOC:1,psy:'重男輕女'},()=>Math.random()<.5?['爸媽被你說動了，決定兩個人輪流。',{study:.6}]:['爸媽沒有改變主意。你很難過，但沒放棄。',{st:12}]],['用免費的線上課程自學',{WIL:1,INT:1,study:.8},'沒有補習，你還是靠自己追上進度。'],['申請學校的獎學金和課輔',{SOC:1,study:.6,m:1},'老師幫你找到了資源。']],pv:{f:'換位思考：如果你是男生，可能就是那個「理所當然」拿到補習機會的人。',m:''}},
+ {q:'阿嬤說：「女兒是幫別人養的，以後嫁出去就是別人家的人。」',o:[['說：「我永遠是這個家的一份子。」',{WIL:1,psy:'重男輕女'},'阿嬤愣住了，後來偷偷塞給你一個紅包。'],['覺得很受傷，但不知道怎麼回應',{st:12,psy:'重男輕女'},'這句話你記了很多年。它說的是舊觀念，不是你的價值。']],pv:{f:'換位思考：男孫常被說「要傳宗接代」「要照顧全家」，被寄予厚望，也是一種壓力。',m:''}},
+);
+GEV.uni.m.push(
+ {q:'爸媽說：「男生一定要讀研究所、念理工，以後才有出息。」',o:[['照自己的興趣規劃',{WIL:1,psy:'性別刻板印象'},'你知道自己想要什麼。'],['聽爸媽的',{st:10},'你說服自己這是為了未來。']],pv:{m:'換位思考：女生常聽到的是：「女生不用讀那麼高，研究所畢業反而不好嫁。」',f:''}},
+);
+GEV.uni.f.push(
+ {q:'爸媽說：「女生不用讀那麼遠，也不用讀研究所，早點工作嫁人比較實在。」',o:[['自己申請獎學金和學貸，照計畫走',{WIL:1,psy:'重男輕女'},'你用自己的方式證明了選擇是對的。'],['跟爸媽好好溝通未來規劃',{SOC:1},'爸媽聽完你的計畫，說會支持你。'],['妥協，選離家近的路',{st:10},'你放棄了原本想去的地方。']],pv:{f:'換位思考：男生常被要求「一定要讀研究所才有出息」。同一件事，兩個性別被期待的方向完全相反。',m:''}},
+);
+GEV.work.m.push(
+ {q:'你們兩個都全職上班，下班後另一半在煮飯、洗衣服，你在滑手機。你覺得：「我有幫忙洗碗啊。」',when:()=>S.married,o:[['坐下來一起列家事清單，平均分工',{SOC:1,st:-5,psy:'家務分工'},'家事不是「幫忙」，是你們兩個人的事。另一半說，這是她最近最開心的一天。'],['買洗碗機、掃地機器人，把家事外包',{m:-3,INT:1,psy:'家務分工'},'家事少了，你們吵架也少了。'],['照舊',{st:5},'另一半越來越常嘆氣。衛福部調查，有伴侶的女性每天做家務照顧的時間，是伴侶的 2.6 倍。']],pv:{m:'換位思考：如果你是女生，下班後常常還有「第二份工作」：煮飯、洗衣、照顧小孩。有伴侶的女性每天花 4.41 小時在家務和照顧上。',f:''}},
+ {q:'爸爸過世了。親戚說：「財產留給兒子，姊妹們都簽好拋棄繼承了。」但這幾年照顧爸爸的，其實是姊姊。',when:()=>S.age>=29,o:[['跟姊妹依法平分遺產',{SOC:1,WIL:1,psy:'重男輕女'},'依民法，兒子和女兒的繼承權完全一樣。姊姊哭著說謝謝。'],['接受遺產，但承擔起照顧媽媽的責任',{SOC:1,st:10,m:20},'你拿了財產，也扛起了責任。'],['照親戚說的收下',{m:30,st:8,psy:'重男輕女'},'財產是你的了，但姊妹們跟你越來越疏遠。']],pv:{m:'換位思考：如果你是女生，可能就是那個被親戚暗示「簽拋棄繼承」的人。2021 年拋棄繼承的人當中，女性約占 55.4%。',f:''}},
+);
+GEV.work.f.push(
+ {q:'你們兩個都全職上班，但下班後煮飯、洗衣、倒垃圾都是你，另一半說：「我有幫忙洗碗啊。」',when:()=>S.married,o:[['坐下來一起列家事清單，平均分工',{SOC:1,WIL:1,st:-8,psy:'家務分工'},'家事不是「幫忙」，是你們兩個人的事。'],['用家電和外包減少家事（存款 -3 萬）',{m:-3,st:-5},'掃地機器人和洗碗機，救了你們的婚姻。'],['自己全部做',{st:20,psy:'家務分工'},'你每天下班後還有第二份工作。有伴侶的女性每天做家務照顧 4.41 小時，是伴侶的 2.6 倍。']],pv:{f:'換位思考：很多男生從小沒被要求做家事，常覺得「幫忙」就夠了。不過也有越來越多男生主動分擔。',m:''}},
+ {q:'爸爸過世了。親戚叫你簽拋棄繼承：「財產要留給兒子，女兒嫁出去了。」但這幾年照顧爸爸的人是你。',when:()=>S.age>=29,o:[['依法主張自己的繼承權',{WIL:1,st:12,psy:'重男輕女'},'依民法，兒子和女兒的繼承權完全一樣。親戚很不高興，但你守住了應得的。',],['簽拋棄，但要求兄弟分擔照顧媽媽',{SOC:1,st:8},'你放棄了財產，但照顧的責任終於不只在你身上。'],['為了家庭和氣，簽了',{st:18,psy:'重男輕女'},'2021 年拋棄繼承的人當中，女性約占 55.4%。很多女兒都是這樣，為了「和氣」放棄。']],pv:{f:'換位思考：兒子常被預設可以繼承財產，但也常被期待要扛起養家和照顧爸媽的經濟責任。',m:''}},
+ {q:'過年時，你在夫家廚房從早忙到晚，初二才能回娘家；另一半在客廳跟親戚聊天。',when:()=>S.married,o:[['跟另一半說好，今年輪流、一起進廚房',{SOC:1,WIL:1,psy:'家務分工'},'另一半捲起袖子洗了一整天的碗。婆婆說：「我兒子什麼時候變這麼勤勞？」'],['今年改成除夕各自回家',{st:-5},'你們找到了適合自己的過年方式。'],['默默撐過去',{st:15},'你很期待初二。']],pv:{f:'換位思考：男生過年回家，常常可以在客廳坐著聊天，很少被要求進廚房。',m:''}},
+);
+GSUM.m.splice(3,0,'在重男輕女的家庭裡，常被優先分配補習、出國、房子和遺產；但也被要求傳宗接代、讀到碩士、扛起養家責任。');
+GSUM.f.splice(3,0,'在重男輕女的家庭裡，補習和出國的機會常先給兄弟，也常被暗示簽拋棄繼承（2021 年拋棄繼承者約 55.4% 是女性）。婚後下班還有「第二份工作」：有伴侶的女性每天做家務照顧 4.41 小時，是伴侶的 2.6 倍。');
+/* ---------- 更多性別處境 ---------- */
+Object.assign(PSY,{
+ '海外的種族歧視':'美國 Stop AAPI Hate 與芝加哥大學 NORC 的全國調查：2025 年有 49% 的亞裔與太平洋島民成年人，曾因種族、族裔或國籍遭受仇恨行為，最常見的是騷擾和制度性歧視；經歷過的人近四分之三感到壓力。日本法務省 2017 年調查，約三成外國居民曾因外國人身分被差別對待，租屋被拒很常見。',
+ '竹子天花板':'形容亞裔在職場上很會做事，卻很難升到高層。哈佛商業評論引用的資料顯示，2016 年亞裔占美國聯邦政府員工的 9.8%，卻只占最高職位的 4.4%。常見的刻板印象是「亞洲人很努力，但不夠有領導力、不敢表達」。',
+ '亞洲女性的刻板印象':'西方社會常把亞洲女性想像成溫順、順從或充滿異國情調，學術上稱為「東方化」和「戀物化」。這會讓亞洲女性更容易遇到帶有種族色彩的性騷擾。',
+ '亞洲男性的刻板印象':'西方媒體長期把亞洲男性塑造成書呆子、不夠陽剛、沒有魅力，讓很多亞洲男性在交友和職場上被低估。',
+ '懷孕職場歧視':'勞動部「女性懷孕友善職場安全感大調查」：34.8% 的職場女性覺得職場對懷孕者不友善，65.2% 擔心懷孕影響考績和升遷，27.8% 親身遇過，常見的是請假被刁難、升遷調薪受影響、言語羞辱。',
+});
+GEV.hs.m.push(
+ {q:'體育課要搬器材，老師說：「男生去搬，女生在旁邊休息。」你的腰前陣子才受傷。',o:[['跟老師說自己受傷，不方便搬',{WIL:1,psy:'性別刻板印象'},'老師說：「那你先休息。」男生也可以說「我不行」。'],['硬撐著搬',{PHY:-1,st:10},'你的腰痛了好幾天。'],['提議大家一起分工，男女都搬輕一點的',{SOC:1},'結果大家搬得更快。']],pv:{m:'換位思考：女生常被說「搬不動就算了」，看起來比較輕鬆，但也常被認為「什麼都做不好」，失去練習的機會。',f:''}},
+);
+GEV.hs.f.push(
+ {q:'學校服儀檢查，教官說你的裙子太短、頭髮太亂，「女生要有女生的樣子」。男同學穿著拖鞋走過去，卻沒人說什麼。',o:[['問教官：為什麼男生沒有被要求？',{WIL:1,psy:'性別刻板印象'},'教官愣住了。後來學校開了學生會議，重新討論服儀規定。'],['默默改掉',{st:8},'你學到，女生的外表常常被管得比較多。'],['跟學生會反映',{SOC:1},'學生會把這件事提到校務會議。']],pv:{f:'換位思考：男生的外表比較少被管，但也常被說「男生不用打扮」，想保養、穿得好看反而被笑。',m:''}},
+);
+GEV.uni.m.push(
+ {q:'交往中的另一半常常情緒失控，會推你、摔東西、翻你的手機。你跟朋友說，朋友卻笑：「被女生打？你也太弱了吧。」',o:[['打 113 保護專線諮詢',{WIL:1,st:-5,psy:'男性求助困境'},'社工說，男性也可能是親密關係暴力的受害者，你可以申請保護令。'],['跟家人或學校諮商中心說',{SOC:1,st:-8},'說出來後，你才發現這段關係不健康。'],['覺得丟臉，自己忍下來',{st:22,psy:'男性求助困境'},'2025 年家暴通報的被害人約七成是女性，但男性被害人比例正在上升，很多人因為覺得丟臉而不敢求助。']],pv:{m:'換位思考：女性是家暴被害人的大多數，約占七成；她們求助時比較容易被相信，但也更常面對嚴重的人身危險。',f:''}},
+);
+GEV.uni.f.push(
+ {q:'一個被你拒絕的人，開始每天傳訊息、在宿舍樓下等你，還出現在你打工的地方。',o:[['保留證據，向警察報案',{WIL:1,st:10,psy:'性騷擾'},'《跟蹤騷擾防制法》2022 年上路，警察可以核發書面告誡。2025 年警方受理約 2954 件跟騷案，加害人近八成是男性。'],['告訴朋友和學校教官，請大家陪你',{SOC:1,st:5},'朋友們輪流陪你上下課。'],['害怕到換了打工、換了路線',{st:20},'你的生活被別人改變了。這不是你的錯。']],pv:{f:'換位思考：男生比較少需要擔心被跟蹤，拒絕別人時也比較不用害怕對方的反應。',m:''}},
+);
+GEV.work.m.push(
+ {q:'公司要派人去外地或國外常駐兩年，主管說：「你是男生，沒有家庭牽絆，你去最適合。」',o:[['接受，當作磨練',{WIL:1,sal:1.15,st:12},'你學到很多，但錯過了很多家裡的重要時刻。'],['說明自己也有家人要照顧',{SOC:1,psy:'性別刻板印象'},'主管愣了一下：「原來你也要顧家。」男生也有照顧的責任。']],pv:{m:'換位思考：女同事常因為「要顧家」直接被排除在外派名單外，也因此少了升遷的機會。',f:''}},
+ {q:'媽媽生病了，你請假照顧，同事說：「你又不會照顧，叫你姊妹來就好啦。」',when:()=>S.age>=28,o:[['說：「照顧爸媽是我的責任。」',{WIL:1,SOC:1,psy:'性別刻板印象'},'你學會了換藥、陪病，也跟媽媽變得更親近。'],['還是交給姊妹',{st:5},'照顧又落在女兒身上了。']],pv:{m:'換位思考：女兒常被預設是照顧者，照顧爸媽而離職的人裡，女性明顯比較多。',f:''}},
+);
+GEV.work.f.push(
+ {q:'你懷孕了。告訴主管後，他開始不把重要專案交給你，還說：「你現在應該以寶寶為重吧。」',when:()=>S.married,o:[['跟主管說明自己的規劃，爭取原本的工作',{WIL:1,SOC:1,psy:'懷孕職場歧視'},'主管把專案還給你。依法，雇主不能因為懷孕而差別待遇。'],['找人資或撥 1955 諮詢',{INT:1,psy:'懷孕職場歧視'},'你知道了自己的權益，也保留了相關紀錄。'],['接受安排，不想起衝突',{st:15,perf:-1,psy:'懷孕職場歧視'},'勞動部調查，65.2% 的職場女性擔心懷孕會影響考績和升遷。']],pv:{f:'換位思考：男同事當爸爸，很少因此被拿走重要專案，有時還會被說「要養家了，更穩重」。',m:''}},
+ {q:'你去修車／看房子，對方一直對著你身邊的男性朋友說明，好像你聽不懂。',o:[['直接說：「我才是要買的人，請跟我說。」',{WIL:1,psy:'性別刻板印象'},'對方尷尬地轉過來，你拿到了更好的價格。'],['事先做好功課，問很專業的問題',{INT:1},'對方發現你很懂，態度完全不一樣了。'],['算了，讓朋友處理',{st:8},'你回家後越想越不舒服。']],pv:{f:'換位思考：男生去修車或看房，很少被預設「不懂」。',m:''}},
+ {q:'主管提醒你：「明天見客戶，記得化妝，女生要注意門面。」男同事穿著皺襯衫也沒人說話。',o:[['照自己的習慣，以專業表現說話',{WIL:1},'客戶記得的是你的提案。'],['化妝出席',{st:5},'你每天比男同事早起四十分鐘。'],['跟主管討論公司的服儀規定是否兩性一致',{SOC:1,psy:'性別刻板印象'},'人資重新調整了服儀規定，男女一致。']],pv:{f:'換位思考：男生上班不太會被要求化妝，但也常被要求「不能留長髮、不能穿得太花俏」。',m:''}},
+);
+/* 海外的歧視 */
+ABROAD_EV.push(
+ {q:'自我介紹說「I\'m from Taiwan」，對方回：「Oh, Thailand?」或「So you\'re Chinese?」',o:[['耐心說明台灣在哪裡、有什麼',{LAN:1,SOC:1},'對方說：「原來你們有珍珠奶茶和半導體！」你成了一個小小的外交官。'],['拿出手機地圖給他看',{INT:1},'一張地圖勝過千言萬語。'],['懶得解釋，笑笑帶過',{st:5},'被誤認次數多了，有時候真的很累。']]},
+ {q:'走在路上，有人對你大喊「Ni hao!」，接著用手拉眼角，旁邊的人在笑。',o:[['冷靜離開，記下時間地點，向學校或警方通報',{WIL:1,st:10,psy:'海外的種族歧視'},'學校的多元辦公室聯絡你，提供協助。2025 年美國的調查，有 49% 的亞裔曾遭受類似的仇恨行為。'],['找同學、留學生社團聊聊',{SOC:1,st:-5,psy:'海外的種族歧視'},'大家都遇過，你們一起整理了安全的通勤路線。'],['很受傷，開始不太想出門',{st:20,psy:'海外的種族歧視'},'種族歧視會對心理造成真實的傷害。學校的諮商中心可以幫你。']]},
+ {q:'分組時，當地同學都先跟彼此一組，你和其他留學生最後被「剩下來」。',o:[['主動邀請組員，先展現自己的專長',{SOC:1,soc:1,perf:1},'你的分析讓大家刮目相看，下次他們主動找你。'],['跟其他國際學生組成一組',{SOC:1},'你們來自五個國家，反而合作得很好。'],['覺得自己被排擠',{st:12},'這種排擠很難說出口，卻很真實。']]},
+);
+const AEV_G={
+ m:[{q:'你用交友軟體，發現很多人在自介寫「No Asians」，配對很少。',o:[['不受影響，專注發展自己的生活和朋友圈',{WIL:1,st:-3,psy:'亞洲男性的刻板印象'},'你在社團和運動場上交到了真正欣賞你的朋友。'],['懷疑自己哪裡不夠好',{st:15,psy:'亞洲男性的刻板印象'},'這是刻板印象的問題，不是你的問題。']],pv:{m:'換位思考：亞洲女性在國外常遇到的是另一種問題：被物化，被說「我就是喜歡溫順的亞洲女生」。',f:''}}],
+ f:[{q:'一個剛認識的人說：「我很喜歡亞洲女生，你們都很溫順、很聽話。」',o:[['直接說這句話讓你不舒服，然後離開',{WIL:1,psy:'亞洲女性的刻板印象'},'你不需要符合任何人想像中的「亞洲女生」。'],['跟朋友討論，一起分享遇到的經驗',{SOC:1,st:-5,psy:'亞洲女性的刻板印象'},'你們發現很多人都遇過，決定互相提醒、保護彼此。'],['尷尬地笑一笑',{st:12},'回到宿舍後，你越想越不舒服。']],pv:{f:'換位思考：亞洲男性在國外常遇到的是另一種刻板印象：被當成不夠有魅力、不夠陽剛，在交友軟體上被直接寫「No Asians」。',m:''}}],
+};
+CAT_EV['海外'].push({q:'你在公司表現一直很好，但升主管的總是當地同事。主管說你「很努力，但領導力和表達還可以再加強」。',o:[['主動爭取帶專案、上台簡報',{SOC:1,LAN:1,perf:1,psy:'竹子天花板'},'你讓大家看見你的領導力，終於升上了主管。'],['找公司裡的亞裔前輩當導師',{SOC:1,sk:'人脈',psy:'竹子天花板'},'前輩教你在這裡「被看見」的方法。'],['覺得無力，考慮回台灣',{st:10,psy:'竹子天花板'},'你把這段經驗，變成回台灣後帶團隊的養分。']]});
+GSUM.m.push('體育課、搬家、出力的事常預設男生來，受傷了也不好意思說「我不行」。','成為親密關係暴力的受害者時，常被笑「被女生打很弱」。2025 年家暴通報被害人約三成是男性，比例正在上升。','外派、加班常被預設「男生沒家庭牽絆」，想請假照顧爸媽會被說「你又不會照顧」。','在國外常被刻板印象當成不夠陽剛、沒有魅力，交友軟體上有人直接寫「No Asians」。');
+GSUM.f.push('服儀、外表被管得比較多，上班被要求化妝，修車看房時常被預設「聽不懂」。','被跟蹤騷擾的風險比較高：2025 年警方受理約 2954 件跟騷案，加害人近八成是男性。','懷孕後可能被拿走重要工作：勞動部調查，65.2% 職場女性擔心懷孕影響考績升遷，27.8% 親身遇過不友善對待。','在國外常被當成「溫順的亞洲女生」，遇到帶有種族色彩的性騷擾。');
+GSUM.abroad=['被誤認為泰國人或中國人，常常要解釋台灣在哪裡。','美國 2025 年調查，49% 的亞裔與太平洋島民曾遭受仇恨行為，例如被喊「Ni hao」、被要求「滾回你的國家」。','日本法務省 2017 年調查，約三成外國居民曾因外國人身分被差別對待，找房子被寫「外國人不可」很常見。','職場上的「竹子天花板」：2016 年亞裔占美國聯邦員工 9.8%，卻只占最高職位 4.4%。','分組時被「剩下來」、上課發言被忽略，這些排擠很難說出口卻很真實。'];
+/* ---------- 身分與背景 ---------- */
+const IDS={
+ '原住民':{p:.04,d:'你是原住民族的孩子。升學有保障名額和加分，但也常被貼上刻板印象。'},
+ '新住民子女':{p:.06,d:'你的爸爸或媽媽來自其他國家。你從小接觸兩種語言和文化。'},
+ '身心障礙':{p:.03,d:'你有身心障礙證明。很多地方對你來說不夠友善，但也有專屬的升學管道和就業保障。'},
+};
+const TRIBES=['阿美族','排灣族','泰雅族','布農族','太魯閣族','卑南族','魯凱族','賽德克族','鄒族','達悟族'];
+const NIMO=[['中國大陸',48],['越南',30],['印尼',6],['菲律賓',4],['泰國',3],['日本',3],['韓國',2],['柬埔寨',2],['緬甸',2]];
+const DISTYPE=[['肢體障礙','PHY'],['聽覺障礙','SOC'],['視覺障礙','ART'],['學習障礙','LAN']];
+const hasId=x=>(S.ids||[]).includes(x);
+function rollIds(){
+ S.ids=[];S.idn={};
+ for(const k in IDS)if(Math.random()<IDS[k].p&&S.ids.length<1)S.ids.push(k);
+ if(hasId('原住民'))S.idn.tribe=pick(TRIBES);
+ if(hasId('新住民子女')){const tot=NIMO.reduce((a,x)=>a+x[1],0);let r=Math.random()*tot;for(const [n,w] of NIMO){r-=w;if(r<=0){S.idn.mom=n;break}}S.idn.parent=pick(['媽媽','媽媽','媽媽','爸爸'])}
+ if(hasId('身心障礙')){const [t,k]=pick(DISTYPE);S.idn.dis=t;S.st[k]=clamp(S.st[k]-2,1,10)}
+}
+const idLabel=()=>hasId('原住民')?`原住民（${S.idn.tribe}）`:hasId('新住民子女')?`新住民子女（${S.idn.parent}來自${S.idn.mom}）`:hasId('身心障礙')?`身心障礙（${S.idn.dis}）`:'';
+Object.assign(PSY,{
+ '原住民升學保障':'依《原住民學生升學保障及原住民公費留學辦法》，原住民學生升學可以有外加名額和加分：通過族語認證可以加總分 35%，沒有通過加 10%。這是為了彌補長期的教育資源落差，但也常被誤解成「加分很爽」。2025 年原住民族勞參率約 64.2%、失業率約 3.45%。',
+ '新住民子女':'各縣市的國中小學生裡，新住民子女約占 5% 到 7%（例如台中 4.97%、桃園 7.28%），父母原生國家以中國大陸、越南、印尼最多。雙語和跨文化背景是很大的優勢，教育部也有「新住民子女海外培力計畫」，補助學生回到父母的國家體驗。',
+ '身心障礙與就業':'勞動部 2024 年調查，身心障礙者勞動力參與率只有 21.9%，失業率 7.1%。依《身心障礙者權益保障法》，一定規模以上的公私立機構有定額進用身心障礙者的義務，也有「職務再設計」補助幫忙調整工作環境。大學也有專門的身心障礙學生升學甄試。',
+});
+const IDEV={
+ hs:[
+  {q:'同學聽說你是原住民，笑說：「你考試有加分很爽欸，不用讀書也可以上大學。」',when:()=>hasId('原住民'),o:[['平靜說明加分制度的原因',{WIL:1,LAN:1,psy:'原住民升學保障'},'你解釋了教育資源的落差，有同學說：「原來是這樣，我以前都不知道。」'],['用成績證明自己',{study:1,st:10},'你比誰都努力。但你不需要證明什麼。'],['裝作沒聽到',{st:12},'這句話你聽過很多次了。']],pv:{}},
+  {q:'部落的長輩問你要不要一起學族語，考族語認證。',when:()=>hasId('原住民')&&!has('族語認證'),o:[['跟著長輩學，報名族語認證',{LAN:1,sk:'族語認證',st:5,psy:'原住民升學保障'},()=>`你通過了${S.idn.tribe}的族語認證！除了升學加分從 10% 變成 35%，你也更懂了自己的文化和家人。`],['課業太忙，先不要',{study:.4},'族語慢慢離你遠了一點。']]},
+  {q:'有人說：「你皮膚不黑、也不會唱歌，看起來不像原住民耶。」',when:()=>hasId('原住民')&&S.urban,o:[['說：「原住民沒有一種樣子。」',{WIL:1},'刻板印象把很多人框住了。'],['開始懷疑自己算不算原住民',{st:12},'身分認同不需要符合別人的想像。']]},
+  {q:'開家長會時，媽媽中文說得不太流利，旁邊有同學偷笑：「外配的小孩喔。」',when:()=>hasId('新住民子女'),o:[['大方介紹媽媽，還教同學說一句媽媽家鄉的話',{SOC:1,WIL:1,psy:'新住民子女'},()=>`同學說：「好酷，你會兩種語言！」${S.idn.parent}在旁邊笑得很開心。`],['回家後不想再讓媽媽來學校',{st:15},'你心裡很矛盾，既心疼媽媽，又怕被笑。'],['跟老師反映同學的言語',{SOC:1},'老師在班上上了一堂多元文化課。']]},
+  {q:'學校公告「新住民子女海外培力計畫」，可以補助你回到父母的國家體驗一個暑假。',when:()=>hasId('新住民子女'),o:[['報名參加',{LAN:1,SOC:1,sk:['外語','海外經驗'],psy:'新住民子女'},()=>`你在${S.idn.mom}的外婆家住了一個月，第一次覺得自己的雙重身分是一種禮物。`],['不好意思，覺得跟別人不一樣',{st:5},'你的背景其實是一種優勢。']]},
+  {q:'學校的電梯常常壞掉，教室在四樓，你每天都要很辛苦地上下樓。',when:()=>hasId('身心障礙')&&S.idn.dis==='肢體障礙',o:[['跟學校申請調整教室',{SOC:1,WIL:1,psy:'身心障礙與就業'},'學校把你們班換到一樓。無障礙是環境的責任，不是你的。'],['請同學幫忙',{SOC:1,st:5},'同學很樂意，但你不想一直麻煩別人。'],['自己硬撐',{st:15,PHY:-1},'你的身體越來越吃不消。']]},
+  {q:'老師上課講太快、沒有字幕，你常常跟不上。',when:()=>hasId('身心障礙')&&S.idn.dis!=='肢體障礙',o:[['申請特教資源和輔具',{INT:1,study:.8,psy:'身心障礙與就業'},'學校的資源班老師幫你申請了輔具和考試調整。'],['跟老師溝通需要的協助',{SOC:1,study:.5},'老師開始提供講義和板書。'],['自己課後拚命補',{WIL:1,st:15,study:.5},'你花的時間是別人的兩倍。']]},
+  {q:'老師提醒你，除了學測，還可以報名「身心障礙學生升學大專校院甄試」。',when:()=>hasId('身心障礙'),o:[['報名甄試',{INT:1,psy:'身心障礙與就業'},()=>{S.disExam=1;return'這是專門的升學管道，考科和名額跟一般生分開。你的學測分數之後會算得寬鬆一些。'}],['只考一般學測',{WIL:1},'你想跟大家走一樣的路。']]},
+  {q:'班上有位原住民同學被叫「番仔」，大家都在笑。',when:()=>!hasId('原住民'),o:[['說：「這樣叫很不尊重。」',{WIL:1,SOC:1,psy:'原住民升學保障'},'笑聲停了。那位同學下課後跟你說了聲謝謝。'],['跟著笑',{st:5},'你後來想起他的表情，覺得很不舒服。'],['私下跟老師說',{SOC:1},'老師在班上談了族群尊重。']],pv:{m:'如果你是原住民：從小可能常被叫「番仔」、被說「加分很爽」，也常被期待一定會唱歌跳舞。',f:'如果你是原住民：從小可能常被叫「番仔」、被說「加分很爽」，也常被期待一定會唱歌跳舞。'}},
+  {q:'同學嘲笑另一位同學：「你媽是越南來的，所以你很窮吧。」',when:()=>!hasId('新住民子女'),o:[['站出來制止',{WIL:1,SOC:1,psy:'新住民子女'},'那位同學說，這是第一次有人幫他說話。'],['事後去關心他',{SOC:1},'他教你說了一句越南話。'],['不想惹麻煩',{st:5},'你什麼都沒說。']],pv:{m:'如果你是新住民子女：可能從小被叫「外配的小孩」，家長會時擔心爸媽的口音被笑。但你也會兩種語言和文化。',f:'如果你是新住民子女：可能從小被叫「外配的小孩」，家長會時擔心爸媽的口音被笑。但你也會兩種語言和文化。'}},
+ ],
+ uni:[
+  {q:'租房子時，房東一聽到你坐輪椅，就說房子已經租出去了。',when:()=>hasId('身心障礙')&&S.idn.dis==='肢體障礙',o:[['向學校資源教室求助，申請無障礙宿舍',{SOC:1,psy:'身心障礙與就業'},'學校幫你安排了無障礙寢室。'],['繼續找，問了二十幾間',{WIL:1,st:15},'你終於找到一間有電梯、門夠寬的房子。']]},
+  {q:'你想回部落，把所學用在家鄉，但同學說：「回去能做什麼？」',when:()=>hasId('原住民'),o:[['研究部落產業、文化觀光或長照的可能',{INT:1,ART:1,sk:'創業經驗'},'你發現家鄉需要很多年輕人的力量。'],['先在都市累積經驗，之後再回去',{WIL:1},'你把這個夢想放在心裡。']]},
+  {q:'企業來學校徵才，說很需要懂越南話、印尼話的人才。',when:()=>hasId('新住民子女')&&['越南','印尼','泰國','菲律賓','柬埔寨','緬甸'].includes(S.idn.mom),o:[['把母語練到商業程度',{LAN:1,sk:'外語'},'在新南向市場，你的雙語能力成了最大的優勢。'],['先專心本科',{},'你知道這張牌隨時可以打。']]},
+  {q:'小組作業，有位聽障同學一直被大家忽略，討論都沒等他。',when:()=>!hasId('身心障礙'),o:[['提議改用文字訊息和共用文件討論',{SOC:1,INT:1,psy:'身心障礙與就業'},'他的想法其實最多，作業因此拿了高分。'],['覺得溝通太麻煩，分給他簡單的工作',{st:3},'他默默做完了，但你們錯過了他的才華。']],pv:{m:'如果你是身心障礙者：常常不是能力不夠，而是環境沒有把你算進去。',f:'如果你是身心障礙者：常常不是能力不夠，而是環境沒有把你算進去。'}},
+ ],
+ work:[
+  {q:'面試時，面試官看到你的身心障礙證明，態度突然變得很冷淡。',when:()=>hasId('身心障礙'),o:[['介紹自己的能力，並說明需要的工作調整',{SOC:1,WIL:1,psy:'身心障礙與就業'},()=>Math.random()<.5?['你被錄取了。公司申請了「職務再設計」補助，幫你調整工作環境。',{perf:1}]:['沒有錄取。身心障礙者的勞參率只有 21.9%，很多不是能力問題。',{st:12}]],['找公部門或有定額進用的公司',{INT:1},'依法，一定規模以上的機構要定額進用身心障礙者，你的履歷被認真看了。'],['向就業服務站求助',{SOC:1},'就服員幫你媒合了適合的工作。']]},
+  {q:'同事開玩笑說：「你們原住民是不是很會喝酒？」',when:()=>hasId('原住民'),o:[['笑著但認真說：「這是刻板印象喔。」',{WIL:1,SOC:1},'同事尷尬地道歉了。'],['分享自己族群真正的文化',{SOC:1,LAN:1},()=>`你介紹了${S.idn.tribe}的祭典和傳統，大家聽得很入迷。`]]},
+  {q:'公司要拓展東南亞市場，主管想到你會說母語。',when:()=>hasId('新住民子女'),o:[['主動爭取負責',{SOC:1,LAN:1,sal:1.12,perf:1},()=>`你帶著團隊到${S.idn.mom}談合作，成了公司的關鍵人物。`],['先觀望',{},'機會給了別人。']]},
+  {q:'公司新進一位視障同事，大家不知道怎麼跟他合作。',when:()=>!hasId('身心障礙')&&!SELF.includes(S.career),o:[['直接問他需要什麼協助',{SOC:1,psy:'身心障礙與就業'},'他說只要文件改成可以用螢幕報讀的格式就好。原來很簡單。'],['保持距離，怕說錯話',{st:3},'他在公司越來越孤單。']],pv:{m:'如果你是身心障礙者：找工作時常常還沒被看見能力，就先被看見障礙。',f:'如果你是身心障礙者：找工作時常常還沒被看見能力，就先被看見障礙。'}},
+ ],
+};
+for(const st in IDEV)IDEV[st].forEach(e=>{if(e.pv&&!e.pv.m&&!e.pv.f)delete e.pv;GEV[st].m.push(e);GEV[st].f.push(e)});
+/* ---------- 各階段的「時間怎麼用」 ---------- */
+const HS_FOCUS=[
+ {l:'拚命讀書',s:'讀書進度大增，壓力也大｜效果看智力和意志',e:()=>({study:Math.round(1.6*studyEff()*10)/10,st:15}),r:()=>`書桌上的參考書越疊越高。\n以你的智力 ${S.st.INT}、意志 ${S.st.WIL}，讀書效率【${effWord()}】。`},
+ {l:'去補習班',s:'花錢買效率（存款 -3 萬）｜效果看智力',e:()=>({study:Math.round(2*studyEff()*10)/10,m:-3,st:12}),r:'每天放學直奔補習班，晚上十點才搭公車回家。',dis:()=>S.m<3},
+ {l:'玩社團',s:'社交、創意或體能成長',e:()=>({SOC:1,[pick(['ART','PHY'])]:1,study:.4,st:-8,soc:1}),r:'社團成發那天，你第一次覺得自己在發光。'},
+ {l:'打工存錢',s:'存款增加，讀書時間變少｜賺多少看體能和社交',e:()=>({m:Math.round(1.5+(S.st.PHY+S.st.SOC)/8),SOC:1,study:.2,st:8}),r:'在手搖飲店打工，學會一次記十杯客製化飲料。'},
+ {l:'自學興趣',s:'挑一個興趣深入',sub:'int'},
+ {l:'放空休息',s:'壓力大降',e:{st:-25,study:.3},r:'你睡飽了，也想了很多事。休息不是浪費。'},
+];
+const INTERESTS=[
+ {l:'寫程式',e:{INT:1,sk:'程式',study:.4},r:'你用 Python 寫出第一個小遊戲。很醜，但它會動！'},
+ {l:'畫畫／設計',e:{ART:1,sk:'作品集'},r:'你的 IG 畫冊累積了幾十張作品。'},
+ {l:'運動訓練',e:{PHY:1,WIL:1,st:-10},r:'每天晨跑五公里，體能和意志都變強了。'},
+ {l:'閱讀寫作',e:{LAN:1,study:.6},r:'你讀完一整櫃小說，還投稿了校刊。'},
+ {l:'拍影片',e:{ART:1,SOC:1,sk:'自媒體'},r:'你開了頻道，第一支影片有 87 次觀看。'},
+ {l:'學外語',e:{LAN:1,sk:'外語'},r:'每天看日劇韓劇練聽力，還考過了英檢中級。'},
+];
+var UNI_FOCUS=[
+ {l:'認真念書',s:'成績穩定，壓力偏大',pb:2.5,e:()=>({[D[S.dept].k[0]]:1,st:12}),r:'圖書館成了你的第二個家。'},
+ {l:'找實習',s:'累積職場經驗',pb:-.5,e:{sk:'實習',SOC:1,st:10,m:1},r:'你第一次穿上識別證走進辦公室，發現學校沒教的事好多。'},
+ {l:'社團／系學會',s:'人脈與社交',pb:-1,e:{SOC:1,sk:'人脈',st:-5,soc:1},r:'你認識了很多不同科系的朋友。'},
+ {l:'打工賺錢',s:'存款增加，課業受影響',pb:-1.2,e:{m:6,st:8},r:'學費和生活費自己顧，你比同學早熟了一點。'},
+ {l:'自學技能',s:'程式、外語、作品集、證照、教育學程…',pb:-.5,sub:'uni'},
+ {l:'準備國考／研究所',s:'畢業後考試更有把握',pb:.3,e:{sk:'備考',WIL:1,st:15},r:'你買了一整套考古題，每天固定讀三小時。'},
+ {l:'休息玩樂',s:'壓力大降',pb:-.8,e:{st:-25,SOC:1},r:'夜衝、環島、看海。大學生活需要一點空白。'},
+];
+UNI_FOCUS.splice(5,0,
+ {l:'寒暑假遊學／交換',s:'出國學語言、開眼界，要花錢',pb:-.6,sub:'trip',show:()=>!S.abroad},
+ {l:'申請轉系',s:'通常只能一次，要看成績或考試',act:()=>applyTransfer(),show:()=>S.uy<=2&&!S.transferred&&!S.trTried},
+ {l:'準備轉學考',s:'考進更前段的學校',act:()=>applyTT(),show:()=>S.uy<=2&&!S.abroad&&!S.ttTried&&S.tier&&TIERS().findIndex(t=>t[1]===S.tier)>0},
+ {l:'辦休學一年',s:'打工、打工度假、休息或先當兵',act:()=>takeLeave(),show:()=>(S.leaves||0)<2});
+const UNI_SKILLS=[
+ {l:'寫程式',e:{INT:1,sk:'程式'},r:'你在線上課程刷完一百題程式題。'},
+ {l:'學外語（考多益）',e:{LAN:1,sk:'外語'},r:'多益考到 850 分，履歷亮了一點。'},
+ {l:'做作品集',e:{ART:1,sk:'作品集'},r:'你整理出一份像樣的作品集網站。'},
+ {l:'經營頻道／社群',e:{ART:1,SOC:1,sk:'自媒體'},r:'你的帳號有了第一批死忠粉絲。'},
+ {l:'考專業證照',e:{WIL:1,sk:'證照'},r:'考到一張專業證照，多了一份保障。'},
+ {l:'修教育學程',e:{LAN:1,sk:'教育學程',st:8},r:'你開始學怎麼站上講台。',dis:()=>has('教育學程')},
+];
+const BIZ_FOCUS=[
+ {l:'衝業績、找客戶',s:'公司成長快，壓力很大',pb:2,e:{SOC:1,st:20,soc:1},r:'你每天跑客戶、打電話、參加展覽。'},
+ {l:'打磨產品',s:'品質提升，長期加分',pb:1.5,e:()=>({[pick(['INT','ART'])]:1,st:12,biz:4}),r:'你一次又一次地改產品，直到自己也想買。'},
+ {l:'找資金',s:'募資、貸款、申請補助',pb:.5,e:()=>Math.random()<.35+S.st.SOC*.05+(has('人脈')?.15:0)?{biz:15,m:10,st:12,SOC:1}:{st:15,WIL:1},r:'簡報改了二十版，你見了十幾位投資人和銀行。'},
+ {l:'照顧自己',s:'壓力大降，公司成長慢',pb:-.5,e:{st:-25},r:'你強迫自己週末關機。老闆倒了，公司也會倒。'},
+ {l:'收掉公司，去找工作',s:'回到職業選單',swap:true},
+];
+const WORK_FOCUS=[
+ {l:'拚升遷',s:'績效加成，壓力很大',pb:2,e:{WIL:1,st:20},r:'你接下最難的專案，常常最後一個離開辦公室。'},
+ {l:'進修新技能',s:'學新東西，長期加分',pb:.8,e:()=>({INT:1,sk:pick(['AI協作','外語','證照','管理','職業駕照']),st:10}),r:'下班後上課、假日讀書，你感覺自己一直在升級。'},
+ {l:'工作生活平衡',s:'壓力大降，績效持平',pb:-.3,e:{st:-25},r:'準時下班、運動、睡飽。原來生活可以這樣過。'},
+ {l:'經營人脈',s:'社交與機會',pb:1,e:{SOC:1,sk:'人脈',st:5,soc:1},r:'聚會、研討會、幫同事忙，機會開始找上門。'},
+ {l:'轉換跑道',s:'回到職業選單，換一條路',swap:true},
+];
+
+/* ---------- 狀態 ---------- */
+let S=null;
+function newS(){return{name:'',g:'x',age:15,st:{},stress:20,m:0,sk:[],stage:'title',hs:null,track:null,voc:null,dept:null,deg:false,study:0,fails:0,gpaS:0,gpaN:0,extra:0,uy:0,log:[],used:[],career:null,sal:0,ct:0,cturns:4,satS:0,satN:0,rolls:3,fam:2,prep:0,pb:0,retake:false,army:false,prepYear:false,hol:{R:0,I:0,A:0,S:0,E:0,C:0},val:{'收入':0,'穩定':0,'自由':0,'意義':0,'成就':0,'生活平衡':0},hood:pick(['#3b5dc9','#b13e53','#38b764','#5d275d','#ef7d57'])};}
+const has=s=>S.sk.includes(s);
+const hasT=t=>(S.tr||[]).includes(t);
+const log=t=>S.log.push([S.age,t]);
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+function ck(name,arg){S.ck=[name,arg];LS.set('jcl-save',S)}
+function topStats(){return Object.keys(STN).sort((a,b)=>S.st[b]-S.st[a])}
+const fitOf=c=>(S.st[c.k[0]]+S.st[c.k[1]])/2;
+function recsFor(n){return CAREERS.filter(c=>c.id!=='svc').slice().sort((a,b)=>fitOf(b)-fitOf(a)).slice(0,n)}
+function deptFit(){const d=D[S.dept];return d?(S.st[d.k[0]]+S.st[d.k[1]])/2:5}
+const stars=f=>'★'.repeat(clamp(Math.round(f/2),1,5))+'☆'.repeat(5-clamp(Math.round(f/2),1,5));
+
+/* ---------- 效果 ---------- */
+function fx(e){
+ if(typeof e==='function') e=e();
+ const out=[];
+ for(const k in e){const v=e[k];
+  if(STN[k]){const b=S.st[k];S.st[k]=clamp(b+v,1,10);const d=S.st[k]-b;if(d)out.push([`${STN[k]} ${d>0?'+':''}${d}`,d>0?'up':'dn'])}
+  else if(k==='st'){let vv=v;if(v>0){if(hasT('完美主義'))vv*=1.25;if(hasT('高敏感'))vv*=1.15;if(hasT('樂觀'))vv*=.8;vv=Math.round(vv)}const b=S.stress;S.stress=clamp(b+vv,0,100);const d=S.stress-b;if(d)out.push([`壓力 ${d>0?'+':''}${d}`,d>0?'dn':'up'])}
+  else if(k==='m'){S.m=Math.round((S.m+v)*10)/10;out.push([`存款 ${v>0?'+':''}${v} 萬`,v>0?'up':'dn'])}
+  else if(k==='sk'){[].concat(v).forEach(x=>{if(!has(x)){S.sk.push(x);out.push([`習得：${x}`,'skc'])}})}
+  else if(k==='study'){S.study+=v;if(v)out.push([`讀書進度 ${v>0?'↑':'↓'}`,v>0?'up':'dn'])}
+  else if(k==='perf'){S.pb+=v;if(v)out.push([`表現 ${v>0?'↑':'↓'}`,v>0?'up':'dn'])}
+  else if(k==='soc'){if(hasT('社交焦慮')){S.expo=(S.expo||0)+1;S.stress=clamp(S.stress+8,0,100);out.push(['社交焦慮：壓力 +8','dn']);if(S.expo>=4){S.tr=S.tr.filter(t=>t!=='社交焦慮');log('一次次練習後，社交焦慮明顯減輕了');out.push(['社交焦慮減輕了！','skc']);learnPsy('漸進式暴露',out)}}else if(hasT('內向')){S.stress=clamp(S.stress+3,0,100);out.push(['內向：社交有點累 +3','dn'])}}
+  else if(k==='avoid'){if(hasT('社交焦慮'))S.expo=Math.max(0,(S.expo||0)-1)}
+  else if(k==='psy'){[].concat(v).forEach(x=>learnPsy(x,out))}
+  else if(k==='biz'){if(S.biz!=null){const b=S.biz;S.biz=clamp(b+v,0,100);const d=S.biz-b;if(d)out.push([`公司體質 ${d>0?'+':''}${d}`,d>0?'up':'dn'])}}
+  else if(k==='sal'){if(S.sal){S.sal*=v;out.push([`月薪 ${v>=1?'+':''}${Math.round((v-1)*100)}%`,v>=1?'up':'dn'])}}
+ }
+ return out;
+}
+function learnPsy(x,out){const L=LS.get('jcl-psy',[]);if(!L.includes(x)){L.push(x);LS.set('jcl-psy',L)}out&&out.push([`心理小知識：${x}`,'psyc'])}
+function cont(fn){return ()=>{if(S&&S.stress>=100)burn(fn);else fn()}}
+function burn(fn){
+ S.stress=55;const k=pick(Object.keys(STN));const c=fx({[k]:-1});S.pb-=1.5;log('壓力爆表，身心俱疲，被迫停下來休息');
+ go('你撐不住了。\n失眠、胃痛、看到訊息就心悸，身體逼你停下來好一陣子。\n\n真實人生裡遇到這種時候，請找信任的人聊聊，或去學校輔導室、身心科。衛福部安心專線 1925 是 24 小時免費的。求助不是軟弱，是保養。',[{l:'慢慢站起來',f:fn}],{chips:c});
+}
+
+/* ---------- 畫面輸出 ---------- */
+let typing=null;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt=t=>esc(t).replace(/【(.+?)】/g,'<b class="hl">$1</b>').replace(/\n/g,'<br>');
+const DATA_RE=/(\d{4} ?年(?!.*【)|\d+(\.\d+)? ?%|\d+(\.\d+)? ?倍|調查|統計|分數來源)/;
+function splitData(t){
+ const data=[];const lines=t.split('\n').map(line=>{if(/【/.test(line)&&!/分數來源/.test(line))return line;const ss=line.split(/(?<=。)/);const keep=[];ss.forEach(x=>{if(DATA_RE.test(x)&&!/【/.test(x))data.push(x.trim());else keep.push(x)});return keep.join('')});
+ const main=lines.join('\n').replace(/\n{3,}/g,'\n\n').trim();
+ if(!main||!data.length)return[t,[]];
+ return[main,data];
+}
+function typeText(t){
+ const el=$('#txt');clearInterval(typing);
+ const done=()=>{clearInterval(typing);el.innerHTML=fmt(t)};
+ if(reduce){done();return}
+ let i=0;el.textContent='';
+ typing=setInterval(()=>{i+=2;el.textContent=t.slice(0,i);if(i>=t.length)done()},16);
+ el.onclick=done;
+}
+function go(text,choices,o={}){
+ const [mainT,dataL]=splitData(text);typeText(mainT);
+ {const dv=$('#data');if(dataL.length){const op=LS.get('jcl-dataopen',false);dv.innerHTML=`<details class="data"${op?' open':''}><summary>看真實數據（${dataL.length}）</summary>${dataL.map(x=>`<p>${fmt(x)}</p>`).join('')}</details>`;dv.querySelector('details').addEventListener('toggle',e=>LS.set('jcl-dataopen',e.target.open))}else dv.innerHTML=''}
+ $('#chips').innerHTML=(o.chips||[]).map(([t,c])=>`<span class="chip ${c}">${esc(t)}</span>`).join('');
+ const ex=$('#extra');const pvh=o.pv?`<div class="pv"><b>⇄ 換位思考</b>${esc(o.pv)}</div>`:'';ex.hidden=!(o.html||pvh);ex.innerHTML=pvh+(o.html||'');
+ const ch=$('#ch');ch.innerHTML='';
+ choices.forEach(c=>{
+  if(c.sep){const d=document.createElement('div');d.className='sep';d.textContent=c.sep;ch.appendChild(d);return}
+  const b=document.createElement('button');b.type='button';b.className='btn'+(c.cls?' '+c.cls:'');
+  b.innerHTML=`<span class="l">${esc(c.l)}</span>${c.s?`<span class="s">${esc(c.s)}</span>`:''}`;
+  if(c.dis)b.disabled=true;else b.onclick=c.f;
+  ch.appendChild(b);
+ });
+ hud();
+ const box=$('#box');const r=box.getBoundingClientRect();
+ if(r.top<0||r.top>innerHeight*.6)box.scrollIntoView({block:'start',behavior:reduce?'auto':'smooth'});
+ if(o.after)o.after();
+}
+function hud(){
+ const h=$('#hud');
+ if(!S||!S.st.INT){h.hidden=true;return}
+ h.hidden=false;
+ const stage={create:'角色建立',jh:'國三',hs:S.hs==='voc'?'高職':'高中',exam:'升學考試',uni:'大學',grad:'研究所',army:'服役',pick:'找工作',work:'職場',end:'回顧'}[S.stage]||'';
+ const extra=S.stage==='work'||S.stage==='end'?(S.career?`<span>職業 <b style="font-family:var(--px);font-size:13px">${esc(CAR[S.career].n)}</b></span><span>月薪 <b>${S.sal.toFixed(1)}</b> 萬</span>`:''):
+  S.gpaN?`<span>GPA <b>${(S.gpaS/S.gpaN).toFixed(2)}</b></span>`:'';
+ const sc=Math.round(S.stress/5);
+ h.innerHTML=`<div class="who"><b>${esc(S.name||'無名氏')}</b><span class="tag y">${S.age} 歲</span>${stage?`<span class="tag">${stage}</span>`:''}${S.dept&&['uni','grad','pick','work','end','army'].includes(S.stage)?`<span class="tag" style="background:var(--hot)">${S.abroad?ABROAD[S.abroad].n+'・':''}${esc(D[S.dept].n)}</span>`:''}</div>
+ <div class="stats">${Object.keys(STN).map(k=>`<div class="st" title="${STD[k]}"><span>${STN[k]}</span><div class="bar" style="--c:${STC[k]}">${Array.from({length:10},(_,i)=>`<i class="${i<S.st[k]?'on':''}"></i>`).join('')}</div><span class="v">${S.st[k]}</span></div>`).join('')}</div>
+ <div class="stress"><span>壓力</span><div class="bar" style="--c:${S.stress>=75?'var(--bad)':S.stress>=50?'var(--hot)':'var(--ok)'}">${Array.from({length:20},(_,i)=>`<i class="${i<sc?'on':''}"></i>`).join('')}</div><span class="v" style="font-family:var(--num);font-size:9px;text-align:right">${S.stress}</span></div>
+ ${S.biz!=null&&S.career&&CAR[S.career].startup?`<div class="stress biz"><span>公司</span><div class="bar" style="--c:${S.biz<25?'var(--bad)':S.biz<50?'var(--hot)':'#c08cf0'}">${Array.from({length:20},(_,i)=>`<i class="${i<Math.round(S.biz/5)?'on':''}"></i>`).join('')}</div><span class="v" style="font-family:var(--num);font-size:9px;text-align:right">${S.biz}</span></div>`:''}
+ <div class="meta">${S.goal&&CAR[S.goal]?`<span>目標 <b style="font-family:var(--px);font-size:13px;color:var(--acc)">${esc(CAR[S.goal].n)}</b></span>`:''}<span>出生 <b style="font-family:var(--px);font-size:13px">${esc(S.born||'')}</b></span>${S.house&&S.stage==='uni'?`<span>住處 <b style="font-family:var(--px);font-size:13px">${HOUSE[S.house]}</b></span>`:''}<span>家境 <b style="font-family:var(--px);font-size:13px">${FAM[S.fam]}</b></span><span>存款 <b>${Math.round(S.m)}</b> 萬</span>${S.debt?`<span>負債 <b>${Math.round(S.debt)}</b> 萬</span>`:''}${extra}</div>
+ ${(S.sk.length||(S.tr||[]).length)?`<div class="sk">${(S.ids||[]).map(x=>`<span class="t" title="${esc(IDS[x].d)}">${esc(idLabel())}</span>`).join('')}${(S.tr||[]).map(x=>`<span class="t" title="${esc(TRAITS[x].d)}">${esc(x)}</span>`).join('')}${S.sk.map(x=>`<span>${esc(x)}</span>`).join('')}</div>`:''}`;
+}
+
+/* ---------- 像素場景 ---------- */
+const cv=$('#scene'),cx=cv.getContext('2d');const W=128,H=56;let scene='title',tick=0;
+const R=(x,y,w,h,c)=>{cx.fillStyle=c;cx.fillRect(x,y,w,h)};
+function setScene(k){scene=k;draw()}
+function skyline(col,win,seed){
+ let s=seed||7;const rand=()=>{s=(s*9301+49297)%233280;return s/233280};let x=0;
+ while(x<W){const w=6+Math.floor(rand()*9),h=8+Math.floor(rand()*20);
+  if(x<92||x>110){R(x,H-12-h,w,h,col);if(win)for(let yy=H-10-h;yy<H-14;yy+=4)for(let xx=x+1;xx<x+w-1;xx+=3)if(rand()>.55)R(xx,yy,1,2,win);}
+  x+=w+1;}
+ const tx=97;R(tx+3,2,2,7,col);
+ for(let i=0;i<8;i++){R(tx,9+i*4,8,4,col);R(tx-1,12+i*4,10,1,col);if(win&&i%2===0)R(tx+2,10+i*4,4,1,win)}
+ R(tx-2,41,12,H-12-41,col);
+}
+const SPR=['....HHHH....','..HHHHHHHH..','..HHHHHHHH..','..HSSSSSSH..','..SSESSESS..','..SSSSSSSS..','...SSMMSS...','....SSSS....','..OOOCCOOO..','.OOOOCCOOOO.','.SOOOOOOOOS.','.SOOOOOOOOS.','..PPPPPPPP..','..PPP..PPP..','..PPP..PPP..','..KKK..KKK..'];
+function outfit(){
+ if(!S||['title','create','jh'].includes(S.stage))return{O:'#94b0c2',C:'#566c86',P:'#333c57'};
+ if(['hs','exam'].includes(S.stage))return{O:'#f4f4f4',C:S.hs==='voc'?'#ef7d57':'#3b5dc9',P:'#29366f'};
+ if(['uni','grad','army'].includes(S.stage))return S.stage==='army'?{O:'#5a6b3a',C:'#3e4a28',P:'#3e4a28'}:{O:S.hood,C:'#f4f4f4',P:'#333c57'};
+ if(S.career){const c=CAR[S.career];const col=CATCOL[c.cat];return c.cat==='醫療'?{O:'#f4f4f4',C:'#41a6f6',P:'#29366f'}:{O:col,C:c.cat==='商管'?'#b13e53':'#f4f4f4',P:'#1a1c2c'}}
+ return{O:S.hood,C:'#f4f4f4',P:'#333c57'};
+}
+function sprite(x,y){
+ const o=outfit();const pal={H:'#2a1d1d',S:'#f2c79a',E:'#1a1c2c',M:'#b13e53',O:o.O,C:o.C,P:o.P,K:'#1a1c2c'};
+ SPR.forEach((row,j)=>{for(let i=0;i<12;i++){const ch=row[i];if(ch!=='.')R(x+i,y+j,1,1,pal[ch])}});
+}
+function draw(){
+ tick++;const bob=(!reduce&&tick%2)?1:0;
+ if(scene==='title'||scene==='end'){
+  if(scene==='title'){R(0,0,W,H,'#1a1c2c');for(let i=0;i<22;i++){const sx=(i*37)%W,sy=(i*13)%30;if((i+tick)%5)R(sx,sy,1,1,'#f4f4f4')}R(14,6,6,6,'#ffcd75');R(16,6,4,4,'#1a1c2c')}
+  else{const b=['#5d275d','#b13e53','#ef7d57','#ffcd75'];b.forEach((c,i)=>R(0,i*9,W,9,c));R(20,22,10,6,'#fff3c0')}
+  skyline(scene==='title'?'#29366f':'#3a1f3d',scene==='title'?'#ffcd75':'#ef7d57',7);
+  R(0,H-12,W,12,scene==='title'?'#333c57':'#5d275d');for(let i=0;i<W;i+=8)R(i,H-7,4,1,'#94b0c2');
+ }else if(scene==='school'){
+  R(0,0,W,H,'#e7d7b4');R(0,0,W,3,'#c9b48a');
+  R(10,8,62,26,'#3b5d3b');R(9,7,64,1,'#8a6a3a');R(9,34,64,2,'#8a6a3a');
+  R(14,13,20,1,'#e8e8e8');R(14,17,30,1,'#e8e8e8');R(14,21,14,1,'#e8e8e8');R(48,13,18,14,'#2f4c2f');R(52,16,10,1,'#ffcd75');R(52,20,8,1,'#ffcd75');
+  R(84,8,32,22,'#73eff7');R(99,8,2,22,'#c9b48a');R(84,18,32,2,'#c9b48a');R(88,20,6,10,'#a7f070');
+  R(0,H-12,W,12,'#b08452');for(let i=0;i<W;i+=16)R(i,H-12,1,12,'#8a6a3a');
+  R(8,H-18,22,4,'#8a6a3a');R(10,H-14,2,6,'#5a4228');R(26,H-14,2,6,'#5a4228');R(96,H-18,22,4,'#8a6a3a');R(98,H-14,2,6,'#5a4228');R(114,H-14,2,6,'#5a4228');
+ }else if(scene==='campus'){
+  R(0,0,W,H,'#73b7f6');R(10,6,14,4,'#f4f4f4');R(14,4,8,2,'#f4f4f4');R(78,10,12,3,'#f4f4f4');
+  R(34,14,60,30,'#b13e53');R(30,12,68,3,'#5d275d');for(let i=0;i<6;i++)R(38+i*9,20,5,7,'#ffcd75');for(let i=0;i<6;i++)R(38+i*9,31,5,7,'#ffcd75');R(60,34,8,10,'#5d275d');
+  const palm=(x)=>{R(x,16,2,28,'#8a6a3a');R(x-6,14,14,2,'#38b764');R(x-4,12,10,2,'#38b764');R(x-7,16,3,2,'#38b764');R(x+6,16,3,2,'#38b764')};
+  palm(14);palm(112);
+  R(0,H-12,W,12,'#38b764');R(0,H-12,W,2,'#a7f070');R(54,H-12,20,12,'#c9b48a');
+ }else{
+  R(0,0,W,H,'#9fd4f8');R(18,8,10,3,'#f4f4f4');R(90,6,14,3,'#f4f4f4');
+  skyline('#566c86','#c8e6ff',11);
+  R(0,H-12,W,12,'#333c57');for(let i=0;i<W;i+=12)R(i,H-6,6,1,'#ffcd75');
+ }
+ if(scene!=='title'||S)sprite(58,H-19-bob);
+}
+setInterval(()=>{if(!reduce&&!document.hidden)draw()},450);
+
+/* ================= 遊戲流程 ================= */
+/* ----- 興趣與價值觀 ----- */
+function reflect(kind,next){
+ if(kind==='hol')go('▼ 停下來想一想。\n回想這段時間，做哪一類事情時最容易忘記時間？\n（也可以用現實中的你來回答。沒有標準答案，選最接近真實感受的。）',HOLQ.map(([k,t])=>({l:t,f:()=>{S.hol[k]+=2;next()}})));
+ else go('▼ 停下來想一想。\n如果未來的工作只能完全滿足一件事，你最不想放棄的是？',VALS.map(v=>({l:v,s:VALD[v],f:()=>{S.val[v]+=2;next()}})));
+}
+function myHol(){const c=LS.get('jcl-compass',null);const h=Object.assign({R:0,I:0,A:0,S:0,E:0,C:0});const add=o=>{if(o)for(const k in o)h[k]+=o[k]};add(c&&c.hol);add(S&&S.hol);return h}
+function myVal(){const c=LS.get('jcl-compass',null);const v={};VALS.forEach(k=>v[k]=0);const add=o=>{if(o)for(const k in o)v[k]+=o[k]};add(c&&c.val);add(S&&S.val);return v}
+const topK=o=>Object.keys(o).sort((a,b)=>o[b]-o[a]);
+function holMatch(c,h){const t=topK(h);const tot=Object.values(h).reduce((a,b)=>a+b,0);if(!tot)return 0;const sc=(k,w)=>{const i=t.indexOf(k);return i===0?3*w:i===1?2*w:i===2?1*w:0};return(sc(c.h[0],2)+sc(c.h[1],1))/9}
+function valMatch(c,v){const t=topK(v);const tot=Object.values(v).reduce((a,b)=>a+b,0);if(!tot)return 0;return c.v.reduce((a,x)=>a+(t.indexOf(x)===0?1:t.indexOf(x)===1?.6:t.indexOf(x)===2?.3:0),0)/1.6}
+const PAIRS=[['R','I'],['A','S'],['E','C'],['R','A'],['I','S'],['C','R'],['E','I'],['S','C'],['A','E'],['R','S'],['I','C'],['A','C'],['R','E'],['I','A'],['S','E']];
+const ACT={R:['組裝家具或修理壞掉的東西','在戶外或工廠操作機器','學一門手藝，像木工、烹飪、水電'],I:['做實驗找出問題的原因','讀一篇深入的科學或歷史文章','解一道很難的數學或邏輯題'],A:['畫畫、寫故事或拍影片','設計一張海報或一個房間','上台表演或玩音樂'],S:['教同學功課','當志工陪伴老人或小朋友','聽朋友說心事、給他建議'],E:['當社團社長、帶大家辦活動','擺攤賣東西、想辦法賺錢','說服別人支持你的想法'],C:['把一堆資料整理成清楚的表格','規劃一趟旅行的每個細節和預算','幫社團管帳、做紀錄']};
+function compass(i,acc){
+ acc=acc||{hol:{R:0,I:0,A:0,S:0,E:0,C:0},val:{}};
+ if(i===undefined)return go('職涯羅盤\n\n這是一個根據霍蘭德（Holland）職業興趣理論設計的小測驗。學校輔導室的興趣量表很多都源自這個理論。\n\n接下來有 15 題二選一，再加上 2 題價值觀。憑直覺選，不用管自己「做不做得到」。',[{l:'開始',cls:'primary',f:()=>compass(0,acc)},{l:'回標題',f:title}]);
+ if(i<PAIRS.length){const [a,b]=PAIRS[i];const pa=ACT[a][i%3],pb=ACT[b][(i+1)%3];
+  return go(`第 ${i+1} / ${PAIRS.length+2} 題\n這兩件事，你比較想做哪一個？`,[{l:pa,f:()=>{acc.hol[a]+=2;compass(i+1,acc)}},{l:pb,f:()=>{acc.hol[b]+=2;compass(i+1,acc)}},{l:'兩個都還好',cls:'sm',f:()=>{acc.hol[a]++;acc.hol[b]++;compass(i+1,acc)}}]);}
+ const vi=i-PAIRS.length;
+ if(vi<2)return go(`第 ${i+1} / ${PAIRS.length+2} 題\n${vi===0?'對未來的工作，你最在乎的是？':'那第二在乎的呢？'}`,VALS.filter(v=>!acc.val[v]).map(v=>({l:v,s:VALD[v],f:()=>{acc.val[v]=vi===0?3:2;compass(i+1,acc)}})));
+ LS.set('jcl-compass',acc);learnPsy('霍蘭德興趣理論');
+ const t=topK(acc.hol).slice(0,3);
+ const rec=CAREERS.filter(c=>c.id!=='svc').map(c=>({c,m:holMatch(c,acc.hol)*.75+valMatch(c,acc.val)*.25})).sort((a,b)=>b.m-a.m).slice(0,8);
+ const html=`<div class="card"><h3>你的興趣代碼：${t.join('')}</h3>${t.map(k=>`<p><b style="font-weight:700;color:var(--acc)">${HOL[k]} ${k}</b>　${HOLD[k]}</p>`).join('')}<p class="k">你最在乎：${topK(acc.val).slice(0,2).join('、')}</p></div>
+ <div class="card"><h3>可能適合你的職業</h3>${rec.map(({c})=>`<p><b style="font-weight:700;color:var(--acc)">${esc(c.n)}</b>　<span class="k">${c.h}｜${c.v.join('、')}</span><br><span class="k">${esc(pathOf(c))}</span></p>`).join('')}</div>
+ <div class="card"><h3>現實中可以先試試</h3>${t.slice(0,2).map(k=>`<p><b style="font-weight:700;color:var(--cool)">${HOL[k]}</b>：${HOLTRY[k]}</p>`).join('')}<p>找 2～3 位正在做這些工作的人，請他們聊聊一天的工作在做什麼、最累的是什麼（這叫「資訊訪談」，是很有效的職涯探索方法）。</p><p class="k">這只是一個起點。興趣會隨經驗改變，測驗結果也不是命運。學校輔導室可以做更完整的測驗與諮詢。</p></div>`;
+ go('測驗完成！\n結果已經存起來了。接下來在遊戲裡找工作時，跟你興趣相符的職業會標上「♥」。',[{l:'帶著結果開始新的人生',cls:'primary',f:create},{l:'回標題',f:title}],{html});
+}
+/* ----- 從不同階段開始 ----- */
+function pickStart(){
+ const g=S.goal&&CAR[S.goal];
+ go(`要從人生的哪個階段開始？\n選你現在正站著的岔路口，就能直接練習那個時刻的選擇。${g?`\n\n你的目標：【${g.n}】。遊戲中跟目標有關的選項會標上「◎」。`:''}`,[
+  {l:'國三，會考放榜（完整人生）',s:'15 歲開始：選高中或高職、選組、考學測',cls:'primary',f:jh},
+  {l:'高三，學測／統測放榜',s:'18 歲開始：直接填志願、選學校和住處',f:startHS3},
+  {l:'大學快畢業',s:'22 歲開始：選好讀了什麼系，直接面對工作、研究所或出國',f:startGrad},
+ ]);
+}
+function startHS3(){
+ const g=S.goal&&CAR[S.goal];const gtr=g&&Array.isArray(g.deg)?new Set(g.deg.filter(x=>D[x]).map(x=>D[x].tr)):new Set();
+ const mark=t=>gtr.has(t)||(t!=='voc'&&gtr.has('both'))?'◎ ':'';
+ const set=(hs,tr,voc,label)=>{S.hs=hs;S.track=tr;S.voc=voc;S.age=18;S.study=Math.round((2.2+(S.st.WIL-5)*.25+(S.st.INT-5)*.15)*10)/10;S.log.push([0,`出生在${S.born}`]);log(`從高三開始：${label}`);setScene('school');exam()};
+ go('你高中讀的是什麼？\n讀書進度會依你的智力和意志估算。',[
+  {l:mark('nat')+'普通高中・自然組',s:'學測看重智力',f:()=>set('gen','nat',null,'普通高中自然組')},
+  {l:mark('soc')+'普通高中・社會組',s:'學測看重語文',f:()=>set('gen','soc',null,'普通高中社會組')},
+ ].concat(Object.entries(VOC).map(([id,v])=>({l:mark(id)+'高職・'+v.n,s:v.d,f:()=>set('voc',null,id,'高職'+v.n)}))).concat([{l:'回上一步',cls:'sm',f:pickStart}]));
+}
+function startGrad(){
+ const g=S.goal&&CAR[S.goal];const gd=g&&Array.isArray(g.deg)?g.deg:[];
+ collegeView(Object.entries(D).filter(([id])=>COLLEGES.some(c=>c[2].includes(id))),'你大學讀的是什麼系？\n成績會依這個系吃重的資質估算。',([id,d])=>{
+  const fit=(S.st[d.k[0]]+S.st[d.k[1]])/2;
+  return{l:(gd.includes(id)||(S.goal&&(REL[id]||[]).includes(S.goal))?'◎ ':'')+d.n,cls:'sm',s:`適性 ${stars(fit)}（${STN[d.k[0]]}+${STN[d.k[1]]}）｜${d.y} 年`,f:()=>{
+   S.dept=id;S.hs='gen';S.track=d.tr==='soc'?'soc':'nat';S.tier='一般國立大學';S.sreg=S.home;S.age=18+d.y;
+   S.gpaS=0;S.gpaN=0;for(let y=0;y<d.y;y++){S.gpaS+=clamp(2.0+(fit-(d.th-43)/6+rnd(-1.5,1.5))*.32,.8,4.3);S.gpaN++}
+   const top=topStats()[0];fx({sk:{INT:'研究',LAN:'外語',ART:'作品集',PHY:'證照',SOC:'人脈',WIL:'實習'}[top]});
+   S.log.push([0,`出生在${S.born}`]);log(`從大學畢業開始：${d.n}`);setScene('campus');graduate();
+  }};
+ },[{l:'回上一步',cls:'sm',f:pickStart}]);
+}
+/* ----- 反向規劃：我想成為… ----- */
+const SKHOW={'程式':'高中「自學興趣」選寫程式，或大學「自學技能」選寫程式','作品集':'高中自學畫畫設計，或大學做作品集、參加競賽','外語':'自學外語、考多益、遊學、交換或留學','證照':'大學考專業證照、高職畢業、工作時進修','自媒體':'高中拍影片，或大學經營頻道','實習':'大學選「找實習」或申請暑期實習','創業經驗':'大學加入同學的創業，或創業收掉後也會獲得','人脈':'參加社團系學會、當兵時跟弟兄打好關係、工作時經營人脈','教育學程':'大學修教育學程','研究所':'大學畢業後考研究所或出國讀碩士','博士':'讀完碩士後繼續讀博士','海外學歷':'出國讀大學或碩士','職業駕照':'工作時選「進修新技能」','管理':'工作時接下主管職或進修'};
+function goalPick(){
+ const cats=CATS.filter(c=>c!=='全部');
+ go('我想成為…\n選一個你想了解的職業，看看從現在開始要怎麼走到那裡。先選類別。',cats.map(cat=>{const list=CAREERS.filter(c=>c.cat===cat);return list.length?{l:cat,s:list.slice(0,4).map(c=>c.n).join('、')+(list.length>4?'…':''),f:()=>go(`【${cat}】你想成為？`,list.map(c=>({l:c.n,cls:'sm',s:`月薪約 ${c.pay[0]}–${c.pay[1]} 萬｜${pathOf(c)}`,f:()=>roadmap(c.id)})).concat([{l:'換一個類別',cls:'sm',f:goalPick}]))}:null}).filter(Boolean).concat([{l:'回標題',cls:'sm',f:title}]));
+}
+function roadmap(id){
+ const c=CAR[id];$('#codex').hidden=true;setScene('city');
+ const steps=[];
+ const trN={nat:'普通高中自然組',soc:'普通高中社會組',both:'自然組或社會組都可以'};
+ if(Array.isArray(c.deg)){
+  const ds=c.deg.filter(x=>D[x]);const trs=[...new Set(ds.map(x=>D[x].tr))].map(t=>trN[t]||('高職'+(VOC[t]?VOC[t].n:'')));
+  steps.push(['高中',`${trs.join('、')}。`]);
+  steps.push(['大學',ds.map(x=>`${D[x].n}（${collegeOf(x)}，${D[x].tr.startsWith('v_')?'科大':`頂尖國立門檻約 ${D[x].th} 級分`}）`).join('、')+(c.alt?`。\n沒有相關學歷，也可以靠技能：${c.alt.join('或')}。`:'。')]);
+ }else if(c.deg==='any')steps.push(['大學','任何科系的大學學歷都可以'+(c.alt?`，或靠技能：${c.alt.join('或')}。`:'。')]);
+ else steps.push(['學歷',c.alt?`不限學歷，但需要技能：${c.alt.join('或')}。`:'不限學歷，看能力和經驗。']);
+ const rel=Object.keys(REL).filter(k=>REL[k].includes(id)&&D[k]&&!(Array.isArray(c.deg)&&c.deg.includes(k)));
+ if(rel.length)steps.push(['相關科系',`讀${rel.map(k=>D[k].n).join('、')}，也算本科相關。`]);
+ if((c.sk||[]).includes('研究所')||c.pref)steps.push(['研究所',(c.sk||[]).includes('研究所')?'一定要讀碩士。':'多數職缺偏好碩士，大學畢業也能進，但起薪較低。']);
+ if((c.sk||[]).includes('博士'))steps.push(['博士','要讀到博士，通常再 4 年以上。']);
+ if(c.exam)steps.push(['考試',`${EX[c.exam].n}：${EX[c.exam].d}`]);
+ if(c.seed)steps.push(['資金',`啟動資金約 ${c.seed} 萬，可以用存款、家人支援、青創貸款或找投資人。`]);
+ if(c.lv)steps.push(['升遷',c.lv.map(l=>`${l[2]}（月薪約 ${l[1]} 萬以上）`).join('、')]);
+ const sks=[...(c.sk||[]),...(c.alt||[])].filter(x=>SKHOW[x]&&x!=='研究所'&&x!=='博士');
+ const html=`<div class="card"><h3>成為${esc(c.n)}的路線</h3><ul class="tl">${steps.map(([a,t])=>`<li><span style="font-family:var(--px);font-size:13px;padding-top:0">${a}</span>${esc(t).replace(/\n/g,'<br>')}</li>`).join('')}</ul></div>
+ <div class="card"><h3>需要的資質</h3><p>最吃重：<b style="font-weight:700;color:var(--acc)">${STN[c.k[0]]}</b>、<b style="font-weight:700;color:var(--acc)">${STN[c.k[1]]}</b></p><p class="k">${STD[c.k[0]]}；${STD[c.k[1]]}</p>${c.need?`<p>門檻：${Object.keys(c.need).map(k=>`${STN[k]} ${c.need[k]} 以上`).join('、')}</p>`:''}${sks.length?`<p><span class="k">要培養的技能：</span></p>${sks.map(x=>`<p>▸ <b style="font-weight:700">${x}</b>：${SKHOW[x]}</p>`).join('')}`:''}</div>
+ <div class="card"><h3>這份工作的樣子</h3><p><span class="k">月薪：</span>起薪約 ${c.pay[0]} 萬，資深約 ${c.pay[1]} 萬</p><p><span class="k">適合的興趣類型：</span>${HOL[c.h[0]]}、${HOL[c.h[1]]}　<span class="k">能滿足：</span>${c.v.join('、')}</p><p><span class="k">要學的：</span>${esc(c.learn)}</p><p><span class="k">挑戰：</span>${esc(c.chal)}</p><p><span class="k">對台灣的貢獻：</span>${esc(IMPACT[c.cat]||'')}</p></div>
+ <div class="card"><h3>現實中，這個月可以先做的事</h3><p>▸ ${HOLTRY[c.h[0]]}</p><p>▸ 找一位正在當${esc(c.n)}的人，請他聊聊一天在做什麼、最累的是什麼。</p><p>▸ 查查相關科系的課程表，看看自己對哪些課有興趣。</p><p class="k">在遊戲裡用這個目標玩一輪，你會看到這條路上真實的挑戰。</p></div>`;
+ go(`我想成為【${c.n}】。\n下面是從現在開始走到那裡的路線、要培養的能力，以及這份工作真實的樣子。`,[
+  {l:'用這個目標開始新的人生',s:'遊戲中跟目標有關的選項會標上「◎」',cls:'primary',f:()=>{LS.set('jcl-goal',id);create()}},
+  {l:'看看其他職業',f:goalPick},{l:'回標題',f:title}],{html});
+}
+/* ---------- 人生卡片 ---------- */
+async function makeCard(ttl,sat){
+ const img=$('#lifeCard');if(!img)return;
+ try{await Promise.all([document.fonts.load('900 40px "Noto Sans TC"'),document.fonts.load('16px "Press Start 2P"')])}catch(e){}
+ const W=720,H=1000,cv2=document.createElement('canvas');cv2.width=W;cv2.height=H;const g=cv2.getContext('2d');
+ const F='"Noto Sans TC",sans-serif',P='"Press Start 2P",monospace';
+ const box=(x,y,w,h,c)=>{g.fillStyle=c;g.fillRect(x,y,w,h)};
+ box(0,0,W,H,'#141322');box(16,16,W-32,H-32,'#f3f1fa');box(28,28,W-56,H-56,'#1f1d36');
+ box(28,28,W-56,120,'#2b2950');
+ g.fillStyle='#ef7d57';g.font=`900 52px ${F}`;g.fillText('人生岔路口',62,108);g.fillStyle='#ffcd75';g.fillText('人生岔路口',58,104);
+ g.fillStyle='#a3a1c4';g.font=`14px ${P}`;g.fillText('TAIWAN LIFE SIM',W-280,104);
+ // sprite
+ const o=outfit();const pal={H:'#2a1d1d',S:'#f2c79a',E:'#1a1c2c',M:'#b13e53',O:o.O,C:o.C,P:o.P,K:'#1a1c2c'};
+ box(60,176,180,220,'#141322');
+ SPR.forEach((row,j)=>{for(let i=0;i<12;i++){const ch=row[i];if(ch!=='.')box(78+i*12,200+j*12,12,12,pal[ch])}});
+ const c=CAR[S.career];
+ g.fillStyle='#ffcd75';g.font=`900 40px ${F}`;g.fillText(S.name,270,220);
+ g.fillStyle='#f3f1fa';g.font=`500 22px ${F}`;g.fillText(`${S.g==='m'?'男':'女'}・${S.age} 歲・出生在${S.born}`,270,258);
+ g.fillStyle='#73eff7';g.font=`700 28px ${F}`;g.fillText(c.n,270,306);
+ g.fillStyle='#ef7d57';g.font=`700 22px ${F}`;g.fillText(`「${ttl}」`,262,346);
+ g.fillStyle='#a3a1c4';g.font=`18px ${F}`;g.fillText(S.dept?(D[S.dept].n+(S.abroad?`（${ABROAD[S.abroad].n}）`:'')):'',270,382);
+ // stats
+ let y=440;g.font=`500 20px ${F}`;
+ Object.keys(STN).forEach((k,i)=>{const x=i%2?380:60,yy=y+Math.floor(i/2)*44;g.fillStyle='#f3f1fa';g.fillText(STN[k],x,yy+18);for(let b=0;b<10;b++)box(x+60+b*24,yy+2,20,18,b<S.st[k]?STC[k]:'#34325a')});
+ y=590;
+ const big=(lab,val,x,col)=>{g.fillStyle='#a3a1c4';g.font=`18px ${F}`;g.fillText(lab,x,y);g.fillStyle=col;g.font=`22px ${P}`;g.fillText(val,x,y+40)};
+ big('人生滿意度',String(sat),60,'#a7f070');big('月薪（萬）',S.sal.toFixed(1),270,'#ffcd75');big('存款（萬）',String(Math.round(S.m)),480,'#73eff7');
+ // path
+ y=690;g.fillStyle='#ffcd75';g.font=`700 22px ${F}`;g.fillText('人生軌跡',60,y);
+ const keys=S.log.filter(([a,t])=>/考上|畢業|成為|升任|轉職|創業|出國|碩士|博士|達成目標|回到台灣|結婚|孩子/.test(t)).slice(-6);
+ g.font=`18px ${F}`;keys.forEach(([a,t],i)=>{g.fillStyle='#41a6f6';g.fillText(`${a}歲`,60,y+38+i*34);g.fillStyle='#f3f1fa';g.fillText(t.length>26?t.slice(0,26)+'…':t,130,y+38+i*34)});
+ box(28,H-88,W-56,60,'#2b2950');g.fillStyle='#a3a1c4';g.font=`16px ${F}`;g.fillText('你會走哪一條路？',60,H-50);g.fillStyle='#ffcd75';g.font=`700 18px ${F}`;g.fillText('made by may22',W-210,H-50);
+ try{img.src=cv2.toDataURL('image/png')}catch(e){}
+}
+function shareText(ttl,sat){return `我在「人生岔路口」活到 ${S.age} 歲，成為${CAR[S.career].n}，稱號是「${ttl}」，人生滿意度 ${sat}。你會走哪條路？`}
+function title(){
+ S=null;setScene('title');
+ const sv=LS.get('jcl-save',null);const runs=LS.get('jcl-runs',0);
+ const ch=[];
+ if(sv&&sv.ck)ch.push({l:`繼續上次的人生`,s:`${sv.name||'無名氏'}，${sv.age} 歲`,cls:'primary',f:()=>{S=sv;RESUME[S.ck[0]](S.ck[1])}});
+ const gl=LS.get('jcl-goal',null);
+ ch.push({l:'開始新的人生',s:'可以從國三、高三或大學畢業開始',cls:sv?'':'primary',f:create},{l:'我想成為…（反向規劃）',s:gl&&CAR[gl]?`目前的目標：${CAR[gl].n}`:'選一個職業，看從現在開始要怎麼走到那裡',f:goalPick},{l:'職涯羅盤測驗',s:LS.get('jcl-compass',null)?'已做過，可以重新測一次':'5 分鐘找出你的興趣類型和適合的職業',f:()=>compass()},{l:'職業圖鑑',s:`${CAREERS.length} 種職業：要學什麼、會遇到什麼挑戰`,f:openCodex},{l:'怎麼玩',f:howto});
+ if(gl&&CAR[gl])ch.push({l:'清除目標',cls:'sm',s:`不再標示「${CAR[gl].n}」的路線`,f:()=>{LS.del('jcl-goal');title()}});
+ go(`站在人生的岔路口了嗎？\n\n這裡以台灣為背景，從國中會考後開始：選高中或高職、選自然組或社會組、考學測、填志願、讀大學、找工作。\n資質是擲骰子決定的，有可能選了想讀的系卻讀不好。這很正常，現實也是這樣。${runs?`\n\n你已經活過 ${runs} 次人生。`:''}`,ch);
+}
+function howto(){
+ go('【玩法】\n可以從國三、高三或大學畢業開始；也可以先用「我想成為…」選一個目標職業，看完路線再出發。\n\n每個階段先選「這段時間怎麼用」，接著會遇到隨機事件。\n\n【六項資質】決定你讀書、工作的表現；選擇會讓它們慢慢成長。\n【壓力】滿了會倒下，被迫休息。\n【技能】像程式、作品集、外語、證照，會打開新的職業。\n\n找工作時，暗掉的職業會寫出你還缺什麼。這就是現實中「要學什麼」的提示。\n\n建議多玩幾輪，試試完全不同的路。',[{l:'了解，回標題',f:title}]);
+}
+function create(){S=newS();S.goal=LS.get('jcl-goal',null);if(S.goal&&!CAR[S.goal])S.goal=null;S.stage='create';roll();setScene('title');drawCreate()}
+function roll(){S.g=pick(['m','f']);S.name=genName(S.g);for(const k in STN)S.st[k]=clamp(Math.round(1+Math.random()*4.5+Math.random()*4.5),1,10);S.tr=[];for(const t in TRAITS)if(Math.random()<TRAITS[t].p&&S.tr.length<2)S.tr.push(t);S.expo=0;{const tot=COUNTIES.reduce((a,c)=>a+c[1],0);let r=Math.random()*tot;for(const c of COUNTIES){r-=c[1];if(r<=0){S.born=c[0];S.home=c[2];S.urban=!!c[3];break}}}S.fam=ri(1,5);S.m=[0,0,2,5,12,35][S.fam];rollIds()}
+function drawCreate(){
+ const idh=(S.ids||[]).length?`<div class="card"><h3>身分背景</h3><p><b style="font-weight:700;color:var(--cool)">${esc(idLabel())}</b>　${esc(IDS[S.ids[0]].d)}</p></div>`:'';
+ const trh=(S.tr||[]).length?`<div class="card"><h3>性格特質</h3>${S.tr.map(t=>`<p><b style="font-weight:700;color:var(--cool)">${t}</b>　${esc(TRAITS[t].d)}</p>`).join('')}</div>`:'<p class="note" style="margin:0">這次沒有抽到特別的性格特質。</p>';
+ const html=idh+trh+`<div class="statdesc">${Object.keys(STN).map(k=>`<b>${STN[k]} ${S.st[k]}</b><span>${STD[k]}</span>`).join('')}</div>
+ <p class="note" style="margin:0">出生地依各縣市人口比例隨機（新北、台中、高雄最多，連江最少）。家境依台灣家庭收支調查的五等分位，每一級出現機率都是 20%。家戶年可支配所得：${FAM.slice(1).map((f,i)=>`${f} ${FAMINC[i+1]}`).join('、')}。</p>`;
+ go(`命運的骰子擲出來了。\n你是【${S.name}】，${S.g==='m'?'男生':'女生'}，出生在【${S.born}】（${S.urban?'都市':'非都會區'}）。\n家境：【${FAM[S.fam]}】（家戶年可支配所得${FAMINC[S.fam]}），起始存款 ${S.m} 萬。${idLabel()?`\n身分：【${idLabel()}】`:''}\n\n名字、性別、出生地、家境、身分都是隨機的，就像現實一樣不能選。天生資質每項 1 到 10，平均大約 5。`,[
+  {l:`重擲人生（剩 ${S.rolls} 次）`,s:'名字、性別、出生地、資質、家境全部重抽',dis:S.rolls<=0,f:()=>{S.rolls--;roll();drawCreate()}},
+  {l:'就這樣，出發！',cls:'primary',f:pickStart},
+ ],{html});
+}
+function jh(){
+ S.stage='jh';S.age=15;setScene('school');ck('jh');
+ const cap=S.st.INT+S.st.LAN+S.st.WIL;
+ const g=cap>=22?'5A++':cap>=19?'5A':cap>=16?'4A1B':cap>=12?'2A3B':'5B';
+ if(!S.log.length){S.log.push([0,`出生在${S.born}`]);log(`國中會考 ${g}`)}
+ go(`${S.name}，15 歲，國三。\n國中會考成績出來了：【${g}】。\n接下來三年，要去哪裡？`,[
+  {l:'普通高中',s:'走學測上大學。高二分自然組或社會組',f:()=>{S.hs='gen';log('進入普通高中');hsTurn(0)}},
+  {l:'技術型高中（高職）',s:'提早學一技之長，可以考統測上科大，或畢業直接工作',f:pickVoc},
+ ]);
+}
+function pickVoc(){
+ go('高職分成很多「群」，選一個你想學的方向。',Object.entries(VOC).map(([id,v])=>({l:v.n,s:v.d,f:()=>{S.hs='voc';S.voc=id;log(`進入高職${v.n}`);hsTurn(0)}})));
+}
+function pickTrack(fn){
+ go('高二要分組了。這個選擇會決定之後能填哪些科系。',[
+  {l:'自然組',s:`數理為主：醫藥、理工、資訊、建築、護理、農學｜你的智力 ${S.st.INT}，學測自然組會比較看重智力`,f:()=>{S.track='nat';log('選了自然組');const p=pvOf('natTrack');p?go('你選了自然組。',[{l:'繼續',f:fn}],{pv:p}):fn()}},
+  {l:'社會組',s:`文史為主：法律、商管、外語、傳播、教育、社工｜你的語文 ${S.st.LAN}，學測社會組會比較看重語文`,f:()=>{S.track='soc';log('選了社會組');const p=pvOf('socTrack');p?go('你選了社會組。',[{l:'繼續',f:fn}],{pv:p}):fn()}},
+ ]);
+}
+function hsTurn(i){
+ S.stage='hs';S.age=15+i;setScene('school');ck('hsTurn',i);
+ if(S.hs==='gen'&&i===1&&!S.track)return pickTrack(()=>hsTurn(1));
+ const school=S.hs==='voc'?`高職${VOC[S.voc].n}`:'高中';
+ const nx=()=>i<2?hsTurn(i+1):exam();const gp=genderPool('hs');const after=(pre,chips)=>eventStep(gp.length&&(i===1||Math.random()<.55)?gp:HS_EV,pre,chips,(i===0||i===2)?()=>reflect(i===0?'hol':'val',nx):nx);
+ go(`${school}${NUMS[i]}年級（${S.age} 歲）。\n這一年，你把時間主要花在哪？`,HS_FOCUS.map(o=>({l:o.l,s:o.s,dis:o.dis&&o.dis(),f:()=>{
+  if(o.sub)return subPick('想深入哪個興趣？',INTERESTS,after);
+  const c=fx(o.e);after(typeof o.r==='function'?o.r():o.r,c);
+ }})));
+}
+function subPick(q,list,after){
+ go(q,list.map(o=>({l:o.l,dis:o.dis&&o.dis(),f:()=>{const c=fx(o.e);after(o.r,c)}})));
+}
+function eventStep(pool,pre,preChips,done,prePv){
+ const ok=pool.filter(e=>!S.used.includes(e.q)&&(!e.when||e.when()));
+ const ev=ok.length?pick(ok):pick(pool);S.used.push(ev.q);
+ go((pre?pre+'\n\n':'')+'▼ '+ev.q,ev.o.map(([l,e,r,cond,sp])=>({l,dis:cond&&!cond(),f:()=>{
+  if(sp==='transfer')return transfer(done);
+  if(sp==='swapjob'){log('第一份工作做不到一年就換工作');return careerPick(`${S.age} 歲，你決定換工作。\n第一份工作的經驗不會白費，你更知道自己不要什麼了。`)}
+  let c=fx(e||{});let t=r;
+  if(typeof r==='function'){const res=r();if(Array.isArray(res)){t=res[0];c=c.concat(fx(res[1]))}else t=res}
+  go(t,[{l:'繼續',f:cont(done)}],{chips:c,pv:(ev.pv&&ev.pv[S.g])||ev.pvk&&pvOf(ev.pvk)||''});
+ }})),{chips:preChips,pv:prePv||''});
+}
+
+/* ----- 升學 ----- */
+const fmtSc=sc=>S.hs==='voc'?`${Math.round(sc/60*500)}/500`:`${Math.round(sc)} 級分`;
+function exam(){
+ S.stage='exam';S.age=18;setScene('school');
+ let sc;
+ let parts;const luck=Math.round(rnd(-4,4));
+ if(S.hs==='gen'){const [a,b]=S.track==='nat'?[1.7,1]:[1,1.7];parts=[['基本分',13],['智力',S.st.INT*a],['語文',S.st.LAN*b],['意志',S.st.WIL*.5],['三年讀書進度',S.study*1.3],['臨場表現',luck]]}
+ else{parts=[['基本分',12],['智力',S.st.INT],['語文',S.st.LAN*.8],[STN[VOC[S.voc].k]+'（專業科目）',S.st[VOC[S.voc].k]*.9],['意志',S.st.WIL*.4],['三年讀書進度',S.study*1.3],['臨場表現',luck]];fx({sk:VOC[S.voc].sk})}
+ if(hasId('原住民'))parts.push([has('族語認證')?'原住民升學優待（有族語認證）':'原住民升學優待',has('族語認證')?6:2]);
+ if(S.disExam)parts.push(['身障生甄試管道',4]);
+ sc=parts.reduce((a,p)=>a+p[1],0);
+ S.score=Math.round(clamp(sc,12,60));S.att=0;
+ const brk=parts.slice(1).map(([n,v])=>`${n} ${v>=0?'+':''}${Math.round(v*10)/10}`).join('、');
+ const name=S.hs==='gen'?'學測':'統測';
+ log(`${name}：${fmtSc(S.score)}`);
+ const lv=S.hs==='voc'?(S.score>=40?'很不錯，國立科大有機會':S.score>=30?'中段':'不太理想'):(S.score>=51?'超過頂標，非常頂尖':S.score>=45?'前標以上，很不錯':S.score>=35?'在均標附近':S.score>=28?'後標附近，選擇變少了':'不太理想');
+ go(`${name}成績出爐！\n\n【${fmtSc(S.score)}】${S.hs==='gen'?'（四科，滿分 60；115 學測四科均標加起來約 35 級分）':''}\n${lv}。\n\n分數來源：${brk}${S.hs==='gen'?`\n（${S.track==='nat'?'自然組比較看重智力':'社會組比較看重語文'}）`:''}\n\n接下來要填志願。最多三個志願，沒上就要想想其他路。`,[{l:'開始填志願',cls:'primary',f:pickTier},{l:'出國讀大學',s:'不看學測分數，但要看外語和錢',f:abroadUni}].concat(S.hs==='voc'?[{l:'不升學，直接工作',s:`帶著高職學到的${VOC[S.voc].sk}進職場`,f:()=>{log('高職畢業直接就業');armyThen(()=>careerPick())}}]:[]));
+}
+function deptList(){
+ if(S.hs==='voc')return Object.entries(D).filter(([id,d])=>d.tr===S.voc||id==='kbiz');
+ return Object.entries(D).filter(([,d])=>d.tr===S.track||d.tr==='both');
+}
+function chanceLabel(df){return df>=3?'穩上':df>=0?'有機會':df>=-3?'衝衝看':'機會渺茫'}
+const TIERS=()=>S.hs==='voc'?[[0,'國立科技大學'],[8,'私立科技大學']]:[[0,'頂尖國立大學'],[6,'一般國立大學'],[12,'私立大學']];
+const thOf=(id,off)=>D[id].th-(['med','dent'].includes(id)?off*.4:off);
+function pickTier(){
+ const n=S.att+1;
+ go(`第 ${n} 志願。你的成績：【${fmtSc(S.score)}】\n先選學校類型，再選地區。越前段的學校門檻越高；私立學費比較貴。`,TIERS().map(([off,name])=>{
+  const reach=deptList().filter(([id])=>S.score>=thOf(id,off)).length;
+  return{l:name,s:`你的成績大約夠上 ${reach} 個科系`,f:()=>pickRegion(off,name)};
+ }));
+}
+function pickRegion(off,tname){
+ go(`${tname}，要選哪個地區？\n你家在【${S.born}】（${REG[S.home].n}）。去外地讀書要多花住宿、伙食和交通費。北部學校通常比較搶，東部和離島門檻比較低。`,TIER_REG[tname].map(rg=>({l:REG[rg].n+(rg===S.home?'（離家近）':'（外地）'),s:rg==='北'?'門檻略高、房租最貴':(rg==='東'||rg==='離島')?'門檻較低':'',f:()=>admit(off-REG[rg].th,tname,rg)})).concat([{l:'回上一步',cls:'sm',f:pickTier}]));
+}
+const ARTD=['musicd','fine','drama','pe'];
+function collegeView(list,head,deptBtn,extra){
+ if(list.length<=8)return go(head,list.sort((a,b)=>b[1].th-a[1].th).map(deptBtn).concat(extra));
+ go(head+'\n先選學院。',COLLEGES.map(([cn,cd,ids])=>{const sub=list.filter(([id])=>ids.includes(id));return sub.length?{l:cn,s:cd,f:()=>go(`${head}\n【${cn}】`,sub.sort((a,b)=>b[1].th-a[1].th).map(deptBtn).concat([{l:'換一個學院',cls:'sm',f:()=>collegeView(list,head,deptBtn,extra)}]).concat(extra))}:null}).filter(Boolean).concat(extra));
+}
+function admit(off,tname,rg){
+ S.att++;
+ const where=`${REG[rg].n}的${tname}`;
+ collegeView(deptList(),`第 ${S.att} 志願｜${where}。你的成績：【${fmtSc(S.score)}】\n「適性」是這個系需要的資質跟你合不合。門檻上得去，不代表讀得好。`,([id,d])=>{
+  const th=Math.round(thOf(id,off));const df=S.score-th;const fit=(S.st[d.k[0]]+S.st[d.k[1]])/2;
+  return{l:(S.goal&&((Array.isArray(CAR[S.goal].deg)&&CAR[S.goal].deg.includes(id))||(REL[id]||[]).includes(S.goal))?'◎ ':'')+d.n,cls:'sm',s:`門檻約 ${fmtSc(th)}｜${chanceLabel(df)}｜適性 ${stars(fit)}（${STN[d.k[0]]}+${STN[d.k[1]]}）｜讀起來${fit-(d.th-43)/6>=6?'輕鬆':fit-(d.th-43)/6>=4?'普通':'吃力'}｜${d.y} 年${ARTD.includes(id)?'｜要考術科':''}`,f:()=>tryDept(id,th,tname,rg)};
+ },[{l:'換學校類型或地區',cls:'sm',f:()=>{S.att--;pickTier()}}]);
+}
+function tryDept(id,th,tname,rg){
+ let p=1/(1+Math.exp(-(S.score-th)/1.6));
+ if(ARTD.includes(id))p*=clamp(S.st[id==='pe'?'PHY':'ART']/7,.25,1.1);
+ const where=`${REG[rg].n}的${tname}`;
+ if(Math.random()<p){
+  const priv=tname.includes('私立');
+  S.dept=id;S.tier=tname;S.sreg=rg;log(`考上${where}${D[id].n}`);
+  let ch=[];let loan='';
+  if(priv){if(S.m>=6)ch=fx({m:-6});else{S.debt=(S.debt||0)+20;loan='\n私立學費比國立貴一倍左右，你申請了【就學貸款】，畢業後要慢慢還。'}}
+  go(`放榜了！\n\n你考上了【${where}${D[id].n}】！${loan}\n\n這個系最吃的資質是【${STN[D[id].k[0]]}】${S.st[D[id].k[0]]} 和【${STN[D[id].k[1]]}】${S.st[D[id].k[1]]}。${deptFit()<4.5?'\n說實話，你在這兩項不算強，讀起來可能會很辛苦。':deptFit()>=7?'\n這兩項剛好是你的強項，應該會讀得很順。':''}`,[{l:'準備去讀大學',cls:'primary',f:uniStart}],{chips:ch,pv:STEM.includes(id)?pvOf('stemF'):CAREGIVE.includes(id)?pvOf('careF'):''});
+ }else if(S.att<3){
+  go(`${where}${D[id].n}……沒上。${ARTD.includes(id)?'\n藝術、體育類科系除了學測，還要看術科考試的表現。':''}`,[{l:`填第 ${S.att+1} 志願`,f:pickTier}]);
+ }else fallback();
+}
+function fallback(){
+ go('三個志願都沒上。\n不過，人生不是只有一次分發。',[
+  {l:'重考一年',s:'年齡 +1、存款 -5 萬、壓力大增，但成績可能進步',dis:S.retake||S.m<5,f:()=>{S.retake=true;S.age=19;S.study+=2.2;fx({m:-5,st:25,WIL:1});log('重考一年');S.att=0;exam2()}},
+  {l:'參加補充分發（私立缺額）',s:'只剩私立學校的缺額，門檻再低一些',f:()=>{S.att=2;S.score+=3;pickTier()}},
+  {l:'先出社會工作',s:'沒有大學學歷，直接找工作',f:()=>{log('沒有升大學，直接就業');armyThen(()=>careerPick())}},
+ ]);
+}
+function exam2(){
+ const old=S.score;let sc;
+ if(S.hs==='gen'){const [a,b]=S.track==='nat'?[1.7,1]:[1,1.7];sc=13+S.st.INT*a+S.st.LAN*b+S.st.WIL*.5+S.study*1.3+rnd(-3,4)}
+ else sc=12+S.st.INT+S.st.LAN*.8+S.st[VOC[S.voc].k]*.9+S.st.WIL*.4+S.study*1.3+rnd(-3,4);
+ S.score=Math.round(clamp(Math.max(sc,old-2),12,60));log(`重考成績：${fmtSc(S.score)}`);
+ go(`在補習班度過了一整年。\n重考成績：【${fmtSc(S.score)}】（去年 ${fmtSc(old)}）`,[{l:'再填一次志願',f:pickTier}]);
+}
+
+/* ----- 大學 ----- */
+function uniStart(){S.stage='uni';S.uy=0;S.uStart=S.age;S.fails=0;setScene('campus');if(!S.abroad&&S.sreg&&!S.house)return housing();uniTurn()}
+function housing(){
+ const same=S.home===S.sreg&&S.home!=='離島';const r=REG[S.sreg];
+ const opts=[];
+ if(same)opts.push({l:'住家裡，通勤上學',s:`最省錢，一年伙食交通約 3.5 萬${S.urban?'':'；住得比較遠，每天通勤會很累'}`,f:()=>setHouse('home')});
+ opts.push({l:'申請學校宿舍',s:`政府每學期補貼 5000 元，住起來很便宜，但要抽籤；${r.n}${r.dorm<.5?'床位很搶':'床位還算夠'}`,f:()=>{
+  const p=Math.min(.95,r.dorm+(S.fam<=2?.2:0)+(same?-.15:0));
+  if(Math.random()<p)setHouse('dorm','抽到宿舍了！');
+  else go('宿舍沒抽到。很多學校的床位不夠，台北好幾所大學的宿舍供給連需求的七成都不到。只能在外面租房子了。',rentOpts(),{chips:fx({st:5})});
+ }});
+ opts.push(...rentOpts());
+ go(`你要去${r.n}讀書了。${same?'學校離家不算遠。':`你要離開${S.born}，到外地生活了。`}\n住的地方會影響每年的開銷。依家境，家裡每年能幫你出生活費 ${FAMLIV[S.fam]} 萬，不夠的要靠存款、打工或就學貸款。`,opts);
+}
+function rentOpts(){const r=REG[S.sreg];return[
+ {l:'在外面租雅房',s:`共用衛浴，${r.n}一個月約 ${Math.round(r.ya*10000)} 元（估計）`,f:()=>setHouse('ya')},
+ {l:'在外面租套房',s:`獨立衛浴，${r.n}一個月約 ${Math.round(r.tao*10000)} 元${S.sreg==='北'?'；台大、師大附近套房平均超過 2 萬，輔大附近約 7500 元':'（估計）'}`,f:()=>setHouse('tao')}]}
+function setHouse(h,msg){
+ S.house=h;log(`大學住處：${HOUSE[h]}`);
+ go(`${msg?msg+'\n':''}住處：【${HOUSE[h]}】。\n預估每年生活開銷約 ${livingCost()} 萬（含住宿、伙食${h==='home'?'':'、回家交通'}），家裡出 ${Math.min(livingCost(),FAMLIV[S.fam])} 萬。${h==='ya'||h==='tao'?'\n簽約前看清楚租約和押金，入住時拍照存證。':''}`,[{l:'開始大學生活',cls:'primary',f:uniTurn}]);
+}
+function uniTotal(){return D[S.dept].y+S.extra}
+function uniTurn(){
+ if(S.uy>=uniTotal())return graduate();
+ S.stage='uni';S.age=S.uStart+S.uy;setScene('campus');ck('uniTurn');
+ go(`大${NUMS[Math.min(S.uy,6)]}（${S.age} 歲）｜${S.abroad?ABROAD[S.abroad].n+'・':''}${collegeOf(S.dept)}・${D[S.dept].n}\n這一年，你最想把時間花在哪？`,UNI_FOCUS.filter(o=>!o.show||o.show()).map(o=>({l:o.l,s:o.s,f:()=>{
+  if(o.act)return o.act();
+  const fin=(r,c)=>uniResult(o.pb,r,c);
+  if(o.sub==='trip')return go('想去哪裡？家裡會依家境幫忙出一部分。',TRIPS.map(t=>{if(t.ex)return{l:t.l,s:t.s,f:()=>exchange(fin)};const pay=famPay(t.c);return{l:t.l,s:`${t.s}｜你要付 ${pay} 萬`,dis:S.m<pay||(t.need&&!t.need()),f:()=>{const c=fx(Object.assign({},t.e,{m:-pay}));log(t.l);fin(t.r,c)}}}).concat([{l:'不去了',f:uniTurn}]));
+  if(o.sub)return subPick('想學哪一種技能？',UNI_SKILLS,fin);
+  fin(o.r,fx(o.e));
+ }})));
+}
+function uniResult(pb,r,c){
+ const d=D[S.dept];
+ const perf=(S.st[d.k[0]]+S.st[d.k[1]])/2+pb+(hasT('完美主義')?.5:0)+S.pb-(d.th-43)/6-(S.abroad?Math.max(0,6-S.st.LAN)*.6:0)+rnd(-2,2);S.pb=0;
+ S.gpaS+=clamp(2.0+perf*.32,.5,4.3);S.gpaN++;
+ let g;
+ if(perf>=6.5){g='期末成績名列前茅，拿到【書卷獎】！';log(`大${NUMS[S.uy]}拿到書卷獎`);c=c.concat(fx({WIL:1}))}
+ else if(perf>=3.5)g='期末成績【中上】，穩穩過關。';
+ else if(perf>=1.5)g='期末成績【低空飛過】，有幾科差點被當。';
+ else{g='期末【被當了好幾科】……';S.fails++;c=c.concat(fx({st:12}))}
+ g+=`\n（系上吃重的${STN[d.k[0]]} ${S.st[d.k[0]]}、${STN[d.k[1]]} ${S.st[d.k[1]]}${S.abroad&&S.st.LAN<6?`，加上語文 ${S.st.LAN} 讓你在國外上課比較吃力`:''}）`;
+ const lc=livingCost();
+ if(lc){const fam=Math.min(lc,FAMLIV[S.fam]);S.m-=lc-fam;c=c.concat([[`這一年生活開銷 ${lc} 萬（家裡出 ${fam}）`,'dn']]);if(S.m<0){S.debt=(S.debt||0)-S.m;c.push([`錢不夠，就學貸款 +${Math.round(-S.m)} 萬`,'dn']);S.m=0}
+  if(S.house==='home'&&!S.urban)c=c.concat(fx({st:5}));}
+ S.uy++;
+ const done=S.uy===2?()=>reflect('hol',uniTurn):()=>uniTurn();
+ if(S.fails>=2){S.fails=0;return crisis(`${r}\n\n${g}`,c,done)}
+ const gpu=genderPool('uni');
+ eventStep((S.uy===1||S.uy===3)&&gpu.length?gpu:S.abroad&&Math.random()<.55?abroadPool():UNI_EV,`${r}\n\n${g}`,c,done);
+}
+function crisis(pre,c,done){
+ log('收到二一警告');
+ go(`${pre}\n\n▼ 你收到了【二一警告】。\n${D[S.dept].n}需要的【${STN[D[S.dept].k[0]]}】【${STN[D[S.dept].k[1]]}】，好像真的不是你的強項。`,[
+  {l:'轉到更適合的科系',s:S.transferred?'你已經轉過一次系了':'重新選系，多讀一年',dis:!!S.transferred,f:()=>transfer(done)},
+  {l:'咬牙延畢',s:'多讀一年，意志 +1',f:()=>{S.extra++;const ch=fx({WIL:1,st:10});log('決定延畢');go('你決定再給自己一年。慢一點沒關係。',[{l:'繼續',f:cont(done)}],{chips:ch})}},
+  {l:'休學，先去工作',s:'沒有大學文憑，直接進職場',f:()=>{log(`從${D[S.dept].n}休學`);S.dept=null;armyThen(()=>careerPick())}},
+ ],{chips:c});
+}
+function transfer(done){
+ const cur=S.dept;
+ const opts=deptList().filter(([id,d])=>id!==cur&&d.th<=S.score+3).sort((a,b)=>((S.st[b[1].k[0]]+S.st[b[1].k[1]])-(S.st[a[1].k[0]]+S.st[a[1].k[1]])));
+ if(!opts.length)return go('目前沒有你的成績能轉進去的科系。只好先把本科念完了。',[{l:'繼續',f:done}]);
+ go('轉系要看成績和名額。下面是你轉得進去的科系，依適性排序。',opts.slice(0,8).map(([id,d])=>({l:d.n,cls:'sm',s:`適性 ${stars((S.st[d.k[0]]+S.st[d.k[1]])/2)}｜吃重：${STN[d.k[0]]}、${STN[d.k[1]]}`,f:()=>{
+  log(`從${D[cur].n}轉到${d.n}`);S.dept=id;S.extra++;S.transferred=true;
+  go(`你轉到了【${d.n}】。\n要補修一些學分，會多讀一年，但這次感覺對了一點。`,[{l:'繼續',f:done}],{chips:fx({st:-10,WIL:1})});
+ }})).concat([{l:'算了，留在原系',f:done}]));
+}
+/* ---------- 各國留學細節 ---------- */
+const AINFO={
+ us:{study:'小班討論和大量閱讀，平時作業、報告和課堂參與都算成績。教授有 office hour，要主動去問問題。大學前兩年可以先廣泛修課再決定主修。',life:'很多城市沒車不方便；醫療很貴，一定要買學校的保險。',work:'F-1 學生簽證學期中只能在校內打工，每週最多 20 小時；校外實習要另外申請 CPT 或 OPT。',learn:'主動發問和表達意見、批判性思考、跟各國同學合作。',chal:'學費全世界最貴；畢業後要留下工作，工作簽證常要抽籤。'},
+ uk:{study:'碩士大多一年就畢業，課程非常密集；上課時數不多，很靠自己讀書，期末論文和報告佔成績很大比例。',life:'天氣陰冷多雨，冬天下午四點就天黑；倫敦物價和房租很高。',work:'學位課程的學生簽證，學期中每週最多打工 20 小時。',learn:'獨立研究、學術寫作、用證據支持論點。',chal:'一年過得飛快，還沒適應就要寫畢業論文；費用高。'},
+ au:{study:'偏重實務和小組作業，常要跟不同國家的同學一起做專案、上台報告。',life:'陽光充足、生活步調輕鬆，但房租和外食很貴。',work:'學生簽證學期中每兩週最多打工 48 小時。',learn:'團隊合作、實務技能、口說和簡報能力。',chal:'物價高、離家遠；有些課程畢業後的就業市場競爭激烈。'},
+ ca:{study:'很多學校有 co-op 制度，讀書和帶薪實習交替進行，畢業時已有工作經驗。',life:'多元文化、治安普遍不錯；冬天非常冷，有些城市零下二三十度。',work:'學期中可以在校外打工，每週最多 24 小時。',learn:'實習經驗、多元文化相處、獨立生活。',chal:'冬天漫長容易憂鬱；近年政策常調整，要隨時注意最新規定。'},
+ jp:{study:'研究所以「研究室」為中心，跟指導教授和前後輩的關係很重要，要參加每週的研究討論。',life:'交通方便、治安很好、很多台灣人；生活規則多，倒垃圾都要分得很細。',work:'要申請「資格外活動許可」，每週最多打工 28 小時。',learn:'日語、做事的細緻和紀律、團隊默契。',chal:'敬語和職場上下關係；想在日本就業要參加「就活」，流程跟台灣很不一樣。'},
+ de:{study:'公立大學幾乎免學費，但非常要求自主學習；考試很難，被當重修很常見，很多人超過規定年限才畢業。',life:'生活費相對便宜，但大城市找房子很難；行政流程慢，什麼都要預約。',work:'學生每年最多可以打工 140 個全天或 280 個半天。',learn:'自律、德語、工程與研究的嚴謹態度。',chal:'德語門檻高；剛開始辦居留、開戶、租房會非常挫折。'},
+};
+const AEV={
+ us:[{q:'第一堂課，教授說「參與分數佔 20%」，同學們搶著發言，你一句都插不上。',o:[['下課去 office hour 找教授聊',{LAN:1,SOC:1,soc:1},'教授說：「你的作業寫得很好，課堂上也讓大家聽聽你的想法。」'],['每堂課準備一個問題',{LAN:1,WIL:1,soc:1,psy:'漸進式暴露'},'從一個問題開始，你越來越敢說了。'],['安靜聽課就好',{perf:-1,st:5},'期末參與分數很低。在美國，沉默常被當成沒有想法。']]}],
+ uk:[{q:'碩士才讀三個月，就要開始想畢業論文題目，一年真的很快。',o:[['馬上找教授討論方向',{INT:1,WIL:1,perf:1},'提早開始讓你寫得很從容。'],['先把課顧好再說',{st:12},'最後兩個月你每天都在圖書館。']]}],
+ au:[{q:'小組作業的組員來自五個國家，有人一直不出現。',o:[['主動分工、定期開會追進度',{SOC:1,sk:'管理',perf:1},'你成了實質上的組長，作業拿了高分。'],['自己把他的部分做完',{st:15},'分數還不錯，但你累壞了。'],['跟老師反映',{SOC:1},'老師讓組員互評，不出現的人分數被扣了。']]}],
+ ca:[{q:'學校的 co-op 帶薪實習要開始申請了，要寫英文履歷、參加面試。',o:[['去學校就業中心改履歷、模擬面試',{LAN:1,SOC:1,sk:'實習'},'你拿到一份四個月的帶薪實習。'],['先不申請，專心讀書',{perf:1},'成績很好，但畢業時少了一段當地的工作經驗。']]},{q:'第一個加拿大的冬天，零下二十度，天黑得很早，你開始悶悶不樂。',o:[['規律運動、多曬太陽燈、跟朋友出門',{PHY:1,st:-10},'你學會了跟冬天相處。'],['窩在宿舍',{st:15},'冬季憂鬱在高緯度國家很常見，學校的諮商中心可以幫忙。']]}],
+ jp:[{q:'研究室的前輩下班都不走，你不知道自己能不能先離開。',o:[['觀察一陣子，再找教授聊研究室的習慣',{SOC:1,LAN:1},'教授說研究做完就可以走。很多「規則」只是自己想像的。'],['跟著留到很晚',{st:15},'你每天十點才回家。'],['照自己的步調',{WIL:1},'有人覺得你很獨立，也有人覺得你不合群。']]}],
+ de:[{q:'辦居留證要預約，最近的時段是三個月後，但你的簽證快到期了。',o:[['寄信說明、準備所有文件',{INT:1,WIL:1,LAN:1},'你學會了德國式的耐心和文件準備。'],['找學校國際處幫忙',{SOC:1},'國際處幫你拿到臨時證明。']]},{q:'期末考後，你發現有一科被當了，同學說這很正常，很多人要考第二次。',o:[['調整讀書方法再考',{WIL:1,INT:1,psy:'成長型思維'},'第二次考過了。'],['很挫折，懷疑自己',{st:15},'在德國，被當不代表你不行，課本來就很難。']]}],
+};
+AEV.jp.push({q:'找房子時，你一連被拒絕好幾次，有的物件直接寫著「外國人不可」。',o:[['找願意租給外國人的不動產公司',{INT:1,LAN:1,psy:'海外的種族歧視'},'你找到一間專門服務外國人的仲介。日本法務省 2017 年調查，約三成外國居民曾因外國人身分被差別對待。'],['請學校或日本朋友當保證人',{SOC:1},'有了日本保證人，房東的態度完全不同。'],['住進比較貴的外國人專用宿舍（存款 -5 萬）',{m:-5},'貴了一點，但至少有地方住。']]});
+function abroadIntro(k,next,back){
+ const a=ABROAD[k],i=AINFO[k];
+ go(`【在${a.n}讀書是什麼樣子】\n\n▸ 上課方式：${i.study}\n▸ 生活：${i.life}\n▸ 打工規定：${i.work}\n▸ 能學到：${i.learn}\n▸ 挑戰：${i.chal}\n\n費用：學費加生活費一年約 ${a.c} 萬${a.est?'（遊戲估計）':''}。`,[{l:'決定去'+a.n,cls:'primary',f:next},{l:'看看其他國家',f:back}]);
+}
+function abroadPool(){const k=S.abroad||S.mab;return (AEV[k]||[]).concat(ABROAD_EV,(typeof AEV_G!=='undefined'&&AEV_G[S.g])||[])}
+function abroadSummary(k,next){
+ const a=ABROAD[k],i=AINFO[k];
+ go(`【在${a.n}的這段日子】\n你學到了：${i.learn}\n\n更重要的是，你學會在陌生的地方照顧自己、交朋友、解決問題。這些經驗會跟著你回到台灣。`,[{l:'繼續',cls:'primary',f:next}],{chips:fx({sk:'跨文化溝通',WIL:1})});
+}
+/* 交換學生 */
+const EXCH=[
+ {n:'日本',c:15,d:'很多台灣大學有姊妹校，課程有日文也有英文。可以體驗日本的社團和打工文化。'},
+ {n:'韓國',c:13,d:'生活費比日本略低，很多學校有英文授課。可以學韓文、體驗韓國的大學生活。'},
+ {n:'歐洲（德國、荷蘭、法國等）',c:20,d:'週末可以搭火車到不同國家旅行。上課重視討論和自主學習。'},
+ {n:'美國',c:30,d:'生活費最貴，但校園資源豐富，可以體驗美式的課堂文化。'},
+];
+function exchange(fin){
+ const gpa=S.gpaN?S.gpaS/S.gpaN:3;
+ go(`交換學生\n\n▸ 流程：先參加學校的校內甄選，看 GPA、語言成績和讀書計畫，名額有限。\n▸ 學費：繳台灣的學校就好，在國外只要付生活費。\n▸ 學分：出發前要先跟系上確認哪些課可以抵免，不然可能要延畢。\n\n你目前 GPA ${gpa.toFixed(2)}、語文 ${S.st.LAN}。想去哪裡？`,EXCH.map(x=>{const pay=famPay(x.c);return{l:x.n,s:`一學期生活費約 ${x.c} 萬（估計）｜你要付 ${pay} 萬`,dis:S.m<pay||S.st.LAN<5,f:()=>{
+  const p=clamp(.25+(gpa-3)*.4+(S.st.LAN-5)*.08,.08,.9);
+  if(Math.random()>=p)return go(`校內甄選沒有上。${x.n}的名額很搶，申請的人很多。（你的機率大約 ${Math.round(p*100)}%）`,[{l:'回去',f:uniTurn}],{chips:fx({st:8})});
+  const c0=fx({m:-pay});log(`到${x.n}交換一學期`);
+  go(`甄選通過！你要到${x.n}交換一學期。\n${x.d}`,[{l:'出發',cls:'primary',f:()=>eventStep(ABROAD_EV,`在${x.n}的交換生活開始了。`,c0,()=>{
+   const lost=Math.random()<.2;
+   const c=fx({LAN:1,SOC:1,sk:['外語','海外經驗','跨文化溝通']});
+   if(lost)c.push(['有些學分沒辦法抵免','dn']);
+   fin(`交換結束，你帶著滿滿的經驗回到台灣。你學會了用另一種語言生活、跟不同文化的人相處，也更清楚自己是誰。${lost?'\n但有兩門課沒辦法抵免學分，之後要補修。':''}`,c);
+  })}]);
+ }}}).concat([{l:'先不要',f:uniTurn}]));
+}
+/* ----- 留學 ----- */
+function fundAbroad(k,yrs,onOk,onBack,schol){
+ const a=ABROAD[k];const total=a.c*yrs;const famPart=Math.min(total,FAMSUP[S.fam]*yrs);const rest=total-famPart;const sav=Math.min(Math.max(0,S.m),rest);const loan=rest-sav;
+ const ch=[{l:'確定出發',cls:'primary',s:loan>200?'需要借的錢太多了，銀行不會核貸':'',dis:loan>200,f:()=>{S.m-=sav;if(loan>0)S.debt=(S.debt||0)+loan;onOk(`家裡出 ${famPart} 萬、存款付 ${sav} 萬${loan>0?`、留學貸款 ${loan} 萬`:''}`)}}];
+ if(schol)ch.push({l:'報考公費留學',s:'教育部 2025 年公費留學名額 201 名，創新高；通過的話學費生活費都有補助',dis:S.schTried,f:()=>{S.schTried=true;const gpa=S.gpaN?S.gpaS/S.gpaN:3;const p=clamp(.06+(gpa-3)*.15+(S.st.INT-5)*.03+(S.st.LAN-5)*.03+(has('研究')?.05:0),.03,.45);
+  if(Math.random()<p){log('考上公費留學');go('你考上了公費留學！\n學費和生活費都有著落了。',[{l:'出發',cls:'primary',f:()=>onOk('公費留學全額補助')}],{chips:fx({WIL:1})})}
+  else go(`公費留學沒考上（你的機率大約 ${Math.round(p*100)}%）。名額真的很少。`,[{l:'回去看看其他方式',f:()=>fundAbroad(k,yrs,onOk,onBack,schol)}],{chips:fx({st:8})})}});
+ ch.push({l:'再想想',f:onBack});
+ go(`去${a.n}讀 ${yrs} 年，學費加生活費一年大約 ${a.c} 萬${a.est?'（遊戲估計）':''}，總共約 ${total} 萬。\n\n家裡能支援：${famPart} 萬\n你的存款能付：${sav} 萬\n還差：【${loan} 萬】，要申請留學貸款。`,ch);
+}
+function abroadUni(){
+ go(`出國讀大學。\n學費加生活費一年大約：美國 130～200 萬、英國 110～180 萬、澳洲 90～140 萬、加拿大 80～130 萬；德國公立大學免學費，一年生活費約 30～48 萬；日本國立大學學費一年約 82 萬日圓。\n\n家境：【${FAM[S.fam]}】`,Object.entries(ABROAD).map(([k,a])=>({l:a.n,s:`一年約 ${a.c} 萬｜要用${a.lang}${a.pre?'｜要先讀一年語言學校':''}`,f:()=>abroadIntro(k,()=>{
+  const go2=()=>{
+   const list=deptList().filter(([id])=>!['med','dent','nurse','pt','phar','law','edu','sw','ot','rad','mt','vet'].includes(id));
+   collegeView(list,`想在${a.n}讀什麼？\n醫學、法律、教育、社工等跟台灣執照綁在一起的科系，在國外讀完回台灣不能直接考照，所以這裡不列出。`,([id,d])=>({l:d.n,cls:'sm',s:`適性 ${stars((S.st[d.k[0]]+S.st[d.k[1]])/2)}`,f:()=>{
+    const p=clamp(.3+(S.st.LAN-5)*.08+(S.score-35)*.02,.1,.9);
+    if(Math.random()<p)fundAbroad(k,D[id].y,(how)=>{S.abroad=k;S.sreg=null;S.dept=id;S.tier=a.n+'的大學';log(`出國到${a.n}讀${D[id].n}（${how}）`);uniStart()},abroadUni);
+    else go(`${a.n}的大學沒有錄取你。申請文件和語言成績都要再加強。`,[{l:'改填台灣的志願',f:pickTier},{l:'換一個國家試試',f:abroadUni}],{chips:fx({st:10})});
+   }}),[{l:'換一個國家',cls:'sm',f:abroadUni}]);
+  };
+  if(a.pre&&!S.preDone){S.preDone=1;S.age++;log(`在${a.n}讀了一年語言學校`);go(`你先到${a.n}讀了一年語言學校（${S.age} 歲）。\n每天四到六小時的語言課，下課還要自己煮飯、辦手續、找房子。一年後，你終於能用${a.lang}應付日常生活和上課了。`,[{l:'繼續',f:go2}],{chips:fx({LAN:1,sk:'外語',m:-famPay(25)})})}else go2();
+ },abroadUni)})).concat([{l:'回去填台灣的志願',f:pickTier}]));
+}
+function abroadMaster(){
+ go(`出國讀碩士。英國多數碩士一年，美國、日本、德國多半兩年。\n家境：【${FAM[S.fam]}】。也可以試試公費留學。`,Object.entries(ABROAD).map(([k,a])=>({l:a.n,s:`${a.yrsM} 年｜一年約 ${a.c} 萬${a.est?'（估計）':''}｜要用${a.lang}`,dis:a.lang!=='英文'&&S.st.LAN<6,f:()=>abroadIntro(k,()=>fundAbroad(k,a.yrsM,(how)=>{S.mab=k;log(`出國到${a.n}讀碩士（${how}）`);masterAbroad(0)},abroadMaster,true),abroadMaster)})).concat([{l:'再想想',f:grad}]));
+}
+function masterAbroad(y){
+ const a=ABROAD[S.mab];S.stage='grad';setScene('campus');
+ if(y>=a.yrsM){fx({sk:['研究所','海外學歷','外語']});log(`取得${a.n}碩士學位`);return abroadSummary(S.mab,()=>go(`你拿到了${a.n}的碩士學位（${S.age} 歲）！\n可以先在${a.n}累積幾年工作經驗，也可以直接回台灣。`,[{l:'去找工作',cls:'primary',f:()=>armyThen(()=>careerPick())}]))}
+ S.age++;
+ eventStep(abroadPool(),`在${a.n}讀碩${NUMS[y]}（${S.age} 歲）。${AINFO[S.mab].study}`,fx({LAN:1,INT:1,st:12}),()=>masterAbroad(y+1));
+}
+function applyTransfer(){
+ S.trTried=true;const gpa=S.gpaN?S.gpaS/S.gpaN:3;
+ const p=clamp(.3+(gpa-2.8)*.45+(S.st.WIL-5)*.03,.1,.9);
+ go(`申請轉系。\n轉系通常【只能一次】，要原系同意，轉入的系會看成績或另外考試，名額有限、擇優錄取。\n依你的 GPA ${gpa.toFixed(2)}，成功機率大約【${Math.round(p*100)}%】。`,[
+  {l:'送出申請',cls:'primary',f:()=>{if(Math.random()<p)transfer(uniTurn);else go('轉系沒有通過。轉入的系名額只有幾個，申請的人很多。',[{l:'繼續',f:uniTurn}],{chips:fx({st:10})})}},
+  {l:'再想想',f:()=>{S.trTried=false;uniTurn()}}]);
+}
+function applyTT(){
+ S.ttTried=true;const gpa=S.gpaN?S.gpaS/S.gpaN:3;
+ const tiers=TIERS();const i=tiers.findIndex(t=>t[1]===S.tier);const up=tiers[i-1];
+ const p=clamp(.2+(S.st.INT-5)*.04+(gpa-3)*.3+(has('備考')?.15:0),.08,.75);
+ go(`準備轉學考，想轉到【${up[1]}】的${D[S.dept].n}。\n轉學考通常考二年級或三年級，名額看各校缺額。你的機率大約【${Math.round(p*100)}%】。`,[
+  {l:'應考',cls:'primary',f:()=>{if(Math.random()<p){S.tier=up[1];log(`轉學考上${up[1]}${D[S.dept].n}`);go(`考上了！你轉進【${up[1]}】的${D[S.dept].n}。\n新環境、新同學，部分學分要重修。`,[{l:'繼續',f:uniTurn}],{chips:fx({st:15,WIL:1})})}else go('轉學考沒考上。',[{l:'繼續',f:uniTurn}],{chips:fx({st:12,sk:'備考'})})}},
+  {l:'再想想',f:()=>{S.ttTried=false;uniTurn()}}]);
+}
+function takeLeave(){
+ const fin=(t,e)=>{S.leaves=(S.leaves||0)+1;S.uStart++;log(`休學一年：${t}`);const c=fx(e);go(`你辦了休學，一年後回到學校。`,[{l:'復學',f:cont(uniTurn)}],{chips:c})};
+ go(`辦休學。\n多數大學累計可以休學兩年（依各校學則），休學期間學籍保留。這一年你要做什麼？`,[
+  {l:'全職打工存錢',s:'存款增加',f:()=>fin('全職打工存錢',{m:18,SOC:1,st:-10})},
+  {l:'去打工度假',s:'澳洲、日本等國家開放 18～30 歲申請',f:()=>fin('出國打工度假',{LAN:1,SOC:1,sk:['外語','海外經驗'],m:5,st:-20})},
+  {l:'休息，好好想清楚方向',s:'壓力大降',f:()=>fin('休息、整理方向',{st:-40,WIL:1})},
+  {l:'先去當兵',s:'把一年兵役先服完',dis:S.g!=='m'||S.army,f:()=>{S.army=true;fin('先去服兵役',{PHY:1,WIL:1,st:5})}},
+  {l:'還是不要休學',f:uniTurn},
+ ]);
+}
+function graduate(){
+ S.deg=true;const gpa=S.gpaS/S.gpaN;
+ if(S.abroad)fx({sk:['海外學歷','外語']});
+ log(`${S.abroad?ABROAD[S.abroad].n+'的大學':''}${D[S.dept].n}畢業（GPA ${gpa.toFixed(2)}）`);
+ S.abroad?abroadSummary(S.abroad,()=>reflect('val',grad)):reflect('val',grad);
+}
+function grad(){
+ S.stage='grad';setScene('campus');ck('grad');
+ const gpa=S.gpaN?S.gpaS/S.gpaN:2.5;
+ go(`${S.age} 歲，你從【${D[S.dept].n}】畢業了！\n畢業 GPA：${gpa.toFixed(2)}\n\n接下來呢？`,[
+  {l:'直接找工作',cls:'primary',f:()=>armyThen(()=>careerPick())},
+  {l:'考研究所',s:'讀兩年碩士。很多科技、研發、心理師職缺需要',dis:!!has('研究所'),f:applyGrad},
+  {l:'出國讀碩士',s:'一年約 40～165 萬，可以試公費留學',dis:!!has('研究所'),f:abroadMaster},
+  {l:'花一年專心準備國考或證照',s:'年齡 +1，之後考試錄取率提高',dis:S.prepYear,f:()=>{S.prepYear=true;S.age++;S.prep++;const c=fx({sk:'備考',WIL:1,st:15});log('畢業後專心準備考試一年');go('你在圖書館和補習班之間來回了一年。',[{l:'繼續',f:cont(grad)}],{chips:c})}},
+ ]);
+}
+function applyGrad(){
+ const gpa=S.gpaS/S.gpaN;
+ let p=clamp(.3+(gpa-2.8)*.45+(has('備考')?.2:0)+(has('研究')?.15:0)+(S.st.INT-5)*.04,.08,.95);if(S.dept==='psy')p*=.55;
+ go(`報考研究所。依你的成績和準備，錄取機率大約【${Math.round(p*100)}%】。${S.dept==='psy'?'\n心理諮商、臨床相關研究所是出了名的窄門，熱門學校一般考試常常幾百人搶個位數名額。':''}`,[
+  {l:'應考',f:()=>{if(Math.random()<p){log('考上研究所');gradSchool(0)}else{go('沒考上研究所。',[{l:'回去想想',f:grad}],{chips:fx({st:10,sk:'備考'})})}}},
+  {l:'再想想',f:grad},
+ ]);
+}
+function gradSchool(y){
+ S.stage='grad';setScene('campus');
+ if(y>=2){fx({sk:'研究所'});log('取得碩士學位');return phdAsk()}
+ go(`研究所碩${NUMS[y]}（${S.age} 歲）。`,[
+  {l:'埋頭做研究',s:'智力 +1，習得研究',f:()=>gsDone(y,{INT:1,sk:'研究',st:15},'你在實驗室過夜的次數多到警衛都認識你。')},
+  {l:'跟業界合作專案',s:'實習經驗、人脈',f:()=>gsDone(y,{sk:['實習','人脈'],SOC:1,st:10},'合作廠商說畢業可以直接去他們那裡。')},
+  {l:'兼助教賺生活費',s:'社交 +1、存款 +4 萬',f:()=>gsDone(y,{SOC:1,m:4,st:8},'帶大學部實驗課，你發現自己挺會教的。')},
+ ]);
+}
+function gsDone(y,e,r){S.age++;go(r,[{l:'繼續',f:cont(()=>gradSchool(y+1))}],{chips:fx(e)})}
+function phdAsk(){
+ go(`你拿到碩士學位了，${S.age} 歲。\n指導教授問你要不要繼續讀博士。`,[
+  {l:'繼續讀博士',s:'大約 4 年以上。想走學術研究或高階研發',dis:S.st.INT<6&&!has('研究'),f:()=>{S.age+=4;const c=fx({INT:1,WIL:1,st:30,sk:'博士'});log('取得博士學位');go('四年後，你站在台上口試完，教授們說：「恭喜你，博士。」\n那幾年有失眠、有退稿、有自我懷疑，也有發現新東西時的狂喜。',[{l:'繼續',f:cont(()=>armyThen(()=>careerPick()))}],{chips:c})}},
+  {l:'不了，去工作',cls:'primary',f:()=>armyThen(()=>careerPick())},
+ ]);
+}
+const ARMY_EV={q:'下部隊後，幾個學長常常故意找你麻煩：半夜叫你起來做事、在大家面前羞辱你，還說「這是傳統，我們以前也是這樣過來的」。',o:[['打 1985 申訴專線',{WIL:1,st:10,psy:'軍中霸凌'},'國防部受理後，學長被調離，你也接受了輔導。「傳統」不是霸凌的理由。'],['跟同梯的弟兄互相支援，一起向輔導長反映',{SOC:1,st:8,psy:'軍中霸凌'},'大家一起站出來，狀況改善了很多。'],['忍到退伍',{st:25,psy:'軍中霸凌'},'你每天都在數饅頭。如果撐不住，請一定要求助。'],['等自己當學長，也這樣對學弟',{st:5},'霸凌就是這樣一代傳一代。打破它，需要有人先停下來。']]};
+function armyThen(fn){
+ if(S.g!=='m'||S.army)return fn();
+ S.army=true;S.stage='army';setScene('city');
+ const go2=(e,r)=>{S.age++;log('服完一年常備兵役');const ch=fx(e);const end=()=>go(r+'\n\n退伍了。兵役讓男生晚一年進入職場，但也有人在軍中學到紀律、交到一輩子的朋友。',[{l:'退伍！',f:cont(fn)}],{chips:ch,pv:pvOf('army')});if(S._armyBully)return eventStep([ARMY_EV],'',[],end);end()};
+ go(`役男，報到！\n依現行制度，你要服一年常備兵役（${S.age} 歲）。`,[
+  {l:'認真操體能',s:'體能、意志成長',f:()=>go2({PHY:1,WIL:1,st:10},'五千公尺跑進 22 分，你沒想過自己做得到。')},
+  {l:'放假時間拿來讀書',s:'習得備考',f:()=>go2({sk:'備考',st:12},'營區熄燈後，你在床上用手電筒看書。')},
+  {l:'跟弟兄打好關係',s:'社交、人脈',f:()=>go2({SOC:1,sk:'人脈',st:5},'來自各行各業的弟兄，讓你看到好多種人生。')},
+ ],{after:()=>{}});
+ S._armyBully=Math.random()<.45;
+}
+
+/* ----- 職場 ----- */
+function reqCheck(c){
+ const miss=[];
+ const altOk=c.alt?c.alt.some(has):false;
+ if(c.deg==='any'){if(!S.deg&&!altOk)miss.push('大學學歷')}
+ else if(c.deg){if(!(S.deg&&c.deg.includes(S.dept))&&!altOk){const names=c.deg.slice(0,3).map(x=>D[x].n.replace('學系','系')).join('、')+(c.deg.length>3?'等':'');miss.push(`學歷：${names}${c.alt?`（或技能：${c.alt.join('／')}）`:''}`)}}
+ else if(c.alt&&!altOk)miss.push(`技能：${c.alt.join('或')}`);
+ (c.sk||[]).forEach(s=>{if(!has(s))miss.push(s==='研究所'?'碩士學位':s==='博士'?'博士學位':'技能：'+s)});
+ if(c.need)for(const k in c.need)if(S.st[k]<c.need[k])miss.push(`${STN[k]}要 ${c.need[k]} 以上`);
+ if(c.money&&S.m<c.money)miss.push(`存款 ${c.money} 萬（目前 ${Math.round(S.m)}）`);
+ return{ok:!miss.length,miss,fit:fitOf(c)};
+}
+function careerPick(msg){
+ S.stage='pick';setScene('city');ck('careerPick');
+ const all=CAREERS.map(c=>({c,r:reqCheck(c)}));
+ const rw={core:3,exp:2,none:0,same:0};
+ const ok=all.filter(x=>x.r.ok).sort((a,b)=>(b.r.fit+holMatch(b.c,myHol())*4+rw[relOf(b.c)])-(a.r.fit+holMatch(a.c,myHol())*4+rw[relOf(a.c)]));
+ const no=all.filter(x=>!x.r.ok).sort((a,b)=>a.r.miss.length-b.r.miss.length);
+ const H=myHol(),V=myVal();const hasH=Object.values(H).some(x=>x>0);
+ const mk=({c,r})=>({l:(c.id===S.goal?'◎ ':'')+(hasH&&holMatch(c,H)>=.55?'♥ ':'')+c.n,cls:'sm',dis:!r.ok||c.id===S.career,s:r.ok?`${RELN[relOf(c)]}｜適性 ${stars(r.fit)}｜${c.startup?`創業・啟動資金約 ${c.seed} 萬`:`起薪約 ${c.pay[0]} 萬`}${c.exam?`｜需考${EX[c.exam].n}`:''}${c.pref&&!has(c.pref)?'｜偏好碩士':''}`:'缺：'+r.miss.join('、'),f:()=>chooseCareer(c)});
+ go(msg||`${S.age} 歲，該踏進職場了。\n亮著的是你現在走得了的路；暗掉的會寫出你還缺什麼。那就是現實中要補的東西。\n「♥」代表跟你的興趣類型比較相符。\n1111 人力銀行 2026 年調查：48.6% 新鮮人的第一份工作跟所學無關。本科相關起步比較順，跨領域也完全可能。`,[{sep:`走得了的路（${ok.length}）`},...ok.map(mk),{sep:`還走不了的路（${no.length}）`},...no.map(mk)]);
+}
+function examP(c){const e=EX[c.exam];let p=e.b;for(const k in e.w)p+=(S.st[k]-5)*e.w[k];p+=.12*Math.min(S.prep,3)+(has('備考')?.1:0);return clamp(p,.05,.95)}
+function chooseCareer(c){
+ if(!c.exam)return enter(c);
+ const p=examP(c);
+ go(`想成為【${c.n}】，必須通過【${EX[c.exam].n}】。\n${EX[c.exam].d}\n\n依你的資質和準備，錄取機率大約【${Math.round(p*100)}%】。\n影響錄取的資質：${Object.keys(EX[c.exam].w).map(k=>`${STN[k]} ${S.st[k]}`).join('、')}。`,[
+  {l:'報名應考',cls:'primary',f:()=>{
+   if(Math.random()<p){log(`通過${EX[c.exam].n}`);go(`榜單上有你的名字！\n通過【${EX[c.exam].n}】。`,[{l:'繼續',f:()=>enter(c)}],{chips:fx({st:-15})})}
+   else{S.prep++;log(`${EX[c.exam].n}落榜`);go('沒考上……差了幾分。\n很多人都是第二、第三次才考上的。失敗代表的是「這次的方法和準備還不夠」，不是「你就是不行」。',[
+    {l:'再拚一年',s:`年齡 +1，錄取率會提高`,f:()=>{S.age++;fx({WIL:1,st:15});chooseCareer(c)}},
+    {l:'換一條路',f:()=>careerPick()}],{chips:fx({st:15,psy:'成長型思維'})})}
+  }},
+  {l:'先回去看看其他路',f:()=>careerPick()},
+ ]);
+}
+function enter(c){
+ if(c.startup&&!c._funded)return fund(c);
+ delete c._funded;
+ const first=!S.career;const prev=S.career;
+ const rel=relOf(c);
+ if(prev){S.pastCats=S.pastCats||[];if(!S.pastCats.includes(CAR[prev].cat))S.pastCats.push(CAR[prev].cat)}
+ S.career=c.id;S.stage='work';S.rel=rel;if(c.id===S.goal&&!S.goalHit){S.goalHit=1;log(`達成目標：成為${c.n}`)}
+ let sal=c.pay[0];
+ if(rel==='core'){sal*=1.05;S.pb+=1}else if(rel==='exp'){S.pb+=.5}else if(rel==='none'&&!c.startup){sal*=.92;S.pb-=1}
+ if(c.pref&&!has(c.pref))sal*=.85;
+ if(has('海外學歷')&&!c.startup&&c.id!=='overseas')sal*=1.1;
+ if(has('研究所')&&!c.startup&&!c.pref)sal*=['科技','商管'].includes(c.cat)?1.3:1.1;
+ if(c.bonus&&c.bonus.includes(S.dept))sal*=1.1;
+ if(!first)sal=Math.max(sal,Math.min(S.sal*.9,c.pay[1]*.8));
+ if(c.startup)sal=c.pay[0];
+ S.sal=sal;
+ const reached=LS.get('jcl-reached',[]);if(!reached.includes(c.id)){reached.push(c.id);LS.set('jcl-reached',reached)}
+ if(first){S.ct=0;S.cturns=S.age>=33?2:S.age>=30?3:4;S.cstart=S.age}
+ log(first?`成為${c.n}`:`從${CAR[prev].n}轉職成為${c.n}`);
+ setScene('city');
+ const relTxt=rel==='core'?'這份工作跟你的所學相關，起步會順一點。':rel==='exp'?'你之前的工作經驗派得上用場。':'這份工作跟你的所學和經驗都不太相關，前期要多花力氣補，但跨領域也可能是你的優勢。';
+ go(`${first?'第一份工作！':'轉換跑道！'}\n你成為了【${c.n}】，月薪大約 ${sal.toFixed(1)} 萬。\n【${RELN[rel]}】${relTxt}\n這份工作最吃重的資質是【${STN[c.k[0]]}】${S.st[c.k[0]]} 和【${STN[c.k[1]]}】${S.st[c.k[1]]}${fitOf(c)>=7?'，剛好是你的強項。':fitOf(c)<4.5?'，不是你的強項，會比別人辛苦一些。':'。'}\n\n【要學的】${c.learn}\n\n【挑戰】${c.chal}`,[{l:'開始工作',cls:'primary',f:first&&!c.startup?()=>eventStep([FIRST_EV],'',[],careerTurn):careerTurn}],{pv:first&&S.deg?pvOf('job1'):''});
+}
+function fund(c){
+ const need=c.seed;S.stage='pick';
+ const ok=()=>{c._funded=true;S.biz=45;enter(c)};
+ go(`創業！\n要開始【${c.n}】，啟動資金大約需要【${need} 萬】。\n你目前存款 ${Math.round(S.m)} 萬。錢要從哪裡來？`,[
+  {l:'用自己的存款',s:`存款 -${need} 萬`,dis:S.m<need,f:()=>{fx({m:-need});log(`用存款 ${need} 萬創業`);ok()}},
+  {l:'家人支援',s:S.fam===5?'家裡全額支持':S.fam===4?'家裡出一半，另一半貸款':'家裡沒有餘力',dis:S.fam<4,f:()=>{if(S.fam===4){S.debt=(S.debt||0)+need/2;fx({st:10})}log('家人支援創業資金');ok()}},
+  {l:'申請青年創業貸款',s:'要寫創業計畫書，核准後背負負債',f:()=>{const p=clamp(.45+(S.st.LAN-5)*.05+(S.st.WIL-5)*.04+(has('創業經驗')?.15:0),.15,.9);
+   if(Math.random()<p){S.debt=(S.debt||0)+need;log(`貸款 ${need} 萬創業`);go('貸款核准了！你背上了負債，也拿到了起跑的機會。',[{l:'開始創業',f:ok}],{chips:fx({st:10})})}
+   else go('計畫書被打槍了。審查委員說：「獲利模式不清楚。」',[{l:'再想想',f:()=>fund(c)}],{chips:fx({LAN:1,st:8})})}},
+  {l:'找天使投資人',s:'要能說服人；成功就不用自己出錢',dis:c.seed<20,f:()=>{const p=clamp(.2+(S.st.SOC-5)*.06+(has('人脈')?.15:0)+(has('創業經驗')?.1:0),.05,.85);
+   if(Math.random()<p){log('拿到天使投資');go('投資人聽完你的簡報，說：「我投。」\n你拿到了資金，也多了一個要交代的人。',[{l:'開始創業',f:ok}],{chips:fx({SOC:1})})}
+   else go('投資人很客氣地說：「我們再保持聯絡。」意思就是不投。',[{l:'再想想',f:()=>fund(c)}],{chips:fx({st:8,WIL:1})})}},
+  {l:'先不要了',f:()=>careerPick()},
+ ]);
+}
+function careerTurn(){
+ if(S.ct>=S.cturns)return ending();
+ const c=CAR[S.career];S.stage='work';setScene('city');ck('careerTurn');
+ const step=Math.max(1,Math.round((35-S.age)/(S.cturns-S.ct)));
+ go(`${S.age} 歲｜${c.n}｜第 ${S.ct+1}/${S.cturns} 階段（接下來約 ${step} 年）\n${c.startup?`公司體質 ${S.biz}／100，你給自己的月薪約 ${S.sal.toFixed(1)} 萬。`:`月薪約 ${S.sal.toFixed(1)} 萬。`}這段時間，你主要在？`,(c.startup?BIZ_FOCUS:WORK_FOCUS).map(o=>({l:o.l,s:o.s,f:()=>{
+  if(o.swap){S.age+=1;if(c.startup){log(`收掉${c.n}`);S.biz=null;fx({sk:'創業經驗'})}return careerPick(`${S.age} 歲，你想換條路走。\n先前的經驗不會白費，薪水會參考你的資歷。`)}
+  const ch=fx(o.e);workResult(o.pb,step,o.r,ch);
+ }})));
+}
+function workResult(pb,step,r,ch){
+ const c=CAR[S.career];const fit=fitOf(c);
+ if(c.startup)return bizResult(pb,step,r,ch);
+ const perf=fit+pb+(hasT('完美主義')?.5:0)+S.pb+rnd(-2,2);S.pb=0;
+ const growth=clamp(.03+(perf-5)*.03,-.08,.32);
+ const before=S.sal;
+ S.sal=Math.min(c.pay[1]*1.6,S.sal*(1+growth)*Math.pow(1.025,step-1));
+ let lvUp=false;
+ if(c.lv)c.lv.forEach(([t,ms,ttl])=>{S.lvd=S.lvd||{};if(!S.lvd[ttl]&&S.ct+1>=t&&perf>=3.5&&S.sal<ms){S.lvd[ttl]=1;lvUp=true;S.sal=ms*(1+Math.random()*.15);log(`升任${ttl}`);ch.push([`升任${ttl}！`,'skc'])}});
+ S.m+=Math.round(S.sal*12*step*(S.mort?.08:.22));
+ if(S.mort){const pay=Math.min(S.mort,Math.round(S.sal*12*step*.3));S.mort-=pay;ch.push([`繳房貸 ${pay} 萬`,'dn'])}
+ if(S.kids){S.m-=8*step;ch.push([`養小孩 -${8*step} 萬（估計）`,'dn'])}
+ if(S.inv&&S.m>0){const g2=Math.round(S.m*(Math.pow(1.05,step)-1));S.m+=g2;if(g2)ch.push([`ETF 長期投資 +${g2} 萬`,'up'])}
+ if(S.debt){const pay=Math.min(S.debt,Math.max(0,S.m));if(pay>0){S.debt-=pay;S.m-=pay;ch.push([`還清負債 ${Math.round(pay)} 萬`,'up'])}}
+ S.age+=step;
+ const sat=clamp(42+(fit-5)*8-(S.stress-40)*.45+(perf-4)*3,0,100);S.satS+=sat;S.satN++;
+ let g;
+ let wpv='';
+ if(perf>=7.5){g='表現亮眼，【升職加薪】！';log(`在${c.n}的工作上升職`);wpv=pvOf('promo')}
+ else if(perf>=4.5)g='表現【穩定成長】。';
+ else if(perf>=2.5)g='表現【普普通通】，有點卡關。';
+ else{g='表現不佳，【被主管約談】。';ch=ch.concat(fx({st:10}))}
+ ch.push([`月薪 ${before.toFixed(1)} → ${S.sal.toFixed(1)} 萬`,S.sal>=before?'up':'dn']);
+ const isFirst=S.ct===0&&c.ev;
+ S.ct++;
+ const catPool=(CAT_EV[c.cat]||[]).filter(e=>!S.used.includes(e.q)&&(!e.when||e.when()));
+ const gpw=genderPool('work');
+ const pool=isFirst?[c.ev]:(S.ct>=2&&gpw.length&&Math.random()<.6)?gpw:(S.rel==='none'&&!S.crossDone&&S.ct<=2)?(S.crossDone=1,[CROSS_EV]):(catPool.length&&Math.random()<.65)?catPool:WORK_EV;
+ if(lvUp&&!wpv)wpv=pvOf('promo');
+ eventStep(pool,`${r}\n\n${step} 年過去了。${g}`+`\n（${STN[c.k[0]]} ${S.st[c.k[0]]}、${STN[c.k[1]]} ${S.st[c.k[1]]} 是這份工作最吃重的資質）`,ch,S.ct===1?()=>reflect('hol',careerTurn):S.ct===2?()=>reflect('val',careerTurn):careerTurn,wpv);
+}
+
+function bizResult(pb,step,r,ch){
+ const c=CAR[S.career];const fit=fitOf(c);
+ const perf=fit+pb+S.pb+rnd(-3,3);S.pb=0;
+ const b0=S.biz;S.biz=clamp(Math.round(S.biz+(perf-5)*7+rnd(-12,12)),0,100);
+ ch.push([`公司體質 ${b0} → ${S.biz}`,S.biz>=b0?'up':'dn']);
+ const before=S.sal;S.sal=c.pay[0]+(c.pay[1]-c.pay[0])*Math.pow(S.biz/100,1.4);
+ ch.push([`月薪 ${before.toFixed(1)} → ${S.sal.toFixed(1)} 萬`,S.sal>=before?'up':'dn']);
+ S.m+=Math.round(S.sal*12*step*.15);
+ if(S.debt&&S.biz>=50){const pay=Math.min(S.debt,Math.round(S.sal*step*2));S.debt-=pay;S.m-=0;ch.push([`還清負債 ${pay} 萬`,'up'])}
+ S.age+=step;
+ S.satS+=clamp(48+(fit-5)*8-(S.stress-40)*.45+(S.biz-50)*.4,0,100);S.satN++;
+ let g;
+ if(S.biz>=85){g='公司【站穩腳步】，開始有人來談合作和投資！';if(!S.bizWin){S.bizWin=1;log(`${c.n}站穩腳步`);ch=ch.concat(fx({m:Math.round(c.seed*1.5),WIL:1}))}}
+ else if(S.biz>=55)g='公司【穩定成長】。';
+ else if(S.biz>=30)g='公司【勉強打平】，每個月都在算錢。';
+ else g='公司【快撐不下去了】。';
+ const isFirst=S.ct===0;S.ct++;
+ const nxt=()=>S.biz<=20?bizCrisis():careerTurn();
+ eventStep(isFirst?[c.ev]:BIZ_EV,`${r}\n\n${step} 年過去了。${g}`,ch,nxt);
+}
+function bizCrisis(){
+ const c=CAR[S.career];
+ go(`▼ 帳上的錢只剩下幾個月。\n【${c.n}】走到了生死關頭。${S.debt?`\n你還背著 ${Math.round(S.debt)} 萬的負債。`:''}`,[
+  {l:'收掉公司，去找工作',s:'失敗也是經驗，習得創業經驗',f:()=>{log(`${c.n}結束營業`);S.biz=null;fx({sk:'創業經驗',st:-10});careerPick(`${S.age} 歲，你收掉了公司。\n很痛，但你學到的東西，是很多上班族沒機會學的。`)}},
+  {l:'再借錢撐一次',s:'負債 +20 萬，公司體質 +25',f:()=>{S.debt=(S.debt||0)+20;const ch=fx({biz:25,st:20});log('再借錢撐下去');go('你又借了一筆錢。這次一定要做對。',[{l:'繼續',f:cont(careerTurn)}],{chips:ch})}},
+  {l:'大轉型',s:'砍掉重練，結果看運氣與能力',f:()=>{const ok=Math.random()<.3+fitOf(c)*.05;const ch=ok?fx({biz:35,INT:1}):fx({biz:5,st:15});log(ok?'公司轉型成功':'轉型失敗');go(ok?'轉型成功！新方向的客戶比你想像的多。':'轉型沒有起色，但你還在撐。',[{l:'繼續',f:cont(()=>S.biz<=20?bizCrisis():careerTurn())}],{chips:ch})}},
+ ]);
+}
+/* ----- 結局 ----- */
+function ending(){
+ const c0=CAR[S.career];
+ if(!S.returned&&(c0.id==='overseas'||S.mab||S.abroad)){
+  S.returned=1;log('帶著海外經驗回到台灣');
+  return go(`${S.age} 歲。\n在國外的這些年，你學到了新的技術、新的視野，也更清楚自己來自哪裡。\n\n你決定回到台灣，把學到的東西帶回來。`,[{l:'回家',cls:'primary',f:ending}],{chips:fx({SOC:1,st:-15})});
+ }
+ S.stage='end';setScene('end');LS.del('jcl-save');LS.set('jcl-runs',LS.get('jcl-runs',0)+1);
+ const c=CAR[S.career];const sat=Math.round(S.satN?S.satS/S.satN:50);const fit=fitOf(c);
+ const back=S.returned?'海外歸國的':'';
+ const ttl=back+(c.startup?(S.biz>=85?`成功的${c.n}`:S.biz>=50?`穩紮穩打的${c.n}`:`還在拚的${c.n}`):sat>=70?`找到熱情的${c.n}`:S.stress>=70?`燃燒中的${c.n}`:S.sal>=c.pay[1]?`高薪${c.n}`:fit<4?`努力適應中的${c.n}`:`穩穩前進的${c.n}`);
+ const H=S.hol,V=S.val;const ht=topK(H).filter(k=>H[k]>0).slice(0,2);const vt=topK(V).filter(k=>V[k]>0).slice(0,2);
+ const rec=CAREERS.filter(x=>x.id!=='svc').map(x=>({x,m:holMatch(x,myHol())*.45+valMatch(x,myVal())*.2+fitOf(x)/10*.35})).sort((a,b)=>b.m-a.m).slice(0,5);
+ const life=[S.married?'已婚':'',S.kids?'有一個孩子':'',S.house2?'有自己的房子'+(S.mort?`（房貸還剩 ${Math.round(S.mort)} 萬）`:''):'',S.inv?'有在長期投資':''].filter(Boolean).join('、')||'目前單身、租屋或住家裡，生活還很有彈性';
+ const html=`<div class="card"><h3>人生卡片</h3><img id="lifeCard" alt="${esc(S.name)}的人生卡片" style="display:block;width:100%;max-width:360px;margin:0 auto;image-rendering:pixelated"><p class="k">長按或按右鍵「另存圖片」，就能分享到 IG、Threads。</p><p id="shareTxt" style="user-select:all">${esc(shareText(ttl,sat))}</p><button type="button" class="mini" id="copyShare">複製分享文字</button></div>
+ <div class="card"><h3>人生稱號：${esc(ttl)}</h3><p><span class="k">人生滿意度</span> <span class="big">${sat}</span><span class="k"> / 100</span></p><p><span class="k">月薪</span> ${S.sal.toFixed(1)} 萬　<span class="k">存款</span> ${Math.round(S.m)} 萬　<span class="k">壓力</span> ${S.stress}${S.debt?`　<span class="k">負債</span> ${Math.round(S.debt)} 萬`:''}${c.startup&&S.biz!=null?`　<span class="k">公司體質</span> ${S.biz}`:''}</p><p><span class="k">生活</span> ${esc(life)}</p><p><span class="k">職業適性</span> ${stars(fit)}　<span class="k">興趣相符</span> ${stars(holMatch(c,myHol())*10||1)}</p></div>
+ <div class="card"><h3>你為台灣做了什麼</h3><p>${esc(IMPACT[c.cat]||'你用自己的方式，讓台灣變得更好一點。')}</p>${S.returned?'<p>你在國外學到的東西，現在在台灣發芽了。</p>':''}<p class="k">每一種工作都是社會運作的一部分。沒有人能做所有的事，但每個人做好自己的事，台灣就會更好。</p></div>
+${S.goal&&CAR[S.goal]?(()=>{const gc=CAR[S.goal];if(S.goalHit)return`<div class="card"><h3>目標達成：${esc(gc.n)}</h3><p>你做到了！${S.career===S.goal?'':'雖然後來換了路，但你曾經走到那裡。'}</p><p class="k">現實中，這條路需要的能力和考驗，你在遊戲裡都看過了。</p></div>`;const miss=reqCheck(gc).miss;return`<div class="card"><h3>目標：${esc(gc.n)}（這一輪沒走到）</h3>${miss.length?`<p><span class="k">還缺：</span>${esc(miss.join('、'))}</p>`:'<p>你其實已經具備條件，只是這一輪選了別的路。</p>'}<p><span class="k">路線：</span>${esc(pathOf(gc))}</p><p class="k">沒走到不代表失敗，也許這一輪讓你發現了更適合的路。也可以選「從高三開始」或「從大學畢業開始」再試一次。</p></div>`})():''}
+ <div class="card"><h3>這一輪透露出的你</h3>${ht.length?`<p><span class="k">你最常忘記時間的事：</span>${ht.map(k=>`<b style="font-weight:700;color:var(--acc)">${HOL[k]}</b>`).join('、')}</p><p class="k">${ht.map(k=>HOLD[k]).join(' ')}</p>`:''}${vt.length?`<p><span class="k">你最不想放棄的：</span>${vt.map(v=>`<b style="font-weight:700;color:var(--acc)">${v}</b>`).join('、')}</p>`:''}<p><span class="k">你的天生強項：</span>${STN[topStats()[0]]}、${STN[topStats()[1]]}</p><p class="k">你在遊戲裡反覆做出的選擇，很可能也透露了現實中你在乎的東西。</p></div>
+ <div class="card"><h3>綜合興趣、價值觀和資質，可以探索</h3>${rec.map(({x})=>`<p><b style="font-weight:700;color:var(--acc)">${esc(x.n)}</b>　<span class="k">${HOL[x.h[0]]}・${x.v.join('、')}</span><br><span class="k">${esc(pathOf(x))}</span></p>`).join('')}${ht[0]?`<p><b style="font-weight:700;color:var(--cool)">現實中可以先試：</b>${HOLTRY[ht[0]]}</p>`:''}</div>
+ <div class="card"><h3>你的人生軌跡</h3><ul class="tl">${S.log.map(([a,t])=>`<li><span>${a}歲</span>${esc(t)}</li>`).join('')}</ul></div>
+ <div class="card"><h3>關於「${esc(c.n)}」</h3><p><span class="k">要學的：</span>${esc(c.learn)}</p><p><span class="k">挑戰：</span>${esc(c.chal)}</p><p><span class="k">參考月薪：</span>起薪約 ${c.pay[0]} 萬，資深約 ${c.pay[1]} 萬</p></div>
+ <div class="card"><h3>關掉遊戲前，想三件事</h3><p>1. 這一輪裡，哪個選擇讓你最開心？為什麼？</p><p>2. 哪個挑戰讓你覺得「這我不想面對」？那是真的不想，還是怕？</p><p>3. 現實中，你這個月可以做哪一件小事來試試看？（營隊、線上課、找從業者聊聊）</p></div>
+ <div class="card"><h3>需要找人聊聊的時候</h3><p>衛福部安心專線 <b style="font-weight:700;color:var(--acc)">1925</b>（24 小時，免費）</p><p>生命線 <b style="font-weight:700;color:var(--acc)">1995</b>（24 小時）　張老師 <b style="font-weight:700;color:var(--acc)">1980</b></p><p>反霸凌 <b style="font-weight:700;color:var(--acc)">1953</b>　勞工諮詢 <b style="font-weight:700;color:var(--acc)">1955</b>　反詐騙 <b style="font-weight:700;color:var(--acc)">165</b></p><p>保護專線（家暴、性侵、性騷擾）<b style="font-weight:700;color:var(--acc)">113</b>　男性關懷專線 <b style="font-weight:700;color:var(--acc)">0800-013-999</b>　國軍申訴 <b style="font-weight:700;color:var(--acc)">1985</b></p></div>`;
+ go(`${S.age} 歲。\n${S.name} 的人生走到這裡，先告一段落。\n\n人生沒有標準答案，迷惘也不是壞事，它代表你在認真想。這只是其中一種可能，換個選擇再走一次看看吧。`,[
+  {l:'再活一次',cls:'primary',f:create},{l:'做職涯羅盤測驗',f:()=>compass()},{l:'翻翻職業圖鑑',f:openCodex},{l:'回標題',f:title}],{html,after:()=>{makeCard(ttl,sat);const b=$('#copyShare');if(b)b.onclick=()=>{const t=shareText(ttl,sat);const ok=()=>{b.textContent='已複製'};try{navigator.clipboard.writeText(t).then(ok,()=>{const r=document.createRange();r.selectNodeContents($('#shareTxt'));const sel=getSelection();sel.removeAllRanges();sel.addRange(r);b.textContent='已選取，請按複製'})}catch(e){}}}});
+}
+function pathOf(c){
+ const p=[];
+ if(c.deg==='any')p.push('任何大學科系');
+ else if(c.deg)p.push(c.deg.map(x=>D[x].n).join('、'));
+ if(c.alt)p.push((c.deg?'或自學：':'需要：')+c.alt.join('／'));
+ if(c.sk)p.push('需要：'+c.sk.map(s=>s==='研究所'?'碩士':s==='博士'?'博士':s).join('、'));
+ if(c.exam)p.push('考試：'+EX[c.exam].n);
+ if(c.seed)p.push(`啟動資金約 ${c.seed} 萬（可存款、家人、貸款或投資人）`);
+ if(c.pref)p.push('偏好碩士');
+ if(c.need)p.push('資質：'+Object.keys(c.need).map(k=>`${STN[k]} ${c.need[k]}+`).join('、'));
+ if(!p.length)p.push('不限學歷，看能力與經驗');
+ return p.join('｜');
+}
+
+/* ----- 圖鑑 ----- */
+let cxCat='全部';
+function openCodex(){$('#codex').hidden=false;renderCodex();$('#codex').scrollTop=0}
+function renderCodex(){
+ const reached=LS.get('jcl-reached',[]);
+ $('#cxF').innerHTML=CATS.map(c=>`<button type="button" class="chipf" aria-pressed="${c===cxCat}" data-c="${c}">${c}</button>`).join('');
+ document.querySelectorAll('#cxF [data-c]').forEach(b=>b.onclick=()=>{cxCat=b.dataset.c;renderCodex()});
+ const list=CAREERS.filter(c=>cxCat==='全部'||c.cat===cxCat);
+ $('#cxList').innerHTML=list.map(c=>`<details class="cx"><summary><span class="n">${reached.includes(c.id)?'<span class="star">★</span> ':''}${esc(c.n)} <span class="note">${c.cat}</span></span><span class="p">${c.pay[0]}–${c.pay[1]}萬</span></summary><div class="body">
+ <div><span class="k">怎麼走：</span>${esc(pathOf(c))}</div>${c.lv?`<div><span class="k">升遷：</span>${c.lv.map(l=>`${l[2]}（約 ${l[1]} 萬以上）`).join('、')}</div>`:''}
+ <div><span class="k">核心資質：</span>${STN[c.k[0]]}、${STN[c.k[1]]}　<span class="k">興趣類型：</span>${HOL[c.h[0]]}、${HOL[c.h[1]]}　<span class="k">滿足：</span>${c.v.join('、')}</div>
+ <div><span class="k">對台灣的貢獻：</span>${esc(IMPACT[c.cat]||'')}</div>
+ <div><button type="button" class="mini" data-goal="${c.id}">看怎麼走到這裡</button></div>
+ <div><span class="k">要學的：</span>${esc(c.learn)}</div>
+ <div><span class="k">挑戰：</span>${esc(c.chal)}</div>
+ ${c.exam?`<div><span class="k">關卡：</span>${esc(EX[c.exam].n)}：${esc(EX[c.exam].d)}</div>`:''}
+ </div></details>`).join('');
+ GSUM.ids=['原住民：升學有外加名額，族語認證加分 35%、沒有加 10%，卻常被說「加分很爽」、被叫「番仔」、被期待會唱歌喝酒；都市原住民常被說「不像原住民」。','新住民子女：約占各縣市國中小學生的 5%～7%，常被叫「外配的小孩」，擔心爸媽的口音被笑；但雙語能力在新南向市場是很大的優勢，還有海外培力計畫。','身心障礙者：2024 年勞參率只有 21.9%、失業率 7.1%，找房子、找工作常被拒絕；有專屬的升學甄試、定額進用和職務再設計補助。'];
+ $('#cxG').innerHTML=[['m','男生可能遇到的'],['f','女生可能遇到的'],['ids','不同身分背景可能遇到的'],['abroad','出國可能遇到的歧視']].map(([g,t])=>`<details class="cx"><summary><span class="n">${t}</span><span class="p" style="color:var(--cool)">${GSUM[g].length} 項</span></summary><div class="body">${GSUM[g].map(x=>`<div>▸ ${esc(x)}</div>`).join('')}</div></details>`).join('');
+ document.querySelectorAll('[data-goal]').forEach(b=>b.onclick=()=>roadmap(b.dataset.goal));
+ const L=LS.get('jcl-psy',[]);
+ $('#cxPsy').innerHTML=Object.keys(PSY).map(k=>L.includes(k)?`<details class="cx"><summary><span class="n">${esc(k)}</span><span class="p" style="color:var(--cool)">已解鎖</span></summary><div class="body"><div>${esc(PSY[k])}</div></div></details>`:`<details class="cx"><summary><span class="n" style="color:var(--mut)">？？？</span><span class="p" style="color:var(--mut)">未解鎖</span></summary><div class="body"><div class="note">在模擬中遇到相關事件就會解鎖。</div></div></details>`).join('');
+}
+$('#cxClose').onclick=()=>{$('#codex').hidden=true};
+$('#bCodex').onclick=openCodex;
+$('#bHome').onclick=()=>{if(S&&S.ck)LS.set('jcl-save',S);title()};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('#codex').hidden)$('#codex').hidden=true});
+
+const RESUME={jh,hsTurn,uniTurn,careerTurn,careerPick:()=>careerPick(),grad};
+title();
+</script>
+
+</body></html>
