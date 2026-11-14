@@ -108,6 +108,24 @@ details.cx .body{padding:6px 12px 12px;font-size:14px;display:flex;flex-directio
 details.cx .body .k{color:var(--acc)}
 .star{color:var(--acc)}
 .note{font-size:12px;color:var(--mut)}
+.book .toc{display:flex;flex-direction:column;gap:12px;margin-top:6px}
+.book .chap{background:#f4ead2;color:#2b2118;margin:0 4px;padding:12px 14px;box-shadow:inset 0 0 0 2px #b59a6a;font-family:'Noto Serif TC','Songti TC',serif}
+.book .chap h3{margin:0 0 6px;font-size:17px;border-bottom:2px double #b59a6a;padding-bottom:4px}
+.book .chap ol{margin:0;padding-left:1.4em}
+.book .tocl{all:unset;cursor:pointer;display:block;width:100%;padding:3px 0;line-height:1.6;font-size:15px;color:#2b2118}
+.book .tocl:hover{text-decoration:underline}
+.page{background:#f4ead2;color:#2b2118;padding:18px 16px;margin:4px;box-shadow:inset 0 0 0 2px #b59a6a;font-family:'Noto Serif TC','Songti TC',serif;line-height:1.85}
+.page h2{margin:4px 0 2px;font-size:24px}
+.pghead{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#7a6548;border-bottom:1px solid #b59a6a;padding-bottom:4px;font-family:var(--px)}
+.page .kicker{margin:4px 0 8px;font-size:13px;color:#7a6548}
+.page .lead{font-style:italic;margin:6px 0 12px}
+.page dl{margin:0 0 12px;display:grid;grid-template-columns:5em 1fr;gap:8px 10px;font-size:14.5px}
+.page dt{color:#8a2b1c;font-weight:700}
+.page dd{margin:0}
+.page .mini{background:#e6d7b4;color:#2b2118}
+.pgnav{display:flex;justify-content:space-between;gap:8px;margin:12px 4px}
+.pgnav .mini{padding:8px 12px;font-size:15px}
+.pgnav .mini:disabled{opacity:.4}
 @media (max-width:400px){.stats{grid-template-columns:1fr}.logo b{font-size:21px}}
 @media (prefers-reduced-motion:reduce){.btn:active:not([disabled]){transform:none}}
 </style>
@@ -129,22 +147,23 @@ details.cx .body .k{color:var(--acc)}
     <div class="extra" id="extra" hidden></div>
   </section>
   <div class="choices" id="ch"></div>
-  <p class="note">資料參考：勞動部 2025 年新鮮人起薪（大學平均約 3.6 萬、碩士約 5.3 萬、約 17% 領基本工資）、2026 年基本工資月薪 29,500 元、主計總處家庭收支調查（最高與最低 20% 家戶可支配所得約 245 萬與 40 萬）、115 學測五標、高普考與律師、藥師、護理師、心理師、警察特考、教師資格考的近年錄取率、兒福聯盟 2025 網路霸凌調查、1111 人力銀行 2026 職場霸凌調查、Stop AAPI Hate 2025 調查、日本法務省外國居民調查、勞動部懷孕友善職場調查、勞動部原住民族與身心障礙者就業調查、各縣市新住民子女統計、警政署跟騷統計、2025 年勞動部職類別薪資調查（機師月薪約 29.8 萬、精算師約 20.3 萬、醫師約 18 萬）、內政部房價所得比與總生育率、警政署詐騙統計、各縣市人口、大學宿舍補貼與租金行情、勞動部性別薪資差距與職場平等調查、衛福部女性生活狀況調查（家務照顧時間）、財政部拋棄繼承性別統計、主計總處女性勞參率、衛福部自殺統計、育嬰留停統計、各國留學費用、日本學生支援機構學費資料、教育部 2025 公費留學名額。各職業薪資為含常見獎金的概略值，科系門檻與部分錄取率為遊戲化估計。</p>
+  <p class="note">資料參考：勞動部 114 年（2025 年）新鮮人起薪調查（2026 年 4 月公布）（大學平均約 3.6 萬、碩士約 5.3 萬、約 17% 領基本工資）、2027 年基本工資月薪 30,900 元（2026 年為 29,500 元）、主計總處家庭收支調查（最高與最低 20% 家戶可支配所得約 245 萬與 40 萬）、115 學測五標、高普考與律師、藥師、護理師、心理師、警察特考、教師資格考的近年錄取率、兒福聯盟 2025 網路霸凌調查、1111 人力銀行 2026 職場霸凌調查、Stop AAPI Hate 2025 調查、日本法務省外國居民調查、勞動部懷孕友善職場調查、勞動部原住民族與身心障礙者就業調查、各縣市新住民子女統計、警政署跟騷統計、勞動部 114 年職類別薪資調查（2026 年 5 月公布；機師月薪約 29.8 萬、精算師約 20.3 萬、醫師約 18 萬）、內政部房價所得比與總生育率、警政署詐騙統計、各縣市人口、大學宿舍補貼與租金行情、勞動部性別薪資差距與職場平等調查、衛福部女性生活狀況調查（家務照顧時間）、財政部拋棄繼承性別統計、主計總處女性勞參率、衛福部自殺統計、育嬰留停統計、各國留學費用、日本學生支援機構學費資料、教育部 2025 公費留學名額。各職業薪資為含常見獎金的概略值，科系門檻與部分錄取率為遊戲化估計。</p>
   <p class="note" style="text-align:center;margin:0;color:var(--acc)">人生岔路口 · made by may22</p>
 </div>
 
 <div id="codex" hidden>
-  <div class="wrap">
+  <div class="wrap book">
     <div class="cxhead"><b>職業圖鑑</b><button class="mini" id="cxClose" type="button">關閉</button></div>
-    <p class="note" style="margin:0">點開每個職業，看要走哪條路、要學什麼、會遇到什麼挑戰。<span class="star">★</span> = 你曾在模擬中走到這裡。</p>
-    <div class="filters" id="cxF"></div>
+    <p class="note" id="cxIntro" style="margin:0">一本翻得完的職業手冊。走過的職業會蓋上 <span class="star">★</span> 印章。</p>
     <div id="cxList"></div>
-    <div class="cxhead" style="position:static"><b>性別視角</b></div>
-    <p class="note" style="margin:0">男生和女生在台灣可能遇到的不同處境。理解彼此，才能互相尊重。</p>
-    <div id="cxG"></div>
-    <div class="cxhead" style="position:static"><b>心理小百科</b></div>
-    <p class="note" style="margin:0">在模擬中遇到的心理學概念會收集在這裡。</p>
-    <div id="cxPsy"></div>
+    <div id="cxAppx">
+      <div class="cxhead" style="position:static"><b>性別視角</b></div>
+      <p class="note" style="margin:0">男生和女生在台灣可能遇到的不同處境。理解彼此，才能互相尊重。</p>
+      <div id="cxG"></div>
+      <div class="cxhead" style="position:static"><b>心理小百科</b></div>
+      <p class="note" style="margin:0">在模擬中遇到的心理學概念會收集在這裡。</p>
+      <div id="cxPsy"></div>
+    </div>
   </div>
 </div>
 
@@ -177,8 +196,7 @@ const FAMSUP=[0,0,0,15,50,200];
 const TRIPS=[
  {l:'菲律賓語言學校一個月',s:'約 6 萬（含學費、住宿、機票）',c:6,e:{LAN:1,sk:'外語'},r:'每天八小時一對一英文課。一個月後，你終於敢開口了。'},
  {l:'日本語言學校三個月',s:'約 15 萬（遊戲估計）',c:15,e:{LAN:1,SOC:1,sk:'外語'},r:'你在東京的便利商店打工，聽懂了店長的關西腔。'},
- {l:'英國或澳洲遊學一個月',s:'約 12 萬（遊戲估計）',c:12,e:{LAN:1,sk:['外語','海外經驗']},r:'你跟來自巴西、韓國、義大利的同學一起上課，世界變大了。'},
- {l:'交換學生一學期',ex:1,s:'要通過校內甄選；學費繳台灣學校，只付生活費；需要語文 5 以上',c:15,need:()=>S.st.LAN>=5,e:{LAN:1,SOC:1,sk:['外語','海外經驗'],soc:1},r:'一個學期改變了你看世界的方式，也讓你更清楚自己是誰。'},
+  {l:'交換學生一學期',ex:1,s:'要通過校內甄選；學費繳台灣學校，只付生活費；需要語文 5 以上',c:15,need:()=>S.st.LAN>=5,e:{LAN:1,SOC:1,sk:['外語','海外經驗'],soc:1},r:'一個學期改變了你看世界的方式，也讓你更清楚自己是誰。'},
 ];
 const famPay=n=>S.fam>=5?0:S.fam===4?Math.ceil(n/2):n;
 const PSY={
@@ -271,7 +289,7 @@ const CAREERS=[
  ev:{q:'凌晨兩點，機台異常、良率掉了 5%，你的手機響了。',o:[['立刻回廠處理',{WIL:1,st:20,perf:1.5},'清晨六點良率回穩。你在停車場的車上睡了一小時。'],['遠端指導值班同仁',{SOC:1,st:10,perf:.5},'同仁照著你的步驟排除了問題，你也學會了帶人。'],['裝沒聽到',{st:-5,perf:-2},'隔天早會被點名，主管的眼神很冷。']]}},
 {id:'md',n:'醫師',cat:'醫療',pay:[11,40],lv:[[2,22,'主治醫師']],deg:['med'],exam:'mdx',k:['INT','WIL'],
  learn:'基礎與臨床醫學、病情告知與溝通、實證醫學，選定專科後還要持續訓練好幾年。',
- chal:'2025 年職類別薪資調查，醫師平均月薪約 18 萬；主治醫師依科別差很多，有醫院的心臟、胸腔外科主治平均月薪破百萬。但住院醫師工時長、值班多，還有醫療糾紛的壓力；內外婦兒急重症辛苦，醫美收入高但爭議也多。',
+ chal:'114 年（2025 年）職類別薪資調查，醫師平均月薪約 18 萬；主治醫師依科別差很多，有醫院的心臟、胸腔外科主治平均月薪破百萬。但住院醫師工時長、值班多，還有醫療糾紛的壓力；內外婦兒急重症辛苦，醫美收入高但爭議也多。',
  ev:{q:'值班到第 30 個小時，急診又送來一位重症病人。',o:[['撐住，親自處理',{WIL:1,st:25,perf:1.5},'病人穩定了。你在值班室睡著，手上還拿著病歷。'],['請學長支援',{SOC:1,st:10,perf:.5},'學長二話不說趕來。醫院是團隊工作。'],['向科部反映排班不合理',{SOC:1,st:5},'沒有立刻改變，但你說出了很多人不敢說的話。']]}},
 {id:'dds',n:'牙醫師',cat:'醫療',pay:[8,30],lv:[[2,16,'開業牙醫師']],deg:['dent'],exam:'ddx',k:['INT','ART'],
  learn:'口腔解剖、精細手部操作、植牙與矯正等專科技術，開業後還要懂診所經營。',
@@ -427,11 +445,11 @@ Object.assign(EX,{
 CAREERS.push(
 {id:'pilot',n:'民航機師',cat:'交通運輸',pay:[12,38],deg:'any',sk:['外語'],need:{PHY:5,LAN:6},exam:'pilotx',k:['WIL','INT'],lv:[[2,26,'機長']],
  learn:'英文、飛航原理、儀器飛行、機組資源管理（CRM），每半年要通過模擬機考核和體檢。',
- chal:'勞動部 2025 年職類別薪資調查，機師平均月薪約 29.8 萬，是全台最高。但要長期面對時差、輪班、體檢不過就停飛的壓力，責任極重。',
+ chal:'勞動部 114 年（2025 年）職類別薪資調查，機師平均月薪約 29.8 萬，是全台最高。但要長期面對時差、輪班、體檢不過就停飛的壓力，責任極重。',
  ev:{q:'起飛前你發現一個小儀表異常，但航班已經延誤，塔台在催。',o:[['堅持檢查到確認安全',{WIL:1,perf:1},'延誤了四十分鐘，但你做了對的事。公司表揚了你的判斷。'],['跟副機師和機務一起快速排除',{SOC:1,INT:1,perf:1},'團隊合作十分鐘就解決了。'],['應該沒事，先飛再說',{st:25,perf:-2},'一路平安，但你整趟都很不安。安全不能賭。']]}},
 {id:'actuary',n:'精算師',cat:'商管',pay:[5.5,25],deg:['math','fin'],k:['INT','WIL'],lv:[[2,15,'正式精算師']],
  learn:'機率統計、財務數學、保險商品定價、程式（R、Python），還要一關關考精算師資格。',
- chal:'2025 年職類別薪資調查，精算師平均月薪約 20.3 萬，排第二。但資格考試要考很多年，邊工作邊讀書非常辛苦。'},
+ chal:'114 年（2025 年）職類別薪資調查，精算師平均月薪約 20.3 萬，排第二。但資格考試要考很多年，邊工作邊讀書非常辛苦。'},
 {id:'trader',n:'證券交易員／投資分析師',cat:'商管',pay:[5,22],deg:['fin','math','acct','biz','eng'],k:['INT','WIL'],lv:[[3,14,'資深交易員']],
  learn:'財報分析、總體經濟、金融商品、風險管理，以及證券分析師等證照。',
  chal:'市場一波動壓力就爆表，績效好壞直接反映在獎金上；工時長，要追國際盤。'},
@@ -488,7 +506,7 @@ CAREERS.push(
  chal:'收入常靠賣課抽成，業績壓力不小；要長期維持自己的體態和專業形象。'},
 {id:'athlete',n:'職業運動員',cat:'演藝運動',pay:[4,30],need:{PHY:8,WIL:6},k:['PHY','WIL'],
  learn:'專項技術、體能訓練、運動心理、傷害管理，還有退役後的第二專長。',
- chal:'2025 年職類別薪資調查，職業運動員進入月薪前十名；但只有極少數人打得上去，職業生涯短，一次受傷就可能結束。'},
+ chal:'114 年（2025 年）職類別薪資調查，職業運動員進入月薪前十名；但只有極少數人打得上去，職業生涯短，一次受傷就可能結束。'},
 {id:'idol',n:'演員／藝人',cat:'演藝運動',pay:[1.5,30],need:{ART:7,SOC:7},k:['ART','SOC'],
  learn:'表演、聲音訓練、鏡頭前的自我管理、經營個人形象與社群。',
  chal:'收入極度不穩，大多數人兼職維生；爆紅的人收入驚人，但隱私和網路評論的壓力也很大。'},
@@ -1055,43 +1073,52 @@ const IDEV={
 for(const st in IDEV)IDEV[st].forEach(e=>{if(e.pv&&!e.pv.m&&!e.pv.f)delete e.pv;GEV[st].m.push(e);GEV[st].f.push(e)});
 /* ---------- 各階段的「時間怎麼用」 ---------- */
 const HS_FOCUS=[
- {l:'拚命讀書',s:'讀書進度大增，壓力也大｜效果看智力和意志',e:()=>({study:Math.round(1.6*studyEff()*10)/10,st:15}),r:()=>`書桌上的參考書越疊越高。\n以你的智力 ${S.st.INT}、意志 ${S.st.WIL}，讀書效率【${effWord()}】。`},
- {l:'去補習班',s:'花錢買效率（存款 -3 萬）｜效果看智力',e:()=>({study:Math.round(2*studyEff()*10)/10,m:-3,st:12}),r:'每天放學直奔補習班，晚上十點才搭公車回家。',dis:()=>S.m<3},
- {l:'玩社團',s:'社交、創意或體能成長',e:()=>({SOC:1,[pick(['ART','PHY'])]:1,study:.4,st:-8,soc:1}),r:'社團成發那天，你第一次覺得自己在發光。'},
+ {l:'拚命讀書',s:'讀書或補習，看你的錢和時間',sub:'study'},
  {l:'打工存錢',s:'存款增加，讀書時間變少｜賺多少看體能和社交',e:()=>({m:Math.round(1.5+(S.st.PHY+S.st.SOC)/8),SOC:1,study:.2,st:8}),r:'在手搖飲店打工，學會一次記十杯客製化飲料。'},
- {l:'自學興趣',s:'挑一個興趣深入',sub:'int'},
+ {l:'社團或興趣',s:'社團、技能或興趣，挑一個深入',sub:'int'},
  {l:'放空休息',s:'壓力大降',e:{st:-25,study:.3},r:'你睡飽了，也想了很多事。休息不是浪費。'},
 ];
+const STUDY_OPTS=[
+ {l:'自己拚',s:'讀書進度大增，壓力也大｜效果看智力和意志',e:()=>({study:Math.round(1.6*studyEff()*10)/10,st:15}),r:()=>`書桌上的參考書越疊越高。\n以你的智力 ${S.st.INT}、意志 ${S.st.WIL}，讀書效率【${effWord()}】。`},
+ {l:'去補習班',s:'花錢買效率（存款 -3 萬）｜效果看智力',e:()=>({study:Math.round(2*studyEff()*10)/10,m:-3,st:12}),r:'每天放學直奔補習班，晚上十點才搭公車回家。',dis:()=>S.m<3},
+];
+
 const INTERESTS=[
  {l:'寫程式',e:{INT:1,sk:'程式',study:.4},r:'你用 Python 寫出第一個小遊戲。很醜，但它會動！'},
  {l:'畫畫／設計',e:{ART:1,sk:'作品集'},r:'你的 IG 畫冊累積了幾十張作品。'},
- {l:'運動訓練',e:{PHY:1,WIL:1,st:-10},r:'每天晨跑五公里，體能和意志都變強了。'},
- {l:'閱讀寫作',e:{LAN:1,study:.6},r:'你讀完一整櫃小說，還投稿了校刊。'},
- {l:'拍影片',e:{ART:1,SOC:1,sk:'自媒體'},r:'你開了頻道，第一支影片有 87 次觀看。'},
  {l:'學外語',e:{LAN:1,sk:'外語'},r:'每天看日劇韓劇練聽力，還考過了英檢中級。'},
+ {l:'社團活動',e:{SOC:1,ART:1,study:.4,st:-8,soc:1},r:'社團成發那天，你第一次覺得自己在發光。'},
 ];
-var UNI_FOCUS=[
+
+var UNI_STUDY=[
  {l:'認真念書',s:'成績穩定，壓力偏大',pb:2.5,e:()=>({[D[S.dept].k[0]]:1,st:12}),r:'圖書館成了你的第二個家。'},
- {l:'找實習',s:'累積職場經驗',pb:-.5,e:{sk:'實習',SOC:1,st:10,m:1},r:'你第一次穿上識別證走進辦公室，發現學校沒教的事好多。'},
- {l:'社團／系學會',s:'人脈與社交',pb:-1,e:{SOC:1,sk:'人脈',st:-5,soc:1},r:'你認識了很多不同科系的朋友。'},
- {l:'打工賺錢',s:'存款增加，課業受影響',pb:-1.2,e:{m:6,st:8},r:'學費和生活費自己顧，你比同學早熟了一點。'},
- {l:'自學技能',s:'程式、外語、作品集、證照、教育學程…',pb:-.5,sub:'uni'},
  {l:'準備國考／研究所',s:'畢業後考試更有把握',pb:.3,e:{sk:'備考',WIL:1,st:15},r:'你買了一整套考古題，每天固定讀三小時。'},
- {l:'休息玩樂',s:'壓力大降',pb:-.8,e:{st:-25,SOC:1},r:'夜衝、環島、看海。大學生活需要一點空白。'},
 ];
-UNI_FOCUS.splice(5,0,
+var UNI_WORK=[
+ {l:'找實習',s:'累積職場經驗',pb:-.5,e:{sk:'實習',SOC:1,st:10,m:1},r:'你第一次穿上識別證走進辦公室，發現學校沒教的事好多。'},
+ {l:'打工賺錢',s:'存款增加，課業受影響',pb:-1.2,e:{m:6,st:8},r:'學費和生活費自己顧，你比同學早熟了一點。'},
+ {l:'社團／系學會',s:'人脈與社交',pb:-1,e:{SOC:1,sk:'人脈',st:-5,soc:1},r:'你認識了很多不同科系的朋友。'},
+];
+function uniMore(){return [
+ {l:'休息玩樂',s:'壓力大降',pb:-.8,e:{st:-25,SOC:1},r:'夜衝、環島、看海。大學生活需要一點空白。'},
  {l:'寒暑假遊學／交換',s:'出國學語言、開眼界，要花錢',pb:-.6,sub:'trip',show:()=>!S.abroad},
  {l:'申請轉系',s:'通常只能一次，要看成績或考試',act:()=>applyTransfer(),show:()=>S.uy<=2&&!S.transferred&&!S.trTried},
  {l:'準備轉學考',s:'考進更前段的學校',act:()=>applyTT(),show:()=>S.uy<=2&&!S.abroad&&!S.ttTried&&S.tier&&TIERS().findIndex(t=>t[1]===S.tier)>0},
- {l:'辦休學一年',s:'打工、打工度假、休息或先當兵',act:()=>takeLeave(),show:()=>(S.leaves||0)<2});
+ {l:'辦休學一年',s:'打工、打工度假、休息或先當兵',act:()=>takeLeave(),show:()=>(S.leaves||0)<2},
+];}
+var UNI_TOP=[
+ {l:'念書',s:'認真念書，或準備國考、研究所',q:'你想怎麼念書？',list:()=>UNI_STUDY},
+ {l:'打工、實習或社團',s:'賺錢、累積經驗、交朋友',q:'你想把時間放在哪？',list:()=>UNI_WORK},
+ {l:'自學技能',s:'程式、外語、作品集、證照',q:'想學哪一種技能？',list:()=>UNI_SKILLS,pb:-.5},
+ {l:'更多',s:'休息、遊學、轉系、休學',q:'其他選擇',list:()=>uniMore()},
+];
 const UNI_SKILLS=[
  {l:'寫程式',e:{INT:1,sk:'程式'},r:'你在線上課程刷完一百題程式題。'},
  {l:'學外語（考多益）',e:{LAN:1,sk:'外語'},r:'多益考到 850 分，履歷亮了一點。'},
  {l:'做作品集',e:{ART:1,sk:'作品集'},r:'你整理出一份像樣的作品集網站。'},
- {l:'經營頻道／社群',e:{ART:1,SOC:1,sk:'自媒體'},r:'你的帳號有了第一批死忠粉絲。'},
  {l:'考專業證照',e:{WIL:1,sk:'證照'},r:'考到一張專業證照，多了一份保障。'},
- {l:'修教育學程',e:{LAN:1,sk:'教育學程',st:8},r:'你開始學怎麼站上講台。',dis:()=>has('教育學程')},
 ];
+
 const BIZ_FOCUS=[
  {l:'衝業績、找客戶',s:'公司成長快，壓力很大',pb:2,e:{SOC:1,st:20,soc:1},r:'你每天跑客戶、打電話、參加展覽。'},
  {l:'打磨產品',s:'品質提升，長期加分',pb:1.5,e:()=>({[pick(['INT','ART'])]:1,st:12,biz:4}),r:'你一次又一次地改產品，直到自己也想買。'},
@@ -1158,16 +1185,16 @@ function splitData(t){
  if(!main||!data.length)return[t,[]];
  return[main,data];
 }
-function typeText(t){
+function typeText(t,animate){
  const el=$('#txt');clearInterval(typing);
  const done=()=>{clearInterval(typing);el.innerHTML=fmt(t)};
- if(reduce){done();return}
+ if(reduce||!animate){done();return}
  let i=0;el.textContent='';
  typing=setInterval(()=>{i+=2;el.textContent=t.slice(0,i);if(i>=t.length)done()},16);
  el.onclick=done;
 }
 function go(text,choices,o={}){
- const [mainT,dataL]=splitData(text);typeText(mainT);
+ const [mainT,dataL]=splitData(text);typeText(mainT,!!o.typewriter);
  {const dv=$('#data');if(dataL.length){const op=LS.get('jcl-dataopen',false);dv.innerHTML=`<details class="data"${op?' open':''}><summary>看真實數據（${dataL.length}）</summary>${dataL.map(x=>`<p>${fmt(x)}</p>`).join('')}</details>`;dv.querySelector('details').addEventListener('toggle',e=>LS.set('jcl-dataopen',e.target.open))}else dv.innerHTML=''}
  $('#chips').innerHTML=(o.chips||[]).map(([t,c])=>`<span class="chip ${c}">${esc(t)}</span>`).join('');
  const ex=$('#extra');const pvh=o.pv?`<div class="pv"><b>⇄ 換位思考</b>${esc(o.pv)}</div>`:'';ex.hidden=!(o.html||pvh);ex.innerHTML=pvh+(o.html||'');
@@ -1314,9 +1341,18 @@ function startGrad(){
 }
 /* ----- 反向規劃：我想成為… ----- */
 const SKHOW={'程式':'高中「自學興趣」選寫程式，或大學「自學技能」選寫程式','作品集':'高中自學畫畫設計，或大學做作品集、參加競賽','外語':'自學外語、考多益、遊學、交換或留學','證照':'大學考專業證照、高職畢業、工作時進修','自媒體':'高中拍影片，或大學經營頻道','實習':'大學選「找實習」或申請暑期實習','創業經驗':'大學加入同學的創業，或創業收掉後也會獲得','人脈':'參加社團系學會、當兵時跟弟兄打好關係、工作時經營人脈','教育學程':'大學修教育學程','研究所':'大學畢業後考研究所或出國讀碩士','博士':'讀完碩士後繼續讀博士','海外學歷':'出國讀大學或碩士','職業駕照':'工作時選「進修新技能」','管理':'工作時接下主管職或進修'};
-function goalPick(){
- const cats=CATS.filter(c=>c!=='全部');
- go('我想成為…\n選一個你想了解的職業，看看從現在開始要怎麼走到那裡。先選類別。',cats.map(cat=>{const list=CAREERS.filter(c=>c.cat===cat);return list.length?{l:cat,s:list.slice(0,4).map(c=>c.n).join('、')+(list.length>4?'…':''),f:()=>go(`【${cat}】你想成為？`,list.map(c=>({l:c.n,cls:'sm',s:`月薪約 ${c.pay[0]}–${c.pay[1]} 萬｜${pathOf(c)}`,f:()=>roadmap(c.id)})).concat([{l:'換一個類別',cls:'sm',f:goalPick}]))}:null}).filter(Boolean).concat([{l:'回標題',cls:'sm',f:title}]));
+const CHAPTERS=[
+ {n:'醫療與照護',cats:['醫療']},
+ {n:'科技與技職',cats:['科技','技職']},
+ {n:'商業與創業',cats:['商管','創業','海外']},
+ {n:'公職與文教',cats:['公職法務','文教']},
+ {n:'創作與生活',cats:['設計創作','演藝運動','服務','交通運輸','自由業']},
+];function goalPick(){
+ go('我想成為…\n先選一個方向，再挑職業。看看要怎麼走到那裡。',CHAPTERS.map(ch=>({l:ch.n,s:ch.cats.join('、'),f:()=>goalList(ch)})).concat([{l:'回標題',cls:'sm',f:title}]));
+}
+function goalList(ch){
+ const list=CAREERS.filter(c=>ch.cats.includes(c.cat));
+ go(`【${ch.n}】你想成為？`,list.map(c=>({l:c.n,cls:'sm',s:`月薪約 ${c.pay[0]}–${c.pay[1]} 萬｜${pathOf(c)}`,f:()=>roadmap(c.id)})).concat([{l:'換一個方向',cls:'sm',f:goalPick}]));
 }
 function roadmap(id){
  const c=CAR[id];$('#codex').hidden=true;setScene('city');
@@ -1382,12 +1418,21 @@ function shareText(ttl,sat){return `我在「人生岔路口」活到 ${S.age} �
 function title(){
  S=null;setScene('title');
  const sv=LS.get('jcl-save',null);const runs=LS.get('jcl-runs',0);
- const ch=[];
- if(sv&&sv.ck)ch.push({l:`繼續上次的人生`,s:`${sv.name||'無名氏'}，${sv.age} 歲`,cls:'primary',f:()=>{S=sv;RESUME[S.ck[0]](S.ck[1])}});
  const gl=LS.get('jcl-goal',null);
- ch.push({l:'開始新的人生',s:'可以從國三、高三或大學畢業開始',cls:sv?'':'primary',f:create},{l:'我想成為…（反向規劃）',s:gl&&CAR[gl]?`目前的目標：${CAR[gl].n}`:'選一個職業，看從現在開始要怎麼走到那裡',f:goalPick},{l:'職涯羅盤測驗',s:LS.get('jcl-compass',null)?'已做過，可以重新測一次':'5 分鐘找出你的興趣類型和適合的職業',f:()=>compass()},{l:'職業圖鑑',s:`${CAREERS.length} 種職業：要學什麼、會遇到什麼挑戰`,f:openCodex},{l:'怎麼玩',f:howto});
+ const ch=[];
+ if(sv&&sv.ck)ch.push({l:'繼續上次的人生',s:`${sv.name||'無名氏'}，${sv.age} 歲`,cls:'primary',f:()=>{S=sv;RESUME[S.ck[0]](S.ck[1])}});
+ ch.push({l:'開始新的人生',s:'從國三、高三或大學畢業開始',cls:sv?'':'primary',f:create},
+  {l:'我想成為…',s:gl&&CAR[gl]?`目前的目標：${CAR[gl].n}`:'選一個職業，看看要怎麼走到那裡',f:goalPick},
+  {l:'職業圖鑑',s:`${CAREERS.length} 種職業，一本翻得完的手冊`,f:openCodex},
+  {l:'更多',s:'職涯羅盤、玩法說明、清除目標',f:more});
+ go(`站在人生的岔路口了嗎？\n\n這裡以台灣為背景，從國中會考後開始：選高中或高職、選自然組或社會組、考學測、填志願、讀大學、找工作。\n資質是擲骰子決定的，有可能選了想讀的系卻讀不好。這很正常，現實也是這樣。${runs?`\n\n你已經活過 ${runs} 次人生。`:''}`,ch,{typewriter:true});
+}
+function more(){
+ const gl=LS.get('jcl-goal',null);
+ const ch=[{l:'職涯羅盤測驗',s:LS.get('jcl-compass',null)?'已做過，可以重新測一次':'5 分鐘找出你的興趣類型和適合的職業',f:()=>compass()},{l:'怎麼玩',f:howto}];
  if(gl&&CAR[gl])ch.push({l:'清除目標',cls:'sm',s:`不再標示「${CAR[gl].n}」的路線`,f:()=>{LS.del('jcl-goal');title()}});
- go(`站在人生的岔路口了嗎？\n\n這裡以台灣為背景，從國中會考後開始：選高中或高職、選自然組或社會組、考學測、填志願、讀大學、找工作。\n資質是擲骰子決定的，有可能選了想讀的系卻讀不好。這很正常，現實也是這樣。${runs?`\n\n你已經活過 ${runs} 次人生。`:''}`,ch);
+ ch.push({l:'回標題',cls:'sm',f:title});
+ go('其他功能。',ch);
 }
 function howto(){
  go('【玩法】\n可以從國三、高三或大學畢業開始；也可以先用「我想成為…」選一個目標職業，看完路線再出發。\n\n每個階段先選「這段時間怎麼用」，接著會遇到隨機事件。\n\n【六項資質】決定你讀書、工作的表現；選擇會讓它們慢慢成長。\n【壓力】滿了會倒下，被迫休息。\n【技能】像程式、作品集、外語、證照，會打開新的職業。\n\n找工作時，暗掉的職業會寫出你還缺什麼。這就是現實中「要學什麼」的提示。\n\n建議多玩幾輪，試試完全不同的路。',[{l:'了解，回標題',f:title}]);
@@ -1429,12 +1474,13 @@ function hsTurn(i){
  const school=S.hs==='voc'?`高職${VOC[S.voc].n}`:'高中';
  const nx=()=>i<2?hsTurn(i+1):exam();const gp=genderPool('hs');const after=(pre,chips)=>eventStep(gp.length&&(i===1||Math.random()<.55)?gp:HS_EV,pre,chips,(i===0||i===2)?()=>reflect(i===0?'hol':'val',nx):nx);
  go(`${school}${NUMS[i]}年級（${S.age} 歲）。\n這一年，你把時間主要花在哪？`,HS_FOCUS.map(o=>({l:o.l,s:o.s,dis:o.dis&&o.dis(),f:()=>{
-  if(o.sub)return subPick('想深入哪個興趣？',INTERESTS,after);
+  if(o.sub==='study')return subPick('你想怎麼拚？',STUDY_OPTS,after);
+  if(o.sub==='int')return subPick('想深入哪個興趣？',INTERESTS,after);
   const c=fx(o.e);after(typeof o.r==='function'?o.r():o.r,c);
  }})));
 }
 function subPick(q,list,after){
- go(q,list.map(o=>({l:o.l,dis:o.dis&&o.dis(),f:()=>{const c=fx(o.e);after(o.r,c)}})));
+ go(q,list.map(o=>({l:o.l,dis:o.dis&&o.dis(),f:()=>{const c=fx(o.e);after(typeof o.r==='function'?o.r():o.r,c)}})));
 }
 function eventStep(pool,pre,preChips,done,prePv){
  const ok=pool.filter(e=>!S.used.includes(e.q)&&(!e.when||e.when()));
@@ -1550,13 +1596,16 @@ function uniTotal(){return D[S.dept].y+S.extra}
 function uniTurn(){
  if(S.uy>=uniTotal())return graduate();
  S.stage='uni';S.age=S.uStart+S.uy;setScene('campus');ck('uniTurn');
- go(`大${NUMS[Math.min(S.uy,6)]}（${S.age} 歲）｜${S.abroad?ABROAD[S.abroad].n+'・':''}${collegeOf(S.dept)}・${D[S.dept].n}\n這一年，你最想把時間花在哪？`,UNI_FOCUS.filter(o=>!o.show||o.show()).map(o=>({l:o.l,s:o.s,f:()=>{
-  if(o.act)return o.act();
-  const fin=(r,c)=>uniResult(o.pb,r,c);
-  if(o.sub==='trip')return go('想去哪裡？家裡會依家境幫忙出一部分。',TRIPS.map(t=>{if(t.ex)return{l:t.l,s:t.s,f:()=>exchange(fin)};const pay=famPay(t.c);return{l:t.l,s:`${t.s}｜你要付 ${pay} 萬`,dis:S.m<pay||(t.need&&!t.need()),f:()=>{const c=fx(Object.assign({},t.e,{m:-pay}));log(t.l);fin(t.r,c)}}}).concat([{l:'不去了',f:uniTurn}]));
-  if(o.sub)return subPick('想學哪一種技能？',UNI_SKILLS,fin);
-  fin(o.r,fx(o.e));
- }})));
+ go(`大${NUMS[Math.min(S.uy,6)]}（${S.age} 歲）｜${S.abroad?ABROAD[S.abroad].n+'・':''}${collegeOf(S.dept)}・${D[S.dept].n}\n這一年，你最想把時間花在哪？`,UNI_TOP.map(g=>({l:g.l,s:g.s,f:()=>uniOpts(g)})));
+}
+function uniOpts(g){
+ go(g.q,g.list().filter(o=>!o.show||o.show()).map(o=>({l:o.l,s:o.s,dis:o.dis&&o.dis(),f:()=>runUniOpt(o,g.pb)})).concat([{l:'回上一層',cls:'sm',f:uniTurn}]));
+}
+function runUniOpt(o,gpb){
+ if(o.act)return o.act();
+ const fin=(r,c)=>uniResult(o.pb!==undefined?o.pb:gpb,r,c);
+ if(o.sub==='trip')return go('想去哪裡？家裡會依家境幫忙出一部分。',TRIPS.map(t=>{if(t.ex)return{l:t.l,s:t.s,f:()=>exchange(fin)};const pay=famPay(t.c);return{l:t.l,s:`${t.s}｜你要付 ${pay} 萬`,dis:S.m<pay||(t.need&&!t.need()),f:()=>{const c=fx(Object.assign({},t.e,{m:-pay}));log(t.l);fin(t.r,c)}}}).concat([{l:'不去了',f:uniTurn}]));
+ fin(o.r,fx(o.e));
 }
 function uniResult(pb,r,c){
  const d=D[S.dept];
@@ -1764,15 +1813,21 @@ function reqCheck(c){
  if(c.money&&S.m<c.money)miss.push(`存款 ${c.money} 萬（目前 ${Math.round(S.m)}）`);
  return{ok:!miss.length,miss,fit:fitOf(c)};
 }
-function careerPick(msg){
+function careerPick(msg,view){
  S.stage='pick';setScene('city');ck('careerPick');
  const all=CAREERS.map(c=>({c,r:reqCheck(c)}));
  const rw={core:3,exp:2,none:0,same:0};
  const ok=all.filter(x=>x.r.ok).sort((a,b)=>(b.r.fit+holMatch(b.c,myHol())*4+rw[relOf(b.c)])-(a.r.fit+holMatch(a.c,myHol())*4+rw[relOf(a.c)]));
  const no=all.filter(x=>!x.r.ok).sort((a,b)=>a.r.miss.length-b.r.miss.length);
- const H=myHol(),V=myVal();const hasH=Object.values(H).some(x=>x>0);
+ const H=myHol();const hasH=Object.values(H).some(x=>x>0);
  const mk=({c,r})=>({l:(c.id===S.goal?'◎ ':'')+(hasH&&holMatch(c,H)>=.55?'♥ ':'')+c.n,cls:'sm',dis:!r.ok||c.id===S.career,s:r.ok?`${RELN[relOf(c)]}｜適性 ${stars(r.fit)}｜${c.startup?`創業・啟動資金約 ${c.seed} 萬`:`起薪約 ${c.pay[0]} 萬`}${c.exam?`｜需考${EX[c.exam].n}`:''}${c.pref&&!has(c.pref)?'｜偏好碩士':''}`:'缺：'+r.miss.join('、'),f:()=>chooseCareer(c)});
- go(msg||`${S.age} 歲，該踏進職場了。\n亮著的是你現在走得了的路；暗掉的會寫出你還缺什麼。那就是現實中要補的東西。\n「♥」代表跟你的興趣類型比較相符。\n1111 人力銀行 2026 年調查：48.6% 新鮮人的第一份工作跟所學無關。本科相關起步比較順，跨領域也完全可能。`,[{sep:`走得了的路（${ok.length}）`},...ok.map(mk),{sep:`還走不了的路（${no.length}）`},...no.map(mk)]);
+ const back={l:'回上一頁',cls:'sm',f:()=>careerPick()};
+ if(view==='ok')return go(`能走的路（${ok.length}）`,ok.map(mk).concat([back]));
+ if(view==='no')return go(`還走不了的路（${no.length}）\n缺的東西，就是現實中要補的課題。`,no.map(mk).concat([back]));
+ const btns=ok.slice(0,4).map(mk);
+ if(ok.length>4)btns.push({l:`看其他能走的路（還有 ${ok.length-4} 個）`,cls:'sm',f:()=>careerPick(undefined,'ok')});
+ if(no.length)btns.push({l:`看還走不了的路（${no.length} 個）`,cls:'sm',f:()=>careerPick(undefined,'no')});
+ go(msg||`${S.age} 歲，該踏進職場了。\n先列出你現在走得了的路，適性高的排前面。「♥」代表跟你的興趣類型比較相符。\n1111 人力銀行 2026 年調查：48.6% 新鮮人的第一份工作跟所學無關。本科相關起步比較順，跨領域也完全可能。`,btns);
 }
 function examP(c){const e=EX[c.exam];let p=e.b;for(const k in e.w)p+=(S.st[k]-5)*e.w[k];p+=.12*Math.min(S.prep,3)+(has('備考')?.1:0);return clamp(p,.05,.95)}
 function chooseCareer(c){
@@ -1937,27 +1992,51 @@ function pathOf(c){
 }
 
 /* ----- 圖鑑 ----- */
-let cxCat='全部';
-function openCodex(){$('#codex').hidden=false;renderCodex();$('#codex').scrollTop=0}
+let cxId=null;
+function openCodex(){$('#codex').hidden=false;cxId=null;renderCodex();$('#codex').scrollTop=0}
+function cxOrder(){return CHAPTERS.flatMap(ch=>CAREERS.filter(c=>ch.cats.includes(c.cat)))}
 function renderCodex(){
  const reached=LS.get('jcl-reached',[]);
- $('#cxF').innerHTML=CATS.map(c=>`<button type="button" class="chipf" aria-pressed="${c===cxCat}" data-c="${c}">${c}</button>`).join('');
- document.querySelectorAll('#cxF [data-c]').forEach(b=>b.onclick=()=>{cxCat=b.dataset.c;renderCodex()});
- const list=CAREERS.filter(c=>cxCat==='全部'||c.cat===cxCat);
- $('#cxList').innerHTML=list.map(c=>`<details class="cx"><summary><span class="n">${reached.includes(c.id)?'<span class="star">★</span> ':''}${esc(c.n)} <span class="note">${c.cat}</span></span><span class="p">${c.pay[0]}–${c.pay[1]}萬</span></summary><div class="body">
- <div><span class="k">怎麼走：</span>${esc(pathOf(c))}</div>${c.lv?`<div><span class="k">升遷：</span>${c.lv.map(l=>`${l[2]}（約 ${l[1]} 萬以上）`).join('、')}</div>`:''}
- <div><span class="k">核心資質：</span>${STN[c.k[0]]}、${STN[c.k[1]]}　<span class="k">興趣類型：</span>${HOL[c.h[0]]}、${HOL[c.h[1]]}　<span class="k">滿足：</span>${c.v.join('、')}</div>
- <div><span class="k">對台灣的貢獻：</span>${esc(IMPACT[c.cat]||'')}</div>
- <div><button type="button" class="mini" data-goal="${c.id}">看怎麼走到這裡</button></div>
- <div><span class="k">要學的：</span>${esc(c.learn)}</div>
- <div><span class="k">挑戰：</span>${esc(c.chal)}</div>
- ${c.exam?`<div><span class="k">關卡：</span>${esc(EX[c.exam].n)}：${esc(EX[c.exam].d)}</div>`:''}
- </div></details>`).join('');
- GSUM.ids=['原住民：升學有外加名額，族語認證加分 35%、沒有加 10%，卻常被說「加分很爽」、被叫「番仔」、被期待會唱歌喝酒；都市原住民常被說「不像原住民」。','新住民子女：約占各縣市國中小學生的 5%～7%，常被叫「外配的小孩」，擔心爸媽的口音被笑；但雙語能力在新南向市場是很大的優勢，還有海外培力計畫。','身心障礙者：2024 年勞參率只有 21.9%、失業率 7.1%，找房子、找工作常被拒絕；有專屬的升學甄試、定額進用和職務再設計補助。'];
- $('#cxG').innerHTML=[['m','男生可能遇到的'],['f','女生可能遇到的'],['ids','不同身分背景可能遇到的'],['abroad','出國可能遇到的歧視']].map(([g,t])=>`<details class="cx"><summary><span class="n">${t}</span><span class="p" style="color:var(--cool)">${GSUM[g].length} 項</span></summary><div class="body">${GSUM[g].map(x=>`<div>▸ ${esc(x)}</div>`).join('')}</div></details>`).join('');
+ const order=cxOrder();
+ const c=cxId&&CAR[cxId];
+ $('#cxIntro').hidden=!!c;$('#cxAppx').hidden=!!c;
+ if(!c){
+  $('#cxList').innerHTML='<div class="toc">'+CHAPTERS.map((ch,i)=>{const list=order.filter(x=>ch.cats.includes(x.cat));return `<section class="chap"><h3>第 ${i+1} 章　${ch.n}</h3><ol>${list.map(x=>`<li><button type="button" class="tocl" data-id="${x.id}">${reached.includes(x.id)?'<span class="star">★</span> ':''}${esc(x.n)}</button></li>`).join('')}</ol></section>`}).join('')+'</div>';
+  document.querySelectorAll('#cxList [data-id]').forEach(b=>b.onclick=()=>{cxId=b.dataset.id;renderCodex();$('#codex').scrollTop=0});
+  GSUM.ids=['原住民：升學有外加名額，族語認證加分 35%、沒有加 10%，卻常被說「加分很爽」、被叫「番仔」、被期待會唱歌喝酒；都市原住民常被說「不像原住民」。','新住民子女：約占各縣市國中小學生的 5%～7%，常被叫「外配的小孩」，擔心爸媽的口音被笑；但雙語能力在新南向市場是很大的優勢，還有海外培力計畫。','身心障礙者：2024 年勞參率只有 21.9%、失業率 7.1%，找房子、找工作常被拒絕；有專屬的升學甄試、定額進用和職務再設計補助。'];
+  $('#cxG').innerHTML=[['m','男生可能遇到的'],['f','女生可能遇到的'],['ids','不同身分背景可能遇到的'],['abroad','出國可能遇到的歧視']].map(([g,t])=>`<details class="cx"><summary><span class="n">${t}</span><span class="p" style="color:var(--cool)">${GSUM[g].length} 項</span></summary><div class="body">${GSUM[g].map(x=>`<div>▸ ${esc(x)}</div>`).join('')}</div></details>`).join('');
+  const L=LS.get('jcl-psy',[]);
+  $('#cxPsy').innerHTML=Object.keys(PSY).map(k=>L.includes(k)?`<details class="cx"><summary><span class="n">${esc(k)}</span><span class="p" style="color:var(--cool)">已解鎖</span></summary><div class="body"><div>${esc(PSY[k])}</div></div></details>`:`<details class="cx"><summary><span class="n" style="color:var(--mut)">？？？</span><span class="p" style="color:var(--mut)">未解鎖</span></summary><div class="body"><div class="note">在模擬中遇到相關事件就會解鎖。</div></div></details>`).join('');
+  return;
+ }
+ const idx=order.indexOf(c);const chIdx=CHAPTERS.findIndex(ch=>ch.cats.includes(c.cat));
+ const got=reached.includes(c.id);
+ $('#cxList').innerHTML=`<article class="page">
+  <div class="pghead"><span>第 ${chIdx+1} 章　${CHAPTERS[chIdx].n}</span><span>${idx+1} / ${order.length}</span></div>
+  <h2>${got?'<span class="star">★</span> ':''}${esc(c.n)}</h2>
+  <p class="kicker">${esc(c.cat)}｜月薪約 ${c.pay[0]}–${c.pay[1]} 萬</p>
+  <p class="lead">${esc(IMPACT[c.cat]||'')}</p>
+  <dl>
+   <dt>怎麼走</dt><dd>${esc(pathOf(c))}</dd>
+   ${c.lv?`<dt>升遷</dt><dd>${c.lv.map(l=>`${esc(l[2])}（約 ${l[1]} 萬以上）`).join('、')}</dd>`:''}
+   <dt>核心資質</dt><dd>${STN[c.k[0]]}、${STN[c.k[1]]}</dd>
+   <dt>興趣類型</dt><dd>${HOL[c.h[0]]}、${HOL[c.h[1]]}</dd>
+   <dt>滿足</dt><dd>${c.v.join('、')}</dd>
+   <dt>要學的</dt><dd>${esc(c.learn)}</dd>
+   <dt>挑戰</dt><dd>${esc(c.chal)}</dd>
+   ${c.exam?`<dt>關卡</dt><dd>${esc(EX[c.exam].n)}：${esc(EX[c.exam].d)}</dd>`:''}
+  </dl>
+  <button type="button" class="mini" data-goal="${c.id}">看怎麼走到這裡</button>
+ </article>
+ <nav class="pgnav">
+  <button type="button" class="mini" id="cxPrev"${idx<=0?' disabled':''}>‹ 上一頁</button>
+  <button type="button" class="mini" id="cxToc">目錄</button>
+  <button type="button" class="mini" id="cxNext"${idx>=order.length-1?' disabled':''}>下一頁 ›</button>
+ </nav>`;
+ $('#cxPrev').onclick=()=>{if(idx>0){cxId=order[idx-1].id;renderCodex();$('#codex').scrollTop=0}};
+ $('#cxNext').onclick=()=>{if(idx<order.length-1){cxId=order[idx+1].id;renderCodex();$('#codex').scrollTop=0}};
+ $('#cxToc').onclick=()=>{cxId=null;renderCodex();$('#codex').scrollTop=0};
  document.querySelectorAll('[data-goal]').forEach(b=>b.onclick=()=>roadmap(b.dataset.goal));
- const L=LS.get('jcl-psy',[]);
- $('#cxPsy').innerHTML=Object.keys(PSY).map(k=>L.includes(k)?`<details class="cx"><summary><span class="n">${esc(k)}</span><span class="p" style="color:var(--cool)">已解鎖</span></summary><div class="body"><div>${esc(PSY[k])}</div></div></details>`:`<details class="cx"><summary><span class="n" style="color:var(--mut)">？？？</span><span class="p" style="color:var(--mut)">未解鎖</span></summary><div class="body"><div class="note">在模擬中遇到相關事件就會解鎖。</div></div></details>`).join('');
 }
 $('#cxClose').onclick=()=>{$('#codex').hidden=true};
 $('#bCodex').onclick=openCodex;
