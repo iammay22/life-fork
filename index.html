@@ -1539,7 +1539,8 @@ function admit(off,tname,rg){
  const where=`${REG[rg].n}的${tname}`;
  collegeView(deptList(),`第 ${S.att} 志願｜${where}。你的成績：【${fmtSc(S.score)}】\n「適性」是這個系需要的資質跟你合不合。門檻上得去，不代表讀得好。`,([id,d])=>{
   const th=Math.round(thOf(id,off));const df=S.score-th;const fit=(S.st[d.k[0]]+S.st[d.k[1]])/2;
-  return{l:(S.goal&&((Array.isArray(CAR[S.goal].deg)&&CAR[S.goal].deg.includes(id))||(REL[id]||[]).includes(S.goal))?'◎ ':'')+d.n,cls:'sm',s:`門檻約 ${fmtSc(th)}｜${chanceLabel(df)}｜適性 ${stars(fit)}（${STN[d.k[0]]}+${STN[d.k[1]]}）｜讀起來${fit-(d.th-43)/6>=6?'輕鬆':fit-(d.th-43)/6>=4?'普通':'吃力'}｜${d.y} 年${ARTD.includes(id)?'｜要考術科':''}`,f:()=>tryDept(id,th,tname,rg)};
+  const locked=df<-3;
+  return{l:(S.goal&&((Array.isArray(CAR[S.goal].deg)&&CAR[S.goal].deg.includes(id))||(REL[id]||[]).includes(S.goal))?'◎ ':'')+d.n,cls:'sm',dis:locked,s:`門檻約 ${fmtSc(th)}｜${chanceLabel(df)}｜適性 ${stars(fit)}（${STN[d.k[0]]}+${STN[d.k[1]]}）｜讀起來${fit-(d.th-43)/6>=6?'輕鬆':fit-(d.th-43)/6>=4?'普通':'吃力'}｜${d.y} 年${ARTD.includes(id)?'｜要考術科':''}${locked?'｜成績差太多，不能報':''}`,f:()=>tryDept(id,th,tname,rg)};
  },[{l:'換學校類型或地區',cls:'sm',f:()=>{S.att--;pickTier()}}]);
 }
 function tryDept(id,th,tname,rg){
